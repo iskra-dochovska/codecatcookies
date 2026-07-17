@@ -36,7 +36,7 @@ function App() {
       </section>
 
       <footer className="w-full bg-cookie-brown px-6 py-6 text-sm text-cookie-cream">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-2">
           <a
             href="https://www.instagram.com/codecatcookies/"
             target="_blank"
@@ -57,9 +57,11 @@ function App() {
               <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
               <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
             </svg>
-            @codecatcookies
+            codecatcookies
           </a>
-          <span>&copy; {new Date().getFullYear()} CodeCat Cookies. All rights reserved.</span>
+          <span className="text-cookie-cream/70">
+            &copy; {new Date().getFullYear()} CodeCat Cookies. All rights reserved.
+          </span>
         </div>
       </footer>
     </div>
