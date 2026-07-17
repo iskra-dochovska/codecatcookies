@@ -32,14 +32,14 @@ function NotifyModal({ open, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-cookie-cream p-6 text-cookie-charcoal dark:bg-cookie-charcoal dark:text-cookie-cream"
+        className="w-full max-w-sm rounded-2xl bg-cookie-cream p-6 text-cookie-charcoal"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="float-right text-xl leading-none text-cookie-brown dark:text-cookie-gold"
+          className="float-right text-xl leading-none text-cookie-brown"
         >
           &times;
         </button>
@@ -60,7 +60,7 @@ function NotifyModal({ open, onClose }: Props) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="rounded-full border border-cookie-brown/30 bg-transparent px-4 py-2 text-sm outline-none focus:border-cookie-rust dark:border-cookie-gold/40"
+              className="rounded-full border border-cookie-brown/30 bg-transparent px-4 py-2 text-sm outline-none focus:border-cookie-rust"
             />
             {status === 'error' && <p className="text-sm text-cookie-rust">{error}</p>}
             <button

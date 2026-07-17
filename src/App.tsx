@@ -8,7 +8,7 @@ function App() {
   const [notifyOpen, setNotifyOpen] = useState(false)
 
   return (
-    <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal transition-colors dark:bg-cookie-charcoal dark:text-cookie-cream">
+    <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
       <header className="w-full bg-cookie-brown px-4 py-6">
         <img src={textLogoLight} alt="CodeCat Cookies" className="h-8" />
       </header>
@@ -28,7 +28,7 @@ function App() {
       </section>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-6 py-16 text-center">
-        <p className="max-w-xl text-lg font-bold uppercase text-cookie-brown dark:text-cookie-gold">
+        <p className="max-w-xl text-lg font-bold uppercase text-cookie-brown">
           The only cookies you want to accept.
         </p>
         <button
