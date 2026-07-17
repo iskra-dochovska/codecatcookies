@@ -9,8 +9,8 @@ function App() {
 
   return (
     <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
-      <header className="w-full bg-cookie-brown px-4 py-6">
-        <img src={textLogo} alt="codecatcookies" className="h-8" />
+      <header className="flex w-full items-center bg-cookie-brown px-4 py-4">
+        <img src={textLogo} alt="codecatcookies" className="h-5" />
       </header>
 
       <section className="relative min-h-[60vh] w-full overflow-hidden">
