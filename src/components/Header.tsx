@@ -3,7 +3,7 @@ import textLogo from '../assets/brand/codecatcookies_text.svg'
 
 function Header() {
   return (
-    <header className="flex w-full items-center justify-between bg-cookie-brown px-6 py-4 sm:px-10">
+    <header className="flex w-full items-center justify-between bg-cookie-brown px-8 py-4 sm:px-20">
       <Link to="/">
         <img src={textLogo} alt="codecatcookies" className="h-5" />
       </Link>
