@@ -6,7 +6,7 @@ export async function subscribeEmail(email: string): Promise<void> {
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({
       access_key: WEB3FORMS_ACCESS_KEY,
-      subject: 'New CodeCat Cookies signup',
+      subject: 'New codecatcookies signup',
       email,
     }),
   })

@@ -10,17 +10,17 @@ function App() {
   return (
     <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
       <header className="w-full bg-cookie-brown px-4 py-6">
-        <img src={textLogoLight} alt="CodeCat Cookies" className="h-8" />
+        <img src={textLogoLight} alt="codecatcookies" className="h-8" />
       </header>
 
       <section className="relative min-h-[60vh] w-full overflow-hidden">
         <img
           src={cookiesHero}
-          alt="Assortment of CodeCat cookies"
+          alt="codecatcookies assortment"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/40 px-6 text-center">
-          <img src={logoMark} alt="CodeCat Cookies" className="h-40 sm:h-64" />
+          <img src={logoMark} alt="codecatcookies" className="h-40 sm:h-64" />
           <span className="rounded-full bg-cookie-rust px-4 py-1.5 text-sm font-semibold tracking-widest text-cookie-cream uppercase">
             Coming soon
           </span>
@@ -65,7 +65,7 @@ function App() {
             codecatcookies
           </a>
           <span className="text-cookie-cream/70">
-            &copy; {new Date().getFullYear()} CodeCat Cookies. All rights reserved.
+            &copy; {new Date().getFullYear()} codecatcookies. All rights reserved.
           </span>
         </div>
       </footer>
