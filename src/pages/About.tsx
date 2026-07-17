@@ -16,19 +16,32 @@ function About() {
           About us
         </h1>
         <p className="mt-3 text-lg text-cookie-brown/80">
-          A small home kitchen, one cat, and too many cookie puns.
+          A small home kitchen, a very loud cat and sweet treats
         </p>
       </div>
 
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-cookie-brown">
-          A small home kitchen
+          Why accept our cookies?
         </h2>
         <p className="text-cookie-charcoal">
-          codecatcookies isn&apos;t a factory or a franchise — it&apos;s a home kitchen making
-          small batches of cookies, one tray at a time. No shortcuts, no mass production,
-          just cookies made carefully in small enough batches that every one gets checked
-          before it goes out.
+          It&apos;s simple, glucose (sugar), is our primary source of energy and the brain
+          is the most energy-demanding organ we have. As a programmer, turned home baker,
+          I&apos;m fully aware how essential it is to have a sweet treat at hand. The
+          solution is simple and it comes in many forms, chocolate chip, peanut butter and
+          other delicious flavors to help you max out your problem solving skills.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <h2 className="text-xl font-bold text-cookie-brown">
+          How do you get a hold of our cookies?
+        </h2>
+        <p className="text-cookie-charcoal">
+          As we&apos;re finding our footing, we&apos;re mainly providing our sugary
+          services in Skopje. If you&apos;d like to get your hands on some of these
+          delicious brain boosters, you can either pick them up @Portal in Karposh. Just
+          place your order on the site and schedule a pickup time, payment is in cash.
         </p>
       </div>
 
@@ -44,26 +57,16 @@ function About() {
           <Sparkle className="absolute top-1/2 -left-2 h-4 w-4 text-cookie-gold" />
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-xl font-bold text-cookie-brown">Meet Sushi</h2>
+          <h2 className="text-xl font-bold text-cookie-brown">
+            What&apos;s with the cat?
+          </h2>
           <p className="text-cookie-charcoal">
-            codecatcookies is named after — and inspired by — Sushi, a Siamese cat who
-            supervises every single batch. She was there for the very first tray, and
-            she hasn&apos;t missed one since. Consider her the brand&apos;s first and
-            harshest quality control.
+            Glad you asked, this little menace, government name Sushi is our mascot!
+            She&apos;s the designated micromanager, making sure your order is made
+            perfectly every single time. If you happen to have a complaint, you&apos;ll
+            have to take it up with her (and she&apos;s quite scary).
           </p>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-cookie-brown">
-          Baked by a developer
-        </h2>
-        <p className="text-cookie-charcoal">
-          This whole thing is a programmer&apos;s side project: someone who writes code
-          during the day and bakes cookies to unwind. The name is the pun you think it
-          is — the only cookies you should ever have to accept are the kind you can eat,
-          not the kind a website asks you to consent to.
-        </p>
       </div>
     </section>
   )
