@@ -45,7 +45,7 @@ function NotifyModal({ open, onClose }: Props) {
         </button>
 
         {status === 'success' ? (
-          <p className="text-center font-bold">
+          <p className="text-center text-sm font-bold">
             Thanks! We&apos;ll let you know when we launch.
           </p>
         ) : (
