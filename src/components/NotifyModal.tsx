@@ -51,7 +51,7 @@ function NotifyModal({ open, onClose }: Props) {
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 text-center">
             <label htmlFor="notify-email" className="px-4 text-sm font-semibold">
-              We&apos;ll email you the cookie location!
+              We&apos;ll email you when we&apos;re open for orders!
             </label>
             <input
               id="notify-email"
