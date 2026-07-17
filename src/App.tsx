@@ -1,25 +1,31 @@
+import textLogo from './assets/brand/codecatcookies_text.svg'
 import textLogoLight from './assets/brand/codecatcookies_text_light.svg'
+import logoMark from './assets/brand/codecatcookies_logo.svg'
 import cookiesHero from './assets/brand/cookies_hero.jpg'
 
 function App() {
   return (
     <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal transition-colors dark:bg-cookie-charcoal dark:text-cookie-cream">
-      <main className="relative min-h-[70vh] flex-1 overflow-hidden">
+      <header className="mx-auto w-full max-w-5xl px-6 py-6">
+        <img src={textLogo} alt="CodeCat Cookies" className="h-8 dark:hidden" />
+        <img src={textLogoLight} alt="CodeCat Cookies" className="hidden h-8 dark:block" />
+      </header>
+
+      <section className="relative min-h-[60vh] w-full overflow-hidden">
         <img
           src={cookiesHero}
           alt="Assortment of CodeCat cookies"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/40 px-6 text-center">
-          <img src={textLogoLight} alt="CodeCat Cookies" className="h-10 sm:h-14" />
-          <span className="text-sm font-semibold tracking-widest text-cookie-cream uppercase">
+          <img src={logoMark} alt="CodeCat Cookies" className="h-20 sm:h-28" />
+          <span className="rounded-full bg-cookie-rust px-4 py-1.5 text-sm font-semibold tracking-widest text-cookie-cream uppercase">
             Coming soon
           </span>
         </div>
-      </main>
+      </section>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-6 py-16 text-center">
-        <h1 className="text-4xl font-bold sm:text-5xl">CodeCat Cookies</h1>
         <p className="max-w-xl text-lg text-cookie-brown dark:text-cookie-gold">
           The only cookies you want to accept.
         </p>
