@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import textLogoLight from './assets/brand/codecatcookies_text_light.svg'
 import logoMark from './assets/brand/codecatcookies_logo.svg'
 import cookiesHero from './assets/brand/cookies_hero.jpg'
 import NotifyModal from './components/NotifyModal'
@@ -10,7 +9,7 @@ function App() {
   return (
     <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
       <header className="w-full bg-cookie-brown px-4 py-6">
-        <img src={textLogoLight} alt="codecatcookies" className="h-8" />
+        <span className="text-2xl font-extrabold text-cookie-cream">codecatcookies</span>
       </header>
 
       <section className="relative min-h-[60vh] w-full overflow-hidden">
