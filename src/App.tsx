@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import textLogoLight from './assets/brand/codecatcookies_text_light.svg'
 import logoMark from './assets/brand/codecatcookies_logo.svg'
 import cookiesHero from './assets/brand/cookies_hero.jpg'
+import NotifyModal from './components/NotifyModal'
 
 function App() {
+  const [notifyOpen, setNotifyOpen] = useState(false)
+
   return (
     <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal transition-colors dark:bg-cookie-charcoal dark:text-cookie-cream">
       <header className="w-full bg-cookie-brown px-4 py-6">
@@ -27,12 +31,13 @@ function App() {
         <p className="max-w-xl text-lg font-bold uppercase text-cookie-brown dark:text-cookie-gold">
           The only cookies you want to accept.
         </p>
-        <a
-          href="#contact"
+        <button
+          type="button"
+          onClick={() => setNotifyOpen(true)}
           className="rounded-full bg-cookie-rust px-6 py-3 text-sm font-semibold text-cookie-cream hover:bg-cookie-brown"
         >
           Get notified
-        </a>
+        </button>
       </section>
 
       <footer className="w-full bg-cookie-brown px-6 py-6 text-sm text-cookie-cream">
@@ -64,6 +69,8 @@ function App() {
           </span>
         </div>
       </footer>
+
+      <NotifyModal open={notifyOpen} onClose={() => setNotifyOpen(false)} />
     </div>
   )
 }
