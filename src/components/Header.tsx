@@ -85,7 +85,7 @@ function Header() {
             to="/about"
             onClick={() => setOpen(false)}
             className={({ isActive }) =>
-              `rounded-lg px-3 py-2 text-lg font-semibold text-cookie-cream ${
+              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream ${
                 isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
               }`
             }
