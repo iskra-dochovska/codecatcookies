@@ -6,7 +6,7 @@ import cookiesHero from './assets/brand/cookies_hero.jpg'
 function App() {
   return (
     <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal transition-colors dark:bg-cookie-charcoal dark:text-cookie-cream">
-      <header className="mx-auto w-full max-w-5xl px-6 py-6">
+      <header className="w-full px-4 py-6">
         <img src={textLogo} alt="CodeCat Cookies" className="h-8 dark:hidden" />
         <img src={textLogoLight} alt="CodeCat Cookies" className="hidden h-8 dark:block" />
       </header>
@@ -18,7 +18,7 @@ function App() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/40 px-6 text-center">
-          <img src={logoMark} alt="CodeCat Cookies" className="h-20 sm:h-28" />
+          <img src={logoMark} alt="CodeCat Cookies" className="h-40 sm:h-64" />
           <span className="rounded-full bg-cookie-rust px-4 py-1.5 text-sm font-semibold tracking-widest text-cookie-cream uppercase">
             Coming soon
           </span>
@@ -26,7 +26,7 @@ function App() {
       </section>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-6 py-16 text-center">
-        <p className="max-w-xl text-lg text-cookie-brown dark:text-cookie-gold">
+        <p className="max-w-xl text-lg font-bold uppercase text-cookie-brown dark:text-cookie-gold">
           The only cookies you want to accept.
         </p>
         <a
