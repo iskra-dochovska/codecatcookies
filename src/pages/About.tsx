@@ -33,7 +33,7 @@ function About() {
       </div>
 
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
-        <div className="relative w-48 flex-none sm:w-56">
+        <div className="relative w-64 flex-none sm:w-80">
           <img
             src={sushi}
             alt="Sushi, the Siamese cat behind codecatcookies"
