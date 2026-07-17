@@ -17,7 +17,7 @@ function App() {
 
       <main className="mx-auto flex max-w-5xl flex-col items-center gap-6 px-6 py-20 text-center">
         <img src={cookie} alt="Chocolate chip cookie" className="h-32 w-32 object-contain" />
-        <h1 className="text-4xl font-bold sm:text-5xl">CodeCat Cookies</h1>
+        <h1 className="font-heading text-4xl font-bold sm:text-5xl">CodeCat Cookies</h1>
         <p className="max-w-xl text-lg text-cookie-brown dark:text-cookie-gold">
           Freshly baked cookies, coded with love. Coming soon.
         </p>
