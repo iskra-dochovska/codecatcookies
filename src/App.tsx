@@ -1,4 +1,3 @@
-import textLogo from './assets/brand/codecatcookies_text.svg'
 import textLogoLight from './assets/brand/codecatcookies_text_light.svg'
 import logoMark from './assets/brand/codecatcookies_logo.svg'
 import cookiesHero from './assets/brand/cookies_hero.jpg'
@@ -6,9 +5,8 @@ import cookiesHero from './assets/brand/cookies_hero.jpg'
 function App() {
   return (
     <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal transition-colors dark:bg-cookie-charcoal dark:text-cookie-cream">
-      <header className="w-full px-4 py-6">
-        <img src={textLogo} alt="CodeCat Cookies" className="h-8 dark:hidden" />
-        <img src={textLogoLight} alt="CodeCat Cookies" className="hidden h-8 dark:block" />
+      <header className="w-full bg-cookie-brown px-4 py-6">
+        <img src={textLogoLight} alt="CodeCat Cookies" className="h-8" />
       </header>
 
       <section className="relative min-h-[60vh] w-full overflow-hidden">
@@ -37,15 +35,32 @@ function App() {
         </a>
       </section>
 
-      <footer className="mx-auto flex w-full max-w-5xl items-center justify-center px-6 py-6 text-sm">
-        <a
-          href="https://www.instagram.com/codecatcookies/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:underline"
-        >
-          @codecatcookies
-        </a>
+      <footer className="w-full bg-cookie-brown px-6 py-6 text-sm text-cookie-cream">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <a
+            href="https://www.instagram.com/codecatcookies/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 hover:underline"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+            </svg>
+            @codecatcookies
+          </a>
+          <span>&copy; {new Date().getFullYear()} CodeCat Cookies. All rights reserved.</span>
+        </div>
       </footer>
     </div>
   )
