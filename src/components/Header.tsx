@@ -10,17 +10,14 @@ function Header() {
     <header className="w-full bg-cookie-brown">
       <div className="flex items-center justify-between px-8 py-4 sm:px-20">
         <Link to="/" onClick={() => setOpen(false)}>
-          {open ? (
-            <img src={logoMark} alt="codecatcookies" className="h-9" />
-          ) : (
-            <img src={textLogo} alt="codecatcookies" className="h-5" />
-          )}
+          <img src={logoMark} alt="codecatcookies" className="h-9 sm:hidden" />
+          <img src={textLogo} alt="codecatcookies" className="hidden h-5 sm:block" />
         </Link>
 
         <nav className="hidden sm:block">
           <Link
             to="/about"
-            className="rounded-full bg-cookie-sky px-4 py-1.5 text-sm font-semibold text-cookie-brown hover:bg-cookie-sky/80"
+            className="rounded-full bg-cookie-cream px-4 py-1.5 text-sm font-semibold text-cookie-brown hover:bg-cookie-cream/80"
           >
             About us
           </Link>
@@ -64,7 +61,7 @@ function Header() {
           <Link
             to="/about"
             onClick={() => setOpen(false)}
-            className="inline-block rounded-full bg-cookie-sky px-4 py-1.5 text-sm font-semibold text-cookie-brown hover:bg-cookie-sky/80"
+            className="inline-block text-lg font-semibold text-cookie-cream/60"
           >
             About us
           </Link>
