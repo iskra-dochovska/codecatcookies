@@ -20,7 +20,7 @@ function Header() {
         <nav className="hidden sm:block">
           <Link
             to="/about"
-            className="text-sm font-semibold text-cookie-cream hover:underline"
+            className="rounded-full bg-cookie-sky px-4 py-1.5 text-sm font-semibold text-cookie-brown hover:bg-cookie-sky/80"
           >
             About us
           </Link>
@@ -64,7 +64,7 @@ function Header() {
           <Link
             to="/about"
             onClick={() => setOpen(false)}
-            className="block text-sm font-semibold text-cookie-cream"
+            className="inline-block rounded-full bg-cookie-sky px-4 py-1.5 text-sm font-semibold text-cookie-brown hover:bg-cookie-sky/80"
           >
             About us
           </Link>
