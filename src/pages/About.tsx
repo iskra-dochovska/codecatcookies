@@ -34,11 +34,11 @@ function About() {
 
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
         <div className="relative w-48 flex-none sm:w-56">
-          <div className="rounded-3xl bg-cookie-rust p-3 shadow-xl ring-4 ring-cookie-honey/70">
+          <div className="overflow-hidden rounded-3xl bg-cookie-brown p-3 pb-0 shadow-xl ring-4 ring-cookie-honey/70">
             <img
               src={sushi}
               alt="Sushi, the Siamese cat behind codecatcookies"
-              className="aspect-4/5 w-full rounded-2xl object-cover"
+              className="aspect-4/5 w-full rounded-t-2xl object-cover"
             />
           </div>
           <Sparkle className="absolute -top-4 -right-3 h-9 w-9 text-cookie-honey" />
