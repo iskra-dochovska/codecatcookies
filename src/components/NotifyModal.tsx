@@ -32,25 +32,25 @@ function NotifyModal({ open, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-cookie-cream p-6 text-cookie-charcoal"
+        className="relative w-full max-w-sm rounded-2xl bg-cookie-cream p-6 text-cookie-charcoal"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="float-right text-xl leading-none text-cookie-brown"
+          className="absolute right-4 top-4 text-xl leading-none text-cookie-brown"
         >
           &times;
         </button>
 
         {status === 'success' ? (
-          <p className="pt-6 pb-2 text-center font-bold">
+          <p className="text-center font-bold">
             Thanks! We&apos;ll let you know when we launch.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 pt-8 text-center">
-            <label htmlFor="notify-email" className="text-sm font-semibold">
+          <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 text-center">
+            <label htmlFor="notify-email" className="px-4 text-sm font-semibold">
               We&apos;ll email you the cookie location!
             </label>
             <input
