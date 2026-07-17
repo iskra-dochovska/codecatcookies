@@ -40,8 +40,17 @@ function About() {
         <p className="text-cookie-charcoal">
           As we&apos;re finding our footing, we&apos;re mainly providing our sugary
           services in Skopje. If you&apos;d like to get your hands on some of these
-          delicious brain boosters, you can either pick them up @Portal in Karposh. Just
-          place your order on the site and schedule a pickup time, payment is in cash.
+          delicious brain boosters, you can pick them up{' '}
+          <a
+            href="https://www.instagram.com/portalskopje/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold underline"
+          >
+            @Portal
+          </a>{' '}
+          in Karposh. Just place your order on the site and schedule a pickup time,
+          payment is in cash.
         </p>
       </div>
 
