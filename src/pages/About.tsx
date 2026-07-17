@@ -34,7 +34,7 @@ function About() {
 
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
         <div className="relative w-48 flex-none sm:w-56">
-          <div className="rotate-3 rounded-3xl bg-cookie-sky p-3 shadow-xl ring-4 ring-cookie-honey/70">
+          <div className="rounded-3xl bg-cookie-rust p-3 shadow-xl ring-4 ring-cookie-honey/70">
             <img
               src={sushi}
               alt="Sushi, the Siamese cat behind codecatcookies"
@@ -42,7 +42,7 @@ function About() {
             />
           </div>
           <Sparkle className="absolute -top-4 -right-3 h-9 w-9 text-cookie-honey" />
-          <Sparkle className="absolute -bottom-3 -left-4 h-6 w-6 rotate-12 text-cookie-rust" />
+          <Sparkle className="absolute -bottom-3 -left-4 h-6 w-6 rotate-12 text-cookie-cream" />
           <Sparkle className="absolute top-1/2 -left-2 h-4 w-4 text-cookie-gold" />
         </div>
         <div className="flex flex-col gap-4">
