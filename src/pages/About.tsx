@@ -33,8 +33,8 @@ function About() {
       </div>
 
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
-        <div className="relative w-60 flex-none sm:w-72">
-          <div className="overflow-hidden rounded-3xl bg-cookie-brown p-3 pb-0 shadow-xl ring-4 ring-cookie-honey/70">
+        <div className="relative w-48 flex-none sm:w-56">
+          <div className="overflow-hidden rounded-3xl bg-cookie-brown p-1.5 pb-0 shadow-xl ring-4 ring-cookie-honey/70">
             <img
               src={sushi}
               alt="Sushi, the Siamese cat behind codecatcookies"
