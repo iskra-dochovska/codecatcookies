@@ -1,5 +1,13 @@
 import sushi from '../assets/brand/sushi.png'
 
+function Sparkle({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 0c.8 4.6 2.4 7.6 5 9.5 2 1.4 4.5 2 7 2.5-2.5.5-5 1.1-7 2.5-2.6 1.9-4.2 4.9-5 9.5-.8-4.6-2.4-7.6-5-9.5-2-1.4-4.5-2-7-2.5 2.5-.5 5-1.1 7-2.5 2.6-1.9 4.2-4.9 5-9.5z" />
+    </svg>
+  )
+}
+
 function About() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16">
@@ -24,12 +32,19 @@ function About() {
         </p>
       </div>
 
-      <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-8">
-        <img
-          src={sushi}
-          alt="Sushi, the Siamese cat behind codecatcookies"
-          className="w-48 flex-none rounded-2xl object-cover shadow-md sm:w-56"
-        />
+      <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
+        <div className="relative w-48 flex-none sm:w-56">
+          <div className="rotate-3 rounded-3xl bg-cookie-sky p-3 shadow-xl ring-4 ring-cookie-honey/70">
+            <img
+              src={sushi}
+              alt="Sushi, the Siamese cat behind codecatcookies"
+              className="aspect-4/5 w-full rounded-2xl object-cover"
+            />
+          </div>
+          <Sparkle className="absolute -top-4 -right-3 h-9 w-9 text-cookie-honey" />
+          <Sparkle className="absolute -bottom-3 -left-4 h-6 w-6 rotate-12 text-cookie-rust" />
+          <Sparkle className="absolute top-1/2 -left-2 h-4 w-4 text-cookie-gold" />
+        </div>
         <div className="flex flex-col gap-4">
           <h2 className="text-xl font-bold text-cookie-brown">Meet Sushi</h2>
           <p className="text-cookie-charcoal">
