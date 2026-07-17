@@ -49,9 +49,9 @@ function NotifyModal({ open, onClose }: Props) {
             Thanks! We&apos;ll let you know when we launch.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-8">
+          <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 pt-8 text-center">
             <label htmlFor="notify-email" className="text-sm font-semibold">
-              Get notified when we launch
+              We&apos;ll email you the cookie location!
             </label>
             <input
               id="notify-email"
@@ -60,7 +60,7 @@ function NotifyModal({ open, onClose }: Props) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="rounded-full border border-cookie-brown/30 bg-transparent px-4 py-2 text-sm outline-none focus:border-cookie-rust"
+              className="w-full rounded-full border border-cookie-brown/30 bg-white px-4 py-2 text-sm text-cookie-charcoal outline-none focus:border-cookie-rust"
             />
             {status === 'error' && <p className="text-sm text-cookie-rust">{error}</p>}
             <button
