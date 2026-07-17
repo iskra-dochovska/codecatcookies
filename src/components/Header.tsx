@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import textLogo from '../assets/codecatcookies_text.svg'
 import logoMark from '../assets/codecatcookies_logo.svg'
 
@@ -56,7 +56,7 @@ function Header() {
         />
 
         <div
-          className={`absolute top-0 right-0 flex h-full w-64 max-w-[80%] flex-col gap-8 bg-cookie-brown px-8 py-8 shadow-xl transition-transform duration-300 ${
+          className={`absolute top-0 right-0 flex h-full w-64 max-w-[80%] flex-col gap-8 bg-cookie-brown/90 px-8 py-8 shadow-xl transition-transform duration-300 ${
             open ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
@@ -81,13 +81,17 @@ function Header() {
             </svg>
           </button>
 
-          <Link
+          <NavLink
             to="/about"
             onClick={() => setOpen(false)}
-            className="text-lg font-semibold text-cookie-cream/60"
+            className={({ isActive }) =>
+              `rounded-lg px-3 py-2 text-lg font-semibold text-cookie-cream ${
+                isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
+              }`
+            }
           >
             About us
-          </Link>
+          </NavLink>
         </div>
       </div>
     </header>
