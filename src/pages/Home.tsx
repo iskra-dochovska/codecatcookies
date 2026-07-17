@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import logoMark from '../assets/brand/codecatcookies_logo.svg'
-import cookiesHero from '../assets/brand/cookies_hero.jpg'
+import logoMark from '../assets/codecatcookies_logo.svg'
+import cookiesHero from '../assets/cookies_hero.jpg'
 import NotifyModal from '../components/NotifyModal'
 
 function Home() {

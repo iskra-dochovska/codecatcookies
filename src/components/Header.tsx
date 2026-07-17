@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import textLogo from '../assets/brand/codecatcookies_text.svg'
+import textLogo from '../assets/codecatcookies_text.svg'
 
 function Header() {
   return (

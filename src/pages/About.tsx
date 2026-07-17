@@ -1,4 +1,4 @@
-import sushi from '../assets/brand/sushi.png'
+import sushi from '../assets/sushi.png'
 
 function Sparkle({ className }: { className?: string }) {
   return (
@@ -34,15 +34,13 @@ function About() {
 
       <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
         <div className="relative w-48 flex-none sm:w-56">
-          <div className="overflow-hidden rounded-3xl bg-cookie-brown p-1.5 pb-0 shadow-xl ring-4 ring-cookie-honey/70">
-            <img
-              src={sushi}
-              alt="Sushi, the Siamese cat behind codecatcookies"
-              className="aspect-4/5 w-full rounded-t-2xl border-2 border-cookie-brown object-cover"
-            />
-          </div>
+          <img
+            src={sushi}
+            alt="Sushi, the Siamese cat behind codecatcookies"
+            className="w-full"
+          />
           <Sparkle className="absolute -top-4 -right-3 h-9 w-9 text-cookie-honey" />
-          <Sparkle className="absolute -bottom-3 -left-4 h-6 w-6 rotate-12 text-cookie-cream" />
+          <Sparkle className="absolute -bottom-3 -left-4 h-6 w-6 rotate-12 text-cookie-rust" />
           <Sparkle className="absolute top-1/2 -left-2 h-4 w-4 text-cookie-gold" />
         </div>
         <div className="flex flex-col gap-4">
