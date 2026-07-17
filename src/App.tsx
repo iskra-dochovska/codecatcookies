@@ -1,6 +1,6 @@
 import textLogo from './assets/brand/codecatcookies_text.svg'
 import textLogoLight from './assets/brand/codecatcookies_text_light.svg'
-import cookie from './assets/brand/cookie 5.png'
+import cookiesHero from './assets/brand/cookies_hero.jpg'
 
 function App() {
   return (
@@ -11,7 +11,11 @@ function App() {
       </header>
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center gap-6 px-6 py-20 text-center">
-        <img src={cookie} alt="Chocolate chip cookie" className="h-32 w-32 object-contain" />
+        <img
+          src={cookiesHero}
+          alt="Assortment of CodeCat cookies"
+          className="aspect-video w-full max-w-3xl rounded-2xl object-cover shadow-lg"
+        />
         <h1 className="font-heading text-4xl font-bold sm:text-5xl">CodeCat Cookies</h1>
         <p className="max-w-xl text-lg text-cookie-brown dark:text-cookie-gold">
           The only cookies you want to accept.
