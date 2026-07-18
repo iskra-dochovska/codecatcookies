@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import sushi from '../assets/sushi.png'
 
 function CookieIcon({ className }: { className?: string }) {
@@ -13,6 +14,24 @@ function CookieIcon({ className }: { className?: string }) {
   )
 }
 
+function FramedSection({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <div
+      className={`relative rounded-3xl border-2 border-cookie-honey bg-white p-6 shadow-md sm:p-8 ${className ?? ''}`}
+    >
+      <CookieIcon className="absolute -top-4 -right-4 h-9 w-9 rotate-6" />
+      <CookieIcon className="absolute -bottom-4 -left-4 h-7 w-7 -rotate-12" />
+      {children}
+    </div>
+  )
+}
+
 function About() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16">
@@ -25,7 +44,7 @@ function About() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <FramedSection className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-cookie-brown">
           Why accept our cookies?
         </h2>
@@ -36,9 +55,9 @@ function About() {
           solution is simple and it comes in many forms, chocolate chip, peanut butter and
           other delicious flavors to help you max out your problem solving skills.
         </p>
-      </div>
+      </FramedSection>
 
-      <div className="flex flex-col gap-4">
+      <FramedSection className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-cookie-brown">
           How do you get a hold of our cookies?
         </h2>
@@ -48,18 +67,15 @@ function About() {
           being. If you&apos;re interested, feel free to browse the options available in
           the Cookies page and get in touch with us so we can have them ready for you!
         </p>
-      </div>
+      </FramedSection>
 
-      <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
-        <div className="relative w-64 flex-none sm:w-80">
+      <FramedSection className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
+        <div className="w-64 flex-none sm:w-80">
           <img
             src={sushi}
             alt="Sushi, the Siamese cat behind codecatcookies"
             className="w-full"
           />
-          <CookieIcon className="absolute -top-4 -right-3 h-10 w-10 rotate-6" />
-          <CookieIcon className="absolute -bottom-3 -left-4 h-7 w-7 -rotate-12" />
-          <CookieIcon className="absolute top-1/2 -left-6 h-5 w-5 rotate-3" />
         </div>
         <div className="flex flex-col gap-4">
           <h2 className="text-xl font-bold text-cookie-brown">
@@ -72,7 +88,7 @@ function About() {
             have to take it up with her (and she&apos;s quite scary).
           </p>
         </div>
-      </div>
+      </FramedSection>
     </section>
   )
 }
