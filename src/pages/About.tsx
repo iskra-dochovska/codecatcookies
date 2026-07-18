@@ -105,7 +105,7 @@ function About() {
             className="w-full"
           />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 pt-4 sm:pt-8">
           <h2 className="text-xl font-bold text-cookie-brown">
             What&apos;s with the cat?
           </h2>
