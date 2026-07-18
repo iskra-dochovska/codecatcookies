@@ -43,19 +43,10 @@ function About() {
           How do you get a hold of our cookies?
         </h2>
         <p className="text-cookie-charcoal">
-          As we&apos;re finding our footing, we&apos;re mainly providing our sugary
-          services in Skopje. If you&apos;d like to get your hands on some of these
-          delicious brain boosters, you can pick them up{' '}
-          <a
-            href="https://www.instagram.com/portalskopje/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold underline"
-          >
-            @Portal
-          </a>{' '}
-          in Karposh. Just place your order on the site and schedule a pickup time,
-          payment is in cash.
+          Since we&apos;re a team of two (a developer and a cat) and only one of us has a
+          driver&apos;s license, distribution will be limited to Skopje for the time
+          being. If you&apos;re interested, feel free to browse the options available in
+          the Cookies page and get in touch with us so we can have them ready for you!
         </p>
       </div>
 
