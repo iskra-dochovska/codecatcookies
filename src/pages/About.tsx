@@ -1,9 +1,14 @@
 import sushi from '../assets/sushi.png'
 
-function Sparkle({ className }: { className?: string }) {
+function CookieIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-      <path d="M12 0c.8 4.6 2.4 7.6 5 9.5 2 1.4 4.5 2 7 2.5-2.5.5-5 1.1-7 2.5-2.6 1.9-4.2 4.9-5 9.5-.8-4.6-2.4-7.6-5-9.5-2-1.4-4.5-2-7-2.5 2.5-.5 5-1.1 7-2.5 2.6-1.9 4.2-4.9 5-9.5z" />
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="11" fill="var(--color-cookie-honey)" />
+      <circle cx="8" cy="9" r="1.4" fill="var(--color-cookie-brown)" />
+      <circle cx="15.5" cy="7.5" r="1.1" fill="var(--color-cookie-brown)" />
+      <circle cx="16" cy="14" r="1.4" fill="var(--color-cookie-brown)" />
+      <circle cx="9.5" cy="15.5" r="1.1" fill="var(--color-cookie-brown)" />
+      <circle cx="12.5" cy="11.5" r="1" fill="var(--color-cookie-brown)" />
     </svg>
   )
 }
@@ -61,9 +66,9 @@ function About() {
             alt="Sushi, the Siamese cat behind codecatcookies"
             className="w-full"
           />
-          <Sparkle className="absolute -top-4 -right-3 h-9 w-9 text-cookie-honey" />
-          <Sparkle className="absolute -bottom-3 -left-4 h-6 w-6 rotate-12 text-cookie-rust" />
-          <Sparkle className="absolute top-1/2 -left-2 h-4 w-4 text-cookie-gold" />
+          <CookieIcon className="absolute -top-4 -right-3 h-10 w-10 rotate-6" />
+          <CookieIcon className="absolute -bottom-3 -left-4 h-7 w-7 -rotate-12" />
+          <CookieIcon className="absolute top-1/2 -left-6 h-5 w-5 rotate-3" />
         </div>
         <div className="flex flex-col gap-4">
           <h2 className="text-xl font-bold text-cookie-brown">
