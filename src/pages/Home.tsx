@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import cookiesHero from '../assets/cookies_hero.jpg'
 import NotifyModal from '../components/NotifyModal'
+import { cookies } from '../data/cookies'
 
 function Home() {
   const [notifyOpen, setNotifyOpen] = useState(false)
@@ -22,7 +24,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-6 py-16 text-center">
+      <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 px-6 py-24 text-center sm:py-32">
         <p className="max-w-xl text-lg font-bold uppercase text-cookie-brown">
           The only cookies you want to accept.
         </p>
@@ -33,6 +35,28 @@ function Home() {
         >
           Get notified
         </button>
+      </section>
+
+      <section className="mx-auto w-full max-w-5xl px-6 pb-16">
+        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-3">
+          {cookies.map((cookie) => (
+            <Link
+              key={cookie.slug}
+              to={`/cookies#${cookie.slug}`}
+              className="flex flex-col items-center gap-3 rounded-2xl border-2 border-cookie-honey bg-cookie-rust p-6 text-center shadow-md transition-shadow hover:shadow-lg"
+            >
+              <div className="rounded-full bg-cookie-cream p-2">
+                <img
+                  src={cookie.image}
+                  alt={cookie.name}
+                  className="h-24 w-24 rounded-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-bold text-cookie-cream">{cookie.name}</h3>
+              <p className="text-base text-cookie-cream/90">{cookie.tagline}</p>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <NotifyModal open={notifyOpen} onClose={() => setNotifyOpen(false)} />

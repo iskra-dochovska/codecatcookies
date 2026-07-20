@@ -3,6 +3,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import About from './pages/About'
+import Cookies from './pages/Cookies'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <main className="flex flex-1 flex-col">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/cookies" element={<Cookies />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </main>

@@ -1,37 +1,5 @@
-import type { ReactNode } from 'react'
 import sushi from '../assets/sushi.png'
-
-function CookieIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
-      <circle cx="12" cy="12" r="11" fill="var(--color-cookie-honey)" />
-      <circle cx="8" cy="9" r="1.4" fill="var(--color-cookie-brown)" />
-      <circle cx="15.5" cy="7.5" r="1.1" fill="var(--color-cookie-brown)" />
-      <circle cx="16" cy="14" r="1.4" fill="var(--color-cookie-brown)" />
-      <circle cx="9.5" cy="15.5" r="1.1" fill="var(--color-cookie-brown)" />
-      <circle cx="12.5" cy="11.5" r="1" fill="var(--color-cookie-brown)" />
-    </svg>
-  )
-}
-
-function FramedSection({
-  children,
-  className,
-  decorations,
-}: {
-  children: ReactNode
-  className?: string
-  decorations: ReactNode
-}) {
-  return (
-    <div
-      className={`relative rounded-3xl border-2 border-cookie-honey bg-white p-6 shadow-md sm:p-8 ${className ?? ''}`}
-    >
-      {decorations}
-      {children}
-    </div>
-  )
-}
+import { FramedSection } from '../components/CookieDecor'
 
 function About() {
   return (
@@ -45,16 +13,7 @@ function About() {
         </p>
       </div>
 
-      <FramedSection
-        className="flex flex-col gap-4"
-        decorations={
-          <>
-            <CookieIcon className="absolute -top-4 -right-4 h-9 w-9 rotate-6" />
-            <CookieIcon className="absolute -bottom-3 -left-3 h-6 w-6 -rotate-12" />
-            <CookieIcon className="absolute top-1/2 -right-3 h-5 w-5 rotate-12" />
-          </>
-        }
-      >
+      <FramedSection className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-cookie-brown">
           Why accept our cookies?
         </h2>
@@ -67,15 +26,7 @@ function About() {
         </p>
       </FramedSection>
 
-      <FramedSection
-        className="flex flex-col gap-4"
-        decorations={
-          <>
-            <CookieIcon className="absolute -top-3 -left-4 h-7 w-7 -rotate-6" />
-            <CookieIcon className="absolute -bottom-4 -right-4 h-10 w-10 rotate-12" />
-          </>
-        }
-      >
+      <FramedSection className="flex flex-col gap-4">
         <h2 className="text-xl font-bold text-cookie-brown">
           How do you get a hold of our cookies?
         </h2>
@@ -87,17 +38,7 @@ function About() {
         </p>
       </FramedSection>
 
-      <FramedSection
-        className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10"
-        decorations={
-          <>
-            <CookieIcon className="absolute -top-4 -left-4 h-8 w-8 rotate-3" />
-            <CookieIcon className="absolute -top-3 -right-6 h-5 w-5 -rotate-6" />
-            <CookieIcon className="absolute -bottom-4 -right-4 h-9 w-9 rotate-12" />
-            <CookieIcon className="absolute -bottom-3 left-1/3 h-4 w-4 -rotate-3" />
-          </>
-        }
-      >
+      <FramedSection className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
         <div className="w-64 flex-none sm:w-80">
           <img
             src={sushi}
