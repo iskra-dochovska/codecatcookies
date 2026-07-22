@@ -7,13 +7,13 @@ export type Cookie = {
   name: string
   image: string
   tagline: string
-  description: string
-  nutrition: { label: string; value: string; indent?: boolean }[]
-  allergens: {
+  description?: string
+  nutrition?: { label: string; value: string; indent?: boolean }[]
+  allergens?: {
     contains: string[]
     mayContain?: string[]
   }
-  pairings: { type: 'Coffee' | 'Tea'; name: string; note: string }[]
+  pairings?: { type: 'Coffee' | 'Tea'; name: string; note: string }[]
 }
 
 export const cookies: Cookie[] = [
@@ -107,43 +107,6 @@ export const cookies: Cookie[] = [
     slug: 'coffee-and-cream',
     name: 'Coffee and cream',
     image: coffeeAndCream,
-    tagline: 'Thin, snappy, caramelized',
-    description:
-      "When it's not enough to drink your coffee, you also have to infuse your cookies with it. If you're someone who is mindful of texture and enjoys a nice snap, this is for you. This cookie has a perfectly caramelized snappy bottom and smells like a shot of espresso.",
-    nutrition: [
-      { label: 'Calories', value: '268 kcal' },
-      { label: 'Total fat', value: '10.5g' },
-      { label: 'Saturated fat', value: '6.4g', indent: true },
-      { label: 'Carbohydrates', value: '40g' },
-      { label: 'Sugars', value: '22g', indent: true },
-      { label: 'Fiber', value: '0.5g', indent: true },
-      { label: 'Protein', value: '3g' },
-      { label: 'Sodium', value: '119mg' },
-    ],
-    allergens: {
-      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
-    },
-    pairings: [
-      {
-        type: 'Coffee',
-        name: 'Flat white or macchiato',
-        note: 'The milky espresso echoes the marbled coffee-and-cream look without overpowering the cookie.',
-      },
-      {
-        type: 'Coffee',
-        name: 'Iced coffee',
-        note: 'A cool contrast to the crisp, caramelized snap.',
-      },
-      {
-        type: 'Tea',
-        name: 'English breakfast',
-        note: 'Strong, malty black tea holds its own next to the coffee flavor without clashing.',
-      },
-      {
-        type: 'Tea',
-        name: 'Rooibos',
-        note: 'Naturally sweet, caramel-like notes echo the caramelized bottom, caffeine-free.',
-      },
-    ],
+    tagline: 'Coming soon',
   },
 ]

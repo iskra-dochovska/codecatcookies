@@ -45,91 +45,95 @@ function Cookies() {
               <p className="text-sm font-semibold uppercase tracking-wide text-cookie-rust">
                 {cookie.tagline}
               </p>
-              <p className="text-cookie-charcoal">{cookie.description}</p>
+              {cookie.description && (
+                <p className="text-cookie-charcoal">{cookie.description}</p>
+              )}
             </div>
           </div>
 
-          <details className="group">
-            <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-sm font-semibold text-cookie-cream hover:bg-cookie-brown [&::-webkit-details-marker]:hidden">
-              Nutrition, allergens & pairings
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4 transition-transform group-open:rotate-180"
-                aria-hidden="true"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </summary>
+          {cookie.nutrition && cookie.allergens && cookie.pairings && (
+            <details className="group">
+              <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-sm font-semibold text-cookie-cream hover:bg-cookie-brown [&::-webkit-details-marker]:hidden">
+                Nutrition, allergens & pairings
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4 transition-transform group-open:rotate-180"
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </summary>
 
-            <div className="flex flex-col gap-8 pt-6">
-              <div>
-                <h3 className="mb-3 text-lg font-bold text-cookie-brown">
-                  Nutrition
-                  <span className="ml-2 text-sm font-normal text-cookie-charcoal/60">per cookie</span>
-                </h3>
-                <dl className="divide-y divide-cookie-honey/40 rounded-xl border border-cookie-honey/40">
-                  {cookie.nutrition.map((fact) => (
-                    <div
-                      key={fact.label}
-                      className={`flex items-center justify-between px-4 py-2 ${
-                        fact.indent
-                          ? 'bg-white pl-8 text-sm text-cookie-charcoal/80'
-                          : 'bg-cookie-honey/15 font-semibold text-cookie-brown'
-                      }`}
-                    >
-                      <dt>{fact.label}</dt>
-                      <dd>{fact.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-
-              <div>
-                <h3 className="mb-3 text-lg font-bold text-cookie-brown">Allergens</h3>
-                <div className="flex flex-wrap gap-2">
-                  {cookie.allergens.contains.map((allergen) => (
-                    <span
-                      key={allergen}
-                      className="rounded-full bg-cookie-rust px-3 py-1 text-sm font-semibold text-cookie-cream"
-                    >
-                      {allergen}
-                    </span>
-                  ))}
-                  {cookie.allergens.mayContain?.map((allergen) => (
-                    <span
-                      key={allergen}
-                      className="rounded-full border border-cookie-rust/50 px-3 py-1 text-sm font-semibold text-cookie-rust"
-                    >
-                      May contain: {allergen}
-                    </span>
-                  ))}
+              <div className="flex flex-col gap-8 pt-6">
+                <div>
+                  <h3 className="mb-3 text-lg font-bold text-cookie-brown">
+                    Nutrition
+                    <span className="ml-2 text-sm font-normal text-cookie-charcoal/60">per cookie</span>
+                  </h3>
+                  <dl className="divide-y divide-cookie-honey/40 rounded-xl border border-cookie-honey/40">
+                    {cookie.nutrition.map((fact) => (
+                      <div
+                        key={fact.label}
+                        className={`flex items-center justify-between px-4 py-2 ${
+                          fact.indent
+                            ? 'bg-white pl-8 text-sm text-cookie-charcoal/80'
+                            : 'bg-cookie-honey/15 font-semibold text-cookie-brown'
+                        }`}
+                      >
+                        <dt>{fact.label}</dt>
+                        <dd>{fact.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
                 </div>
-              </div>
 
-              <div>
-                <h3 className="mb-3 text-lg font-bold text-cookie-brown">Pairs well with</h3>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {cookie.pairings.map((pairing) => (
-                    <div
-                      key={pairing.name}
-                      className="rounded-xl bg-cookie-cream p-4"
-                    >
-                      <span className="text-xs font-bold tracking-wide text-cookie-rust uppercase">
-                        {pairing.type}
+                <div>
+                  <h3 className="mb-3 text-lg font-bold text-cookie-brown">Allergens</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {cookie.allergens.contains.map((allergen) => (
+                      <span
+                        key={allergen}
+                        className="rounded-full bg-cookie-rust px-3 py-1 text-sm font-semibold text-cookie-cream"
+                      >
+                        {allergen}
                       </span>
-                      <p className="font-semibold text-cookie-brown">{pairing.name}</p>
-                      <p className="text-sm text-cookie-charcoal">{pairing.note}</p>
-                    </div>
-                  ))}
+                    ))}
+                    {cookie.allergens.mayContain?.map((allergen) => (
+                      <span
+                        key={allergen}
+                        className="rounded-full border border-cookie-rust/50 px-3 py-1 text-sm font-semibold text-cookie-rust"
+                      >
+                        May contain: {allergen}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-3 text-lg font-bold text-cookie-brown">Pairs well with</h3>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {cookie.pairings.map((pairing) => (
+                      <div
+                        key={pairing.name}
+                        className="rounded-xl bg-cookie-cream p-4"
+                      >
+                        <span className="text-xs font-bold tracking-wide text-cookie-rust uppercase">
+                          {pairing.type}
+                        </span>
+                        <p className="font-semibold text-cookie-brown">{pairing.name}</p>
+                        <p className="text-sm text-cookie-charcoal">{pairing.note}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </details>
+            </details>
+          )}
         </FramedSection>
       ))}
     </section>
