@@ -13,7 +13,6 @@ export type Cookie = {
     contains: string[]
     mayContain?: string[]
   }
-  pairings?: { type: 'Coffee' | 'Tea'; name: string; note: string }[]
 }
 
 export const cookies: Cookie[] = [
@@ -37,28 +36,6 @@ export const cookies: Cookie[] = [
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],
     },
-    pairings: [
-      {
-        type: 'Coffee',
-        name: 'Medium-roast drip coffee',
-        note: 'Balances the sweetness and cuts through the butter without competing with the chocolate.',
-      },
-      {
-        type: 'Coffee',
-        name: 'Cappuccino or latte',
-        note: 'The milky foam mirrors the fluffy, crumbly texture and mellows the chocolate.',
-      },
-      {
-        type: 'Tea',
-        name: 'Earl Grey',
-        note: 'Bergamot citrus cuts the richness and plays nicely against the chocolate.',
-      },
-      {
-        type: 'Tea',
-        name: 'Chai',
-        note: 'Warm cinnamon and cardamom spice complement the brown sugar notes.',
-      },
-    ],
   },
   {
     slug: 'double-chocolate-peanut-butter',
@@ -80,33 +57,26 @@ export const cookies: Cookie[] = [
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk', 'Peanuts'],
     },
-    pairings: [
-      {
-        type: 'Coffee',
-        name: 'Dark roast espresso or Americano',
-        note: 'Bold bitterness cuts the richness and cocoa intensity, and offsets the peanut butter fat.',
-      },
-      {
-        type: 'Coffee',
-        name: 'Cold brew',
-        note: 'Smooth, low-acid intensity stands up to the density without adding more sweetness.',
-      },
-      {
-        type: 'Tea',
-        name: 'Assam black tea',
-        note: 'Malty, robust body matches the dense chew and deep chocolate.',
-      },
-      {
-        type: 'Tea',
-        name: 'Peppermint tea',
-        note: 'Cool, sharp mint cuts through the richness and complements the chocolate.',
-      },
-    ],
   },
   {
     slug: 'coffee-and-cream',
     name: 'Coffee and cream',
     image: coffeeAndCream,
-    tagline: 'Coming soon',
+    tagline: 'Sweet, soft, aromatic',
+    description:
+      "A soft, buttery cookie brewed with real coffee for a warm, aromatic bite. Simple ingredients, big flavor, perfect for anyone who wants their coffee and cookie in one.",
+    nutrition: [
+      { label: 'Calories', value: '250 kcal' },
+      { label: 'Total fat', value: '12g' },
+      { label: 'Saturated fat', value: '7g', indent: true },
+      { label: 'Carbohydrates', value: '32g' },
+      { label: 'Sugars', value: '15g', indent: true },
+      { label: 'Fiber', value: '0.6g', indent: true },
+      { label: 'Protein', value: '3g' },
+      { label: 'Sodium', value: '78mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
   },
 ]
