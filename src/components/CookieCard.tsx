@@ -15,9 +15,7 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
           <p className="text-sm font-semibold uppercase tracking-wide text-cookie-rust">
             {cookie.tagline}
           </p>
-          {cookie.description && (
-            <p className="text-cookie-charcoal">{cookie.description}</p>
-          )}
+          {cookie.scales && <ScaleList scales={cookie.scales} className="mt-2" />}
         </div>
       </div>
 
@@ -46,6 +44,31 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
         </details>
       )}
     </FramedSection>
+  )
+}
+
+function ScaleList({
+  scales,
+  className,
+}: {
+  scales: NonNullable<Cookie['scales']>
+  className?: string
+}) {
+  return (
+    <div className={`flex flex-col gap-2 ${className ?? ''}`}>
+      {scales.map((scale) => (
+        <div key={scale.left} className="flex items-center gap-2 text-xs font-semibold text-cookie-charcoal/70">
+          <span className="w-14 text-right sm:w-16">{scale.left}</span>
+          <div className="h-2 w-32 overflow-hidden rounded-full bg-cookie-honey/40 sm:w-48">
+            <div
+              className="h-full rounded-full bg-cookie-rust"
+              style={{ width: `${((scale.value - 1) / 4) * 100}%` }}
+            />
+          </div>
+          <span className="w-14 sm:w-16">{scale.right}</span>
+        </div>
+      ))}
+    </div>
   )
 }
 

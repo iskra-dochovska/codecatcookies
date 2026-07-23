@@ -7,7 +7,7 @@ export type Cookie = {
   name: string
   image: string
   tagline: string
-  description?: string
+  scales?: { left: string; right: string; value: number }[]
   nutrition?: { label: string; value: string; indent?: boolean }[]
   allergens?: {
     contains: string[]
@@ -20,9 +20,12 @@ export const cookies: Cookie[] = [
     slug: 'chocolate-chip',
     name: 'Chocolate chip',
     image: chocolateChip,
-    tagline: 'Crumbly, fluffy, not too sweet',
-    description:
-      'Our take on a cookie classic. Made to be dunked in a hot cup of cappuccino and enjoyed by the dozens. This cookie will have you thinking about it for the whole day due to its velvety after taste.',
+    tagline: 'Our take on a classic',
+    scales: [
+      { left: 'Fluffy', right: 'Dense', value: 2 },
+      { left: 'Soft', right: 'Crunchy', value: 2 },
+      { left: 'Mild', right: 'Bold', value: 2 },
+    ],
     nutrition: [
       { label: 'Calories', value: '265 kcal' },
       { label: 'Total fat', value: '14g' },
@@ -41,9 +44,12 @@ export const cookies: Cookie[] = [
     slug: 'double-chocolate-peanut-butter',
     name: 'Double chocolate peanut butter',
     image: doubleChocolatePeanutButter,
-    tagline: 'Dense, rich, chewy',
-    description:
-      'This is for all our chocolate lovers. The iconic chocolate and peanut butter combination is rich and chewy, perfect for all of us with a major sweet tooth.',
+    tagline: 'A timeless combination',
+    scales: [
+      { left: 'Fluffy', right: 'Dense', value: 5 },
+      { left: 'Soft', right: 'Crunchy', value: 3 },
+      { left: 'Mild', right: 'Bold', value: 5 },
+    ],
     nutrition: [
       { label: 'Calories', value: '418 kcal' },
       { label: 'Total fat', value: '25.5g' },
@@ -62,9 +68,12 @@ export const cookies: Cookie[] = [
     slug: 'coffee-and-cream',
     name: 'Coffee and cream',
     image: coffeeAndCream,
-    tagline: 'Sweet, soft, aromatic',
-    description:
-      "A soft, buttery cookie brewed with real coffee for a warm, aromatic bite. Simple ingredients, big flavor, perfect for anyone who wants their coffee and cookie in one.",
+    tagline: 'Double caffeinated',
+    scales: [
+      { left: 'Fluffy', right: 'Dense', value: 3 },
+      { left: 'Soft', right: 'Crunchy', value: 2 },
+      { left: 'Mild', right: 'Bold', value: 3 },
+    ],
     nutrition: [
       { label: 'Calories', value: '250 kcal' },
       { label: 'Total fat', value: '12g' },
