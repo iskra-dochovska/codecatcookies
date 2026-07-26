@@ -37,13 +37,13 @@ function Home() {
         </button>
       </section>
 
-      <section className="mx-auto w-full max-w-5xl px-6 pb-16">
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-3">
-          {cookies.map((cookie) => (
+      <section className="mx-auto w-full max-w-5xl overflow-hidden px-6 pb-16">
+        <div className="flex w-max animate-carousel-scroll gap-6">
+          {[...cookies, ...cookies].map((cookie, index) => (
             <Link
-              key={cookie.slug}
+              key={`${cookie.slug}-${index}`}
               to={`/cookies#${cookie.slug}`}
-              className="flex flex-col items-center gap-3 rounded-2xl border-2 border-cookie-honey bg-cookie-rust p-6 text-center shadow-md transition-shadow hover:shadow-lg"
+              className="flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-2 border-cookie-honey bg-cookie-rust p-6 text-center shadow-md transition-shadow hover:shadow-lg"
             >
               <div className="rounded-full bg-cookie-cream p-2">
                 <img

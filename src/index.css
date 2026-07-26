@@ -4,3 +4,16 @@
 @import "@fontsource/nunito/latin-700.css";
 @import "./styles/colors.css";
 @import "./styles/fonts.css";
+
+@keyframes carousel-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-carousel-scroll {
+  animation: carousel-scroll 20s linear infinite;
+}
