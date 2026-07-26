@@ -57,15 +57,14 @@ function ScaleList({
   return (
     <div className={`flex flex-col gap-2 ${className ?? ''}`}>
       {scales.map((scale) => (
-        <div key={scale.left} className="flex items-center gap-2 text-xs font-semibold text-cookie-charcoal/70">
-          <span className="w-14 text-right sm:w-16">{scale.left}</span>
+        <div key={scale.label} className="flex flex-col items-center gap-1">
+          <span className="text-xs font-bold text-cookie-brown">{scale.label}</span>
           <div className="h-2 w-32 overflow-hidden rounded-full bg-cookie-honey/40 sm:w-48">
             <div
               className="h-full rounded-full bg-cookie-rust"
               style={{ width: `${((scale.value - 1) / 4) * 100}%` }}
             />
           </div>
-          <span className="w-14 sm:w-16">{scale.right}</span>
         </div>
       ))}
     </div>
