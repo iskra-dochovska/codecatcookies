@@ -12,7 +12,7 @@ function Home() {
   const [notifyOpen, setNotifyOpen] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
   const pausedRef = useRef(false)
-  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
     const track = trackRef.current
