@@ -1,13 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import textLogo from '../assets/codecatcookies_text.svg'
+import textLogo from '../assets/codecatcookies_text_light.svg'
 import logoMark from '../assets/codecatcookies_logo.svg'
 
 function Header() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <header className="w-full bg-cookie-brown">
+    <header
+      className={`sticky top-0 z-40 w-full bg-cookie-brown transition-colors duration-300 ${
+        scrolled ? 'sm:bg-cookie-brown/80 sm:backdrop-blur-md' : ''
+      }`}
+    >
       <div className="flex items-center justify-between px-8 py-4 sm:px-20">
         <Link to="/" onClick={() => setOpen(false)}>
           <img src={logoMark} alt="codecatcookies" className="h-9 sm:hidden" />

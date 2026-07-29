@@ -31,10 +31,8 @@ function About() {
           How do you get a hold of our cookies?
         </h2>
         <p className="text-cookie-charcoal">
-          Since we&apos;re a team of two (a developer and a cat) and only one of us has a
-          driver&apos;s license, distribution will be limited to Skopje for the time
-          being. If you&apos;re interested, feel free to browse the options available in
-          the Cookies page and get in touch with us so we can have them ready for you!
+          Cookies will be available for pickup, delivery or you just might find them at a
+          coffee shop near you. Stay tuned to find out where to find us!
         </p>
       </FramedSection>
 

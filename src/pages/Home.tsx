@@ -1,12 +1,67 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import logoMark from '../assets/codecatcookies_logo.svg'
+import logoMark from '../assets/codecatcookies_logo_and_text_light.svg'
 import cookiesHero from '../assets/cookies_hero.jpg'
 import NotifyModal from '../components/NotifyModal'
 import { cookies } from '../data/cookies'
 
+const STEP_INTERVAL_MS = 3000
+const RESUME_DELAY_MS = 2000
+
 function Home() {
   const [notifyOpen, setNotifyOpen] = useState(false)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const pausedRef = useRef(false)
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    const wrap = () => {
+      const half = track.scrollWidth / 2
+      if (track.scrollLeft >= half) track.scrollLeft -= half
+      else if (track.scrollLeft <= 0) track.scrollLeft += half
+    }
+
+    const step = () => {
+      if (pausedRef.current) return
+      const firstCard = track.children[0] as HTMLElement | undefined
+      if (!firstCard) return
+      const gap = parseFloat(getComputedStyle(track).columnGap || '0')
+      track.scrollBy({ left: firstCard.offsetWidth + gap, behavior: 'smooth' })
+    }
+
+    const intervalId = setInterval(step, STEP_INTERVAL_MS)
+    track.addEventListener('scroll', wrap)
+    return () => {
+      clearInterval(intervalId)
+      track.removeEventListener('scroll', wrap)
+    }
+  }, [])
+
+  const pause = () => {
+    pausedRef.current = true
+    clearTimeout(resumeTimeoutRef.current)
+  }
+
+  const scheduleResume = () => {
+    clearTimeout(resumeTimeoutRef.current)
+    resumeTimeoutRef.current = setTimeout(() => {
+      pausedRef.current = false
+    }, RESUME_DELAY_MS)
+  }
+
+  const scrollByCard = (direction: 1 | -1) => {
+    const track = trackRef.current
+    if (!track) return
+    const firstCard = track.children[0] as HTMLElement | undefined
+    if (!firstCard) return
+    const gap = parseFloat(getComputedStyle(track).columnGap || '0')
+    pause()
+    track.scrollBy({ left: direction * (firstCard.offsetWidth + gap), behavior: 'smooth' })
+    scheduleResume()
+  }
 
   return (
     <>
@@ -37,25 +92,79 @@ function Home() {
         </button>
       </section>
 
-      <section className="mx-auto w-full max-w-5xl overflow-hidden px-6 pb-16">
-        <div className="flex w-max animate-carousel-scroll gap-6">
-          {[...cookies, ...cookies].map((cookie, index) => (
-            <Link
-              key={`${cookie.slug}-${index}`}
-              to={`/cookies#${cookie.slug}`}
-              className="flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-2 border-cookie-honey bg-cookie-rust p-6 text-center shadow-md transition-shadow hover:shadow-lg"
+      <section className="mx-auto w-full max-w-6xl px-6 pb-16">
+        <div className="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            aria-label="Previous cookie"
+            onClick={() => scrollByCard(-1)}
+            className="hidden shrink-0 p-2 text-cookie-brown hover:text-cookie-rust sm:flex"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden="true"
             >
-              <div className="rounded-full bg-cookie-cream p-2">
-                <img
-                  src={cookie.image}
-                  alt={cookie.name}
-                  className="h-24 w-24 rounded-full object-cover"
-                />
-              </div>
-              <h3 className="text-xl font-bold text-cookie-cream">{cookie.name}</h3>
-              <p className="text-base text-cookie-cream/90">{cookie.tagline}</p>
-            </Link>
-          ))}
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+
+          <div
+            ref={trackRef}
+            onPointerDown={pause}
+            onPointerUp={scheduleResume}
+            onPointerLeave={scheduleResume}
+            onWheel={() => {
+              pause()
+              scheduleResume()
+            }}
+            onTouchStart={pause}
+            onTouchEnd={scheduleResume}
+            className="flex w-[912px] max-w-full gap-6 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {[...cookies, ...cookies].map((cookie, index) => (
+              <Link
+                key={`${cookie.slug}-${index}`}
+                to={`/cookies#${cookie.slug}`}
+                className="flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-2 border-cookie-honey bg-cookie-rust p-6 text-center shadow-md transition-shadow hover:shadow-lg"
+              >
+                <div className="rounded-full bg-cookie-cream p-2">
+                  <img
+                    src={cookie.image}
+                    alt={cookie.name}
+                    className="h-24 w-24 rounded-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-cookie-cream">{cookie.name}</h3>
+                <p className="text-base text-cookie-cream/90">{cookie.tagline}</p>
+              </Link>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            aria-label="Next cookie"
+            onClick={() => scrollByCard(1)}
+            className="hidden shrink-0 p-2 text-cookie-brown hover:text-cookie-rust sm:flex"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
         </div>
       </section>
 
