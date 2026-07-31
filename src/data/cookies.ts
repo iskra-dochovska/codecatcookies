@@ -1,7 +1,8 @@
-import chocolateChip from '../assets/chocolate_chip.webp'
+import chocolateChip from '../assets/choco_chip.png'
 import coffeeAndCream from '../assets/coffee_and_cream.webp'
-import doubleChocolatePeanutButter from '../assets/double_chocolate_peanut_butter.webp'
+import doubleChocolatePeanutButter from '../assets/double_choco_pb.png'
 import whiteChocolate from '../assets/white_chocolate.png'
+import lemon from '../assets/lemon.png'
 
 export type Cookie = {
   slug: string
@@ -45,7 +46,7 @@ export const cookies: Cookie[] = [
     slug: 'double-chocolate-peanut-butter',
     name: 'Double chocolate peanut butter',
     image: doubleChocolatePeanutButter,
-    tagline: 'A timeless combination',
+    tagline: 'Nutty and sticky',
     scales: [
       { label: 'Sweetness', value: 5 },
       { label: 'Chewiness', value: 4 },
@@ -93,7 +94,7 @@ export const cookies: Cookie[] = [
     slug: 'white-chocolate',
     name: 'White chocolate',
     image: whiteChocolate,
-    tagline: 'Melts in every bite',
+    tagline: 'Milky, sweet goodness',
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
@@ -108,6 +109,30 @@ export const cookies: Cookie[] = [
       { label: 'Fiber', value: '0.5g', indent: true },
       { label: 'Protein', value: '3g' },
       { label: 'Sodium', value: '88mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
+  },
+  {
+    slug: 'lemon',
+    name: 'Lemon',
+    image: lemon,
+    tagline: 'Zesty and bright',
+    scales: [
+      { label: 'Sweetness', value: 3 },
+      { label: 'Chewiness', value: 4 },
+      { label: 'Thicccness', value: 3 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '287 kcal' },
+      { label: 'Total fat', value: '13g' },
+      { label: 'Saturated fat', value: '7.8g', indent: true },
+      { label: 'Carbohydrates', value: '38g' },
+      { label: 'Sugars', value: '13g', indent: true },
+      { label: 'Fiber', value: '1g', indent: true },
+      { label: 'Protein', value: '4g' },
+      { label: 'Sodium', value: '76mg' },
     ],
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],

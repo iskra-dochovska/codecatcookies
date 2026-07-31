@@ -133,14 +133,22 @@ function Home() {
                 to={`/cookies#${cookie.slug}`}
                 className="flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-2 border-cookie-honey bg-cookie-rust p-6 text-center shadow-md transition-shadow hover:shadow-lg"
               >
-                <div className="rounded-full bg-cookie-cream p-2">
-                  <img
-                    src={cookie.image}
-                    alt={cookie.name}
-                    className="h-24 w-24 rounded-full object-cover"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-cookie-cream">{cookie.name}</h3>
+                <img
+                  src={cookie.image}
+                  alt={cookie.name}
+                  className="h-24 w-24 object-contain"
+                />
+                <h3 className="text-xl font-bold text-cookie-cream">
+                  {cookie.slug === 'double-chocolate-peanut-butter' ? (
+                    <>
+                      Double chocolate
+                      <br />
+                      peanut butter
+                    </>
+                  ) : (
+                    cookie.name
+                  )}
+                </h3>
                 <p className="text-base text-cookie-cream/90">{cookie.tagline}</p>
               </Link>
             ))}
