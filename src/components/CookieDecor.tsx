@@ -1,18 +1,21 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 export function FramedSection({
   children,
   className,
   id,
+  style,
 }: {
   children: ReactNode
   className?: string
   id?: string
+  style?: CSSProperties
 }) {
   return (
     <div
       id={id}
-      className={`rounded-3xl border-4 border-cookie-honey bg-white p-6 shadow-lg sm:p-8 ${className ?? ''}`}
+      style={style}
+      className={`rounded-3xl border-4 border-cookie-ink bg-white p-6 shadow-[6px_6px_0_var(--color-cookie-ink)] sm:p-8 ${className ?? ''}`}
     >
       {children}
     </div>

@@ -18,11 +18,11 @@ function Cookies() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16">
       <div className="text-center">
-        <h1 className="text-3xl font-extrabold text-cookie-brown sm:text-4xl">
+        <h1 className="text-3xl font-black text-cookie-brown uppercase sm:text-4xl">
           Our cookies
         </h1>
         <p className="mt-3 text-lg text-cookie-brown/80">
-          Get to Know Our Flavors
+          Get to know our flavors
         </p>
       </div>
 

@@ -5,7 +5,7 @@ function About() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16">
       <div className="text-center">
-        <h1 className="text-3xl font-extrabold text-cookie-brown sm:text-4xl">
+        <h1 className="text-3xl font-black text-cookie-brown uppercase sm:text-4xl">
           About us
         </h1>
         <p className="mt-3 text-lg text-cookie-brown/80">
@@ -13,8 +13,11 @@ function About() {
         </p>
       </div>
 
-      <FramedSection className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-cookie-brown">
+      <FramedSection
+        style={{ '--tilt': '-0.8deg' } as React.CSSProperties}
+        className="sticker-card flex flex-col gap-4"
+      >
+        <h2 className="text-xl font-black text-cookie-brown uppercase">
           Why accept our cookies?
         </h2>
         <p className="text-cookie-charcoal">
@@ -26,8 +29,11 @@ function About() {
         </p>
       </FramedSection>
 
-      <FramedSection className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-cookie-brown">
+      <FramedSection
+        style={{ '--tilt': '0.8deg' } as React.CSSProperties}
+        className="sticker-card flex flex-col gap-4"
+      >
+        <h2 className="text-xl font-black text-cookie-brown uppercase">
           How do you get a hold of our cookies?
         </h2>
         <p className="text-cookie-charcoal">
@@ -36,16 +42,19 @@ function About() {
         </p>
       </FramedSection>
 
-      <FramedSection className="flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10">
+      <FramedSection
+        style={{ '--tilt': '-0.5deg' } as React.CSSProperties}
+        className="sticker-card flex flex-col items-center gap-8 sm:flex-row sm:items-start sm:gap-10"
+      >
         <div className="w-64 flex-none sm:w-80">
           <img
             src={sushi}
             alt="Sushi, the Siamese cat behind codecatcookies"
-            className="w-full"
+            className="w-full rounded-2xl border-[3px] border-cookie-ink"
           />
         </div>
         <div className="flex flex-col gap-4 pt-4 sm:pt-8">
-          <h2 className="text-xl font-bold text-cookie-brown">
+          <h2 className="text-xl font-black text-cookie-brown uppercase">
             What&apos;s with the cat?
           </h2>
           <p className="text-cookie-charcoal">

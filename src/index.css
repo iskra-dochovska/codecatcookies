@@ -2,5 +2,15 @@
 @import "@fontsource/nunito/latin-400.css";
 @import "@fontsource/nunito/latin-500.css";
 @import "@fontsource/nunito/latin-700.css";
+@import "@fontsource/nunito/latin-900.css";
 @import "./styles/colors.css";
 @import "./styles/fonts.css";
+
+.sticker-card {
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sticker-card:hover {
+  transform: translate(-2px, -4px) rotate(0deg);
+}

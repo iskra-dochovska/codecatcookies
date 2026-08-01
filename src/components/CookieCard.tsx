@@ -7,21 +7,21 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
   return (
     <FramedSection id={cookie.slug} className="flex flex-col gap-6 scroll-mt-6">
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
-        <div className="w-48 flex-none overflow-hidden rounded-2xl sm:w-56">
+        <div className="w-48 flex-none overflow-hidden rounded-2xl border-[3px] border-cookie-ink sm:w-56">
           <img src={cookie.image} alt={cookie.name} className="w-full object-cover" />
         </div>
         <div className="flex flex-col gap-3 text-center sm:text-left">
-          <h2 className="text-2xl font-bold text-cookie-brown">{cookie.name}</h2>
-          <p className="text-sm font-semibold uppercase tracking-wide text-cookie-rust">
+          <h2 className="text-2xl font-black text-cookie-brown uppercase">{cookie.name}</h2>
+          <span className="mx-auto rounded-full border border-dashed border-cookie-rust bg-cookie-rust/10 px-3 py-1 font-mono text-xs text-cookie-rust sm:mx-0">
             {cookie.tagline}
-          </p>
+          </span>
           {cookie.scales && <ScaleList scales={cookie.scales} className="mt-2" />}
         </div>
       </div>
 
       {hasDetails && (
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-sm font-semibold text-cookie-cream hover:bg-cookie-brown [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full border-2 border-cookie-ink bg-cookie-rust px-4 py-2 text-sm font-bold text-cookie-cream shadow-[3px_3px_0_var(--color-cookie-ink)] [&::-webkit-details-marker]:hidden">
             Nutrition & allergens
             <svg
               viewBox="0 0 24 24"
@@ -56,17 +56,24 @@ function ScaleList({
 }) {
   return (
     <div className={`flex flex-col gap-2 ${className ?? ''}`}>
-      {scales.map((scale) => (
-        <div key={scale.label} className="flex flex-col items-center gap-1">
-          <span className="text-xs font-bold text-cookie-brown">{scale.label}</span>
-          <div className="h-2 w-32 overflow-hidden rounded-full bg-cookie-honey/40 sm:w-48">
-            <div
-              className="h-full rounded-full bg-cookie-rust"
-              style={{ width: `${((scale.value - 1) / 4) * 100}%` }}
-            />
+      {scales.map((scale) => {
+        const filled = Math.round(scale.value)
+        return (
+          <div key={scale.label} className="flex flex-col items-center gap-1 sm:items-start">
+            <span className="text-xs font-bold text-cookie-brown uppercase">{scale.label}</span>
+            <div className="flex h-3.5 w-40 gap-0.5 rounded-full border-2 border-cookie-ink p-0.5 sm:w-52">
+              {[1, 2, 3, 4, 5].map((segment) => (
+                <span
+                  key={segment}
+                  className={`flex-1 rounded-full ${
+                    segment <= filled ? 'bg-cookie-rust' : 'bg-transparent'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
@@ -74,18 +81,18 @@ function ScaleList({
 function NutritionTable({ facts }: { facts: NonNullable<Cookie['nutrition']> }) {
   return (
     <div>
-      <h3 className="mb-3 text-lg font-bold text-cookie-brown">
+      <h3 className="mb-3 text-lg font-black text-cookie-brown uppercase">
         Nutrition
-        <span className="ml-2 text-sm font-normal text-cookie-charcoal/60">per cookie</span>
+        <span className="ml-2 font-mono text-sm font-normal text-cookie-charcoal/60 normal-case">
+          per cookie
+        </span>
       </h3>
-      <dl className="divide-y divide-cookie-honey/40 rounded-xl border border-cookie-honey/40">
+      <dl className="flex flex-col gap-1 rounded-xl border-2 border-dashed border-cookie-ink/40 bg-cookie-cream/40 px-4 py-3 font-mono text-sm">
         {facts.map((fact) => (
           <div
             key={fact.label}
-            className={`flex items-center justify-between px-4 py-2 ${
-              fact.indent
-                ? 'bg-white pl-8 text-sm text-cookie-charcoal/80'
-                : 'bg-cookie-honey/15 font-semibold text-cookie-brown'
+            className={`flex items-center justify-between ${
+              fact.indent ? 'pl-4 text-cookie-charcoal/70' : 'font-bold text-cookie-brown'
             }`}
           >
             <dt>{fact.label}</dt>
@@ -103,12 +110,12 @@ function NutritionTable({ facts }: { facts: NonNullable<Cookie['nutrition']> }) 
 function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens']> }) {
   return (
     <div>
-      <h3 className="mb-3 text-lg font-bold text-cookie-brown">Allergens</h3>
+      <h3 className="mb-3 text-lg font-black text-cookie-brown uppercase">Allergens</h3>
       <div className="flex flex-wrap gap-2">
         {allergens.contains.map((allergen) => (
           <span
             key={allergen}
-            className="rounded-full bg-cookie-rust px-3 py-1 text-sm font-semibold text-cookie-cream"
+            className="rounded-full border-2 border-cookie-ink bg-cookie-rust px-3 py-1 text-sm font-bold text-cookie-cream"
           >
             {allergen}
           </span>
@@ -116,7 +123,7 @@ function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens
         {allergens.mayContain?.map((allergen) => (
           <span
             key={allergen}
-            className="rounded-full border border-cookie-rust/50 px-3 py-1 text-sm font-semibold text-cookie-rust"
+            className="rounded-full border-2 border-dashed border-cookie-rust px-3 py-1 text-sm font-bold text-cookie-rust"
           >
             May contain: {allergen}
           </span>

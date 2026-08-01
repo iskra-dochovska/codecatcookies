@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="w-full bg-cookie-brown px-6 py-6 text-sm text-cookie-cream">
+    <footer className="w-full border-t-4 border-cookie-zest bg-cookie-brown px-6 py-6 text-sm text-cookie-cream">
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4">
         <a
           href="https://www.instagram.com/codecatcookies/"

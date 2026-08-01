@@ -29,13 +29,19 @@ function Header() {
         <nav className="hidden items-center gap-3 sm:flex">
           <Link
             to="/cookies"
-            className="rounded-full bg-cookie-cream px-4 py-1.5 text-sm font-semibold text-cookie-brown hover:bg-cookie-cream/80"
+            className="rounded-full border-2 border-cookie-ink bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-ink shadow-[3px_3px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-ink)]"
           >
             Cookies
           </Link>
           <Link
+            to="/where-to-buy"
+            className="rounded-full border-2 border-cookie-ink bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-ink shadow-[3px_3px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-ink)]"
+          >
+            Where to buy
+          </Link>
+          <Link
             to="/about"
-            className="rounded-full bg-cookie-cream px-4 py-1.5 text-sm font-semibold text-cookie-brown hover:bg-cookie-cream/80"
+            className="rounded-full border-2 border-cookie-ink bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-ink shadow-[3px_3px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-ink)]"
           >
             About us
           </Link>
@@ -109,6 +115,17 @@ function Header() {
             }
           >
             Cookies
+          </NavLink>
+          <NavLink
+            to="/where-to-buy"
+            onClick={() => setOpen(false)}
+            className={({ isActive }) =>
+              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream ${
+                isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
+              }`
+            }
+          >
+            Where to buy
           </NavLink>
           <NavLink
             to="/about"
