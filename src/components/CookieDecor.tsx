@@ -15,7 +15,7 @@ export function FramedSection({
     <div
       id={id}
       style={style}
-      className={`rounded-3xl border-4 border-cookie-ink bg-white p-6 shadow-[6px_6px_0_var(--color-cookie-ink)] sm:p-8 ${className ?? ''}`}
+      className={`rounded-3xl border-4 border-cookie-charcoal bg-white p-6 shadow-[6px_6px_0_var(--color-cookie-charcoal)] sm:p-8 ${className ?? ''}`}
     >
       {children}
     </div>

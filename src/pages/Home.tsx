@@ -106,15 +106,15 @@ function Home() {
           />
           <h1 className="text-5xl leading-[0.95] font-black text-balance text-cookie-cream uppercase sm:text-6xl">
             The only cookies you want to{' '}
-            <span className="text-cookie-zest">accept.</span>
+            <span className="text-cookie-honey">accept.</span>
           </h1>
-          <span className="-rotate-[4deg] rounded-lg border-2 border-cookie-zest px-4 py-1.5 font-mono text-sm font-bold tracking-widest text-cookie-zest uppercase">
+          <span className="-rotate-[4deg] rounded-lg border-2 border-cookie-honey px-4 py-1.5 font-mono text-sm font-bold tracking-widest text-cookie-honey uppercase">
             Coming soon
           </span>
           <button
             type="button"
             onClick={() => setNotifyOpen(true)}
-            className="rounded-full border-2 border-cookie-ink bg-cookie-zest px-8 py-3 text-sm font-black text-cookie-ink uppercase shadow-[5px_5px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[7px_7px_0_var(--color-cookie-ink)]"
+            className="rounded-full border-2 border-cookie-charcoal bg-cookie-honey px-8 py-3 text-sm font-black text-cookie-charcoal uppercase shadow-[5px_5px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[7px_7px_0_var(--color-cookie-charcoal)]"
           >
             Get notified
           </button>
@@ -164,12 +164,12 @@ function Home() {
                 key={`${cookie.slug}-${index}`}
                 to={`/cookies#${cookie.slug}`}
                 style={{ '--tilt': `${CARD_TILTS[index % CARD_TILTS.length]}deg` } as React.CSSProperties}
-                className="sticker-card flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-[3px] border-cookie-ink bg-white p-5 text-center shadow-[6px_6px_0_var(--color-cookie-ink)]"
+                className="sticker-card flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-[3px] border-cookie-charcoal bg-white p-5 text-center shadow-[6px_6px_0_var(--color-cookie-charcoal)]"
               >
                 <img
                   src={cookie.image}
                   alt={cookie.name}
-                  className="h-32 w-32 rounded-full border-[3px] border-cookie-ink object-cover"
+                  className="h-32 w-32 rounded-full border-[3px] border-cookie-charcoal object-cover"
                 />
                 <h3 className="text-lg font-black text-cookie-brown uppercase">
                   {cookie.slug === 'double-chocolate-peanut-butter' ? (
@@ -220,7 +220,7 @@ function Home() {
             <img
               src={sushi}
               alt="Sushi, the Siamese cat behind codecatcookies"
-              className="w-full rounded-2xl border-[3px] border-cookie-ink"
+              className="w-full rounded-2xl border-[3px] border-cookie-charcoal"
             />
           </div>
           <div className="flex flex-col gap-4 text-center sm:pt-4 sm:text-left">
@@ -234,7 +234,7 @@ function Home() {
             </p>
             <Link
               to="/about"
-              className="mx-auto rounded-full border-2 border-cookie-ink bg-cookie-rust px-5 py-2 text-sm font-black text-cookie-cream uppercase shadow-[3px_3px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--color-cookie-ink)] sm:mx-0"
+              className="mx-auto rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-5 py-2 text-sm font-black text-cookie-cream uppercase shadow-[3px_3px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[5px_5px_0_var(--color-cookie-charcoal)] sm:mx-0"
             >
               Meet the team
             </Link>
@@ -255,7 +255,7 @@ function Home() {
             {shops.map((shop) => (
               <span
                 key={shop.name}
-                className="rounded-full border-2 border-cookie-ink bg-white px-4 py-2 text-sm font-bold text-cookie-brown shadow-[2px_2px_0_var(--color-cookie-ink)]"
+                className="rounded-full border-2 border-cookie-charcoal bg-white px-4 py-2 text-sm font-bold text-cookie-brown shadow-[2px_2px_0_var(--color-cookie-charcoal)]"
               >
                 {shop.name}
               </span>
@@ -263,7 +263,7 @@ function Home() {
           </div>
           <Link
             to="/where-to-buy"
-            className="rounded-full border-2 border-cookie-ink bg-cookie-rust px-6 py-3 text-sm font-black text-cookie-cream uppercase shadow-[4px_4px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--color-cookie-ink)]"
+            className="rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-6 py-3 text-sm font-black text-cookie-cream uppercase shadow-[4px_4px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--color-cookie-charcoal)]"
           >
             See all locations
           </Link>
@@ -278,7 +278,7 @@ function Home() {
           {faqs.map((faq) => (
             <details
               key={faq.question}
-              className="group rounded-2xl border-[3px] border-cookie-ink bg-white px-5 py-4"
+              className="group rounded-2xl border-[3px] border-cookie-charcoal bg-white px-5 py-4"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-cookie-brown [&::-webkit-details-marker]:hidden">
                 {faq.question}
@@ -295,7 +295,7 @@ function Home() {
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </summary>
-              <p className="mt-3 border-t-2 border-dashed border-cookie-ink/30 pt-3 text-cookie-charcoal">
+              <p className="mt-3 border-t-2 border-dashed border-cookie-charcoal/30 pt-3 text-cookie-charcoal">
                 {faq.answer}
               </p>
             </details>
@@ -313,7 +313,7 @@ function Home() {
           </p>
           <div
             style={{ '--tilt': '-2deg' } as React.CSSProperties}
-            className="sticker-card flex h-24 w-24 items-center justify-center rounded-xl border-[3px] border-cookie-cream bg-cookie-brown font-black text-4xl text-cookie-cream shadow-[3px_3px_0_var(--color-cookie-ink)]"
+            className="sticker-card flex h-24 w-24 items-center justify-center rounded-xl border-[3px] border-cookie-cream bg-cookie-brown font-black text-4xl text-cookie-cream shadow-[3px_3px_0_var(--color-cookie-charcoal)]"
           >
             ?
           </div>
@@ -321,7 +321,7 @@ function Home() {
             href="https://www.instagram.com/codecatcookies/"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border-2 border-cookie-ink bg-cookie-cream px-6 py-3 text-sm font-black text-cookie-brown uppercase shadow-[4px_4px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--color-cookie-ink)]"
+            className="rounded-full border-2 border-cookie-charcoal bg-cookie-cream px-6 py-3 text-sm font-black text-cookie-brown uppercase shadow-[4px_4px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--color-cookie-charcoal)]"
           >
             Follow @codecatcookies
           </a>

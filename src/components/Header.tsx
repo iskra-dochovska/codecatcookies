@@ -29,19 +29,19 @@ function Header() {
         <nav className="hidden items-center gap-3 sm:flex">
           <Link
             to="/cookies"
-            className="rounded-full border-2 border-cookie-ink bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-ink shadow-[3px_3px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-ink)]"
+            className="rounded-full border-2 border-cookie-charcoal bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal shadow-[3px_3px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-charcoal)]"
           >
             Cookies
           </Link>
           <Link
             to="/where-to-buy"
-            className="rounded-full border-2 border-cookie-ink bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-ink shadow-[3px_3px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-ink)]"
+            className="rounded-full border-2 border-cookie-charcoal bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal shadow-[3px_3px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-charcoal)]"
           >
             Where to buy
           </Link>
           <Link
             to="/about"
-            className="rounded-full border-2 border-cookie-ink bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-ink shadow-[3px_3px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-ink)]"
+            className="rounded-full border-2 border-cookie-charcoal bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal shadow-[3px_3px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-charcoal)]"
           >
             About us
           </Link>

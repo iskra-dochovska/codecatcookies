@@ -13,7 +13,7 @@ function WhereToBuy() {
         </p>
       </div>
 
-      <div className="flex items-center gap-3 rounded-2xl border-[3px] border-cookie-ink bg-white px-5 py-4 text-cookie-brown">
+      <div className="flex items-center gap-3 rounded-2xl border-[3px] border-cookie-charcoal bg-white px-5 py-4 text-cookie-brown">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -36,7 +36,7 @@ function WhereToBuy() {
         {shops.map((shop) => (
           <div
             key={shop.name}
-            className="flex items-center justify-between gap-4 rounded-xl border-2 border-cookie-ink bg-cookie-cream px-5 py-4"
+            className="flex items-center justify-between gap-4 rounded-xl border-2 border-cookie-charcoal bg-cookie-cream px-5 py-4"
           >
             <div>
               <p className="font-black text-cookie-brown uppercase">{shop.name}</p>
@@ -44,7 +44,7 @@ function WhereToBuy() {
                 <p className="font-mono text-sm text-cookie-charcoal">{shop.area}</p>
               )}
             </div>
-            <span className="rounded-full border-2 border-cookie-ink bg-cookie-rust px-3 py-1 font-mono text-xs font-bold tracking-wide text-cookie-cream uppercase">
+            <span className="rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-3 py-1 font-mono text-xs font-bold tracking-wide text-cookie-cream uppercase">
               {shop.tag}
             </span>
           </div>
@@ -63,7 +63,7 @@ function WhereToBuy() {
           href="https://www.instagram.com/codecatcookies/"
           target="_blank"
           rel="noopener noreferrer"
-          className="mx-auto rounded-full border-2 border-cookie-ink bg-cookie-rust px-6 py-3 text-sm font-black text-cookie-cream uppercase shadow-[4px_4px_0_var(--color-cookie-ink)] transition-transform hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--color-cookie-ink)]"
+          className="mx-auto rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-6 py-3 text-sm font-black text-cookie-cream uppercase shadow-[4px_4px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[6px_6px_0_var(--color-cookie-charcoal)]"
         >
           Get in touch
         </a>
