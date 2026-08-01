@@ -40,7 +40,9 @@ function WhereToBuy() {
           >
             <div>
               <p className="font-black text-cookie-brown uppercase">{shop.name}</p>
-              <p className="font-mono text-sm text-cookie-charcoal">{shop.area}</p>
+              {shop.area && (
+                <p className="font-mono text-sm text-cookie-charcoal">{shop.area}</p>
+              )}
             </div>
             <span className="rounded-full border-2 border-cookie-ink bg-cookie-rust px-3 py-1 font-mono text-xs font-bold tracking-wide text-cookie-cream uppercase">
               {shop.tag}

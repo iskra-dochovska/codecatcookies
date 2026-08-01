@@ -311,16 +311,11 @@ function Home() {
           <p className="max-w-lg text-cookie-cream/90">
             New flavors, behind-the-scenes baking and Sushi&apos;s opinions on all of it.
           </p>
-          <div className="grid grid-cols-3 gap-4 sm:grid-cols-5">
-            {cookies.map((cookie, index) => (
-              <img
-                key={cookie.slug}
-                src={cookie.image}
-                alt={cookie.name}
-                style={{ '--tilt': `${CARD_TILTS[index % CARD_TILTS.length]}deg` } as React.CSSProperties}
-                className="sticker-card h-20 w-20 rounded-xl border-[3px] border-cookie-cream object-cover shadow-[3px_3px_0_var(--color-cookie-ink)] sm:h-24 sm:w-24"
-              />
-            ))}
+          <div
+            style={{ '--tilt': '-2deg' } as React.CSSProperties}
+            className="sticker-card flex h-24 w-24 items-center justify-center rounded-xl border-[3px] border-cookie-cream bg-cookie-brown font-black text-4xl text-cookie-cream shadow-[3px_3px_0_var(--color-cookie-ink)]"
+          >
+            ?
           </div>
           <a
             href="https://www.instagram.com/codecatcookies/"
