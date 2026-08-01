@@ -50,7 +50,7 @@ function About() {
           <img
             src={sushi}
             alt="Sushi, the Siamese cat behind codecatcookies"
-            className="w-full rounded-2xl border-[3px] border-cookie-charcoal"
+            className="w-full rounded-2xl"
           />
         </div>
         <div className="flex flex-col gap-4 pt-4 sm:pt-8">
