@@ -21,11 +21,11 @@ function About() {
           Why accept our cookies?
         </h2>
         <p className="text-cookie-charcoal">
-          It&apos;s simple, glucose (sugar), is our primary source of energy and the brain
-          is the most energy-demanding organ we have. As a programmer, turned home baker,
-          I&apos;m fully aware how essential it is to have a sweet treat at hand. The
-          solution is simple and it comes in many forms, chocolate chip, peanut butter and
-          other delicious flavors to help you max out your problem solving skills.
+          It&apos;s simple, we make great brain fuel. Ever sat down to debug something for 4
+          hours straight just to realize that you&apos;ve been looking at dev instead of
+          local environment? Yeah, have a cookie, we&apos;ve all been there. Even if
+          you&apos;re not an engineer, you&apos;ll still highly benefit from this delicious
+          goodness!
         </p>
       </FramedSection>
 
