@@ -8,7 +8,6 @@ import { shops } from '../data/shops'
 
 const STEP_INTERVAL_MS = 3000
 const RESUME_DELAY_MS = 2000
-const CARD_TILTS = [-2, 2, -1.5, 2.5, -1]
 
 const wavePath =
   'M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,53.3C672,43,768,21,864,21.3C960,21,1056,43,1152,48C1248,53,1344,43,1392,37.3L1440,32L1440,74L1392,74C1344,74,1248,74,1152,74C1056,74,960,74,864,74C768,74,672,74,576,74C480,74,384,74,288,74C192,74,96,74,48,74L0,74Z'
@@ -58,26 +57,18 @@ function Home() {
     const track = trackRef.current
     if (!track) return
 
-    const wrap = () => {
-      const half = track.scrollWidth / 2
-      if (track.scrollLeft >= half) track.scrollLeft -= half
-      else if (track.scrollLeft <= 0) track.scrollLeft += half
-    }
-
     const step = () => {
       if (pausedRef.current) return
       const firstCard = track.children[0] as HTMLElement | undefined
       if (!firstCard) return
       const gap = parseFloat(getComputedStyle(track).columnGap || '0')
+      const half = track.scrollWidth / 2
+      if (track.scrollLeft >= half - 1) track.scrollLeft -= half
       track.scrollBy({ left: firstCard.offsetWidth + gap, behavior: 'smooth' })
     }
 
     const intervalId = setInterval(step, STEP_INTERVAL_MS)
-    track.addEventListener('scroll', wrap)
-    return () => {
-      clearInterval(intervalId)
-      track.removeEventListener('scroll', wrap)
-    }
+    return () => clearInterval(intervalId)
   }, [])
 
   const pause = () => {
@@ -98,7 +89,10 @@ function Home() {
     const firstCard = track.children[0] as HTMLElement | undefined
     if (!firstCard) return
     const gap = parseFloat(getComputedStyle(track).columnGap || '0')
+    const half = track.scrollWidth / 2
     pause()
+    if (direction === 1 && track.scrollLeft >= half - 1) track.scrollLeft -= half
+    else if (direction === -1 && track.scrollLeft <= 1) track.scrollLeft += half
     track.scrollBy({ left: direction * (firstCard.offsetWidth + gap), behavior: 'smooth' })
     scheduleResume()
   }
@@ -166,8 +160,7 @@ function Home() {
                 <Link
                   key={`${cookie.slug}-${index}`}
                   to={`/cookies#${cookie.slug}`}
-                  style={{ '--tilt': `${CARD_TILTS[index % CARD_TILTS.length]}deg` } as React.CSSProperties}
-                  className="sticker-card flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-[3px] border-cookie-charcoal bg-white p-5 text-center shadow-[6px_6px_0_var(--color-cookie-charcoal)]"
+                  className="flex w-72 shrink-0 flex-col items-center gap-3 rounded-2xl border-[3px] border-cookie-charcoal bg-white p-5 text-center shadow-[6px_6px_0_var(--color-cookie-charcoal)]"
                 >
                   <img
                     src={cookie.image}
