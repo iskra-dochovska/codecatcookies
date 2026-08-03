@@ -256,7 +256,7 @@ function Home() {
             {shops.map((shop) => (
               <span
                 key={shop.name}
-                className="rounded-full border-2 border-cookie-charcoal bg-white px-4 py-2 text-sm font-bold text-cookie-brown shadow-[2px_2px_0_var(--color-cookie-charcoal)]"
+                className="rounded-full border-2 border-cookie-charcoal bg-white px-4 py-2 text-sm font-bold text-cookie-brown uppercase shadow-[2px_2px_0_var(--color-cookie-charcoal)]"
               >
                 {shop.name}
               </span>

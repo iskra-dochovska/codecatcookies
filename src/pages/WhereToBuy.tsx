@@ -34,20 +34,51 @@ function WhereToBuy() {
 
       <FramedSection className="flex flex-col gap-4">
         {shops.map((shop) => (
-          <div
+          <details
             key={shop.name}
-            className="flex items-center justify-between gap-4 rounded-xl border-2 border-cookie-charcoal bg-cookie-cream px-5 py-4"
+            className="group rounded-xl border-2 border-cookie-charcoal bg-cookie-cream px-5 py-4"
           >
-            <div>
-              <p className="font-black text-cookie-brown uppercase">{shop.name}</p>
-              {shop.area && (
-                <p className="font-mono text-sm text-cookie-charcoal">{shop.area}</p>
-              )}
-            </div>
-            <span className="rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-3 py-1 font-mono text-xs font-bold tracking-wide text-cookie-cream uppercase">
-              {shop.tag}
-            </span>
-          </div>
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+              <div>
+                <p className="font-black text-cookie-brown uppercase">{shop.name}</p>
+                {shop.area && (
+                  <p className="font-mono text-sm text-cookie-charcoal">{shop.area}</p>
+                )}
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-3 py-1 font-mono text-xs font-bold tracking-wide text-cookie-cream uppercase">
+                  {shop.tag}
+                </span>
+                {shop.mapsEmbedUrl && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-4 w-4 flex-none text-cookie-brown transition-transform group-open:rotate-180"
+                    aria-hidden="true"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                )}
+              </div>
+            </summary>
+            {shop.mapsEmbedUrl && (
+              <div className="mt-4 overflow-hidden rounded-lg border-2 border-cookie-charcoal">
+                <iframe
+                  src={shop.mapsEmbedUrl}
+                  width="100%"
+                  height="300"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  title={`Map for ${shop.name}`}
+                />
+              </div>
+            )}
+          </details>
         ))}
       </FramedSection>
 
