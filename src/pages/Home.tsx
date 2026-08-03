@@ -107,8 +107,8 @@ function Home() {
             className="w-28 -rotate-[8deg] drop-shadow-[4px_5px_0_rgba(0,0,0,0.35)] sm:w-32"
           />
           <h1 className="text-5xl leading-[0.95] font-black text-balance text-cookie-cream uppercase sm:text-6xl">
-            The only cookies you want to{' '}
-            <span className="text-cookie-honey">accept.</span>
+            The <span className="text-cookie-honey">only</span> cookies you want to
+            accept.
           </h1>
           <span className="-rotate-[4deg] rounded-lg border-2 border-cookie-honey px-4 py-1.5 font-mono text-sm font-bold tracking-widest text-cookie-honey uppercase">
             Coming soon
@@ -120,7 +120,7 @@ function Home() {
       <section className="relative w-full bg-cookie-cream px-6 pt-16 pb-20">
         <div className="mx-auto w-full max-w-6xl">
           <h2 className="mb-8 text-center text-2xl font-black text-cookie-brown uppercase sm:text-3xl">
-            Five flavors, zero regrets
+            Get to know our cookies
           </h2>
           <div className="flex items-center justify-center gap-3">
             <button
@@ -227,9 +227,9 @@ function Home() {
                 A very small kitchen, a very loud cat
               </h2>
               <p className="text-cookie-charcoal">
-                codecatcookies started with one programmer&apos;s love for glucose and a cat
-                who insists on supervising every batch. Every cookie is baked, boxed and
-                (mostly) approved by Sushi before it goes out the door.
+                <strong>codecatcookies</strong> started with one programmer&apos;s love for
+                sugary sweets and a curious gremlin who loves micromanaging. Every cookie is
+                baked, boxed and (mostly) approved by Sushi before it goes out the door.
               </p>
               <Link
                 to="/about"
