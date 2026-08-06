@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { CookieCard } from '../components/CookieCard'
 import { cookies } from '../data/cookies'
+import { allergenColors } from '../data/allergens'
 
 function Cookies() {
   const { hash } = useLocation()
@@ -21,6 +22,16 @@ function Cookies() {
         <h1 className="text-3xl font-black text-cookie-brown uppercase sm:text-4xl">
           Find your favorite
         </h1>
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {Object.entries(allergenColors).map(([allergen, colors]) => (
+            <span
+              key={allergen}
+              className={`rounded-full px-3 py-1 text-xs font-bold ${colors.bg} ${colors.text}`}
+            >
+              {allergen}
+            </span>
+          ))}
+        </div>
       </div>
 
       {cookies.map((cookie) => (

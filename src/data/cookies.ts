@@ -161,4 +161,27 @@ export const cookies: Cookie[] = [
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],
     },
   },
+  {
+    slug: 'oatmeal',
+    name: 'Oatmeal',
+    tagline: 'Breakfast made delicious',
+    scales: [
+      { label: 'Sweetness', value: 3 },
+      { label: 'Chewiness', value: 3 },
+      { label: 'Thickness', value: 3 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '262 kcal' },
+      { label: 'Total fat', value: '11g' },
+      { label: 'Saturated fat', value: '6.2g', indent: true },
+      { label: 'Carbohydrates', value: '36g' },
+      { label: 'Sugars', value: '15.7g', indent: true },
+      { label: 'Fiber', value: '1.9g', indent: true },
+      { label: 'Protein', value: '5g' },
+      { label: 'Sodium', value: '146mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
+  },
 ]

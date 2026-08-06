@@ -1,5 +1,6 @@
 import { FramedSection } from './CookieDecor'
 import type { Cookie } from '../data/cookies'
+import { allergenColors, defaultAllergenColor } from '../data/allergens'
 
 export function CookieCard({ cookie }: { cookie: Cookie }) {
   const hasDetails = Boolean(cookie.nutrition || cookie.allergens)
@@ -122,22 +123,28 @@ function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens
     <div>
       <h3 className="mb-3 text-lg font-black text-cookie-brown uppercase">Allergens</h3>
       <div className="flex flex-wrap gap-2">
-        {allergens.contains.map((allergen) => (
-          <span
-            key={allergen}
-            className="rounded-full bg-cookie-rust px-3 py-1 text-sm font-bold text-cookie-cream"
-          >
-            {allergen}
-          </span>
-        ))}
-        {allergens.mayContain?.map((allergen) => (
-          <span
-            key={allergen}
-            className="rounded-full bg-cookie-rust/10 px-3 py-1 text-sm font-bold text-cookie-rust"
-          >
-            May contain: {allergen}
-          </span>
-        ))}
+        {allergens.contains.map((allergen) => {
+          const colors = allergenColors[allergen] ?? defaultAllergenColor
+          return (
+            <span
+              key={allergen}
+              className={`rounded-full px-3 py-1 text-sm font-bold ${colors.bg} ${colors.text}`}
+            >
+              {allergen}
+            </span>
+          )
+        })}
+        {allergens.mayContain?.map((allergen) => {
+          const colors = allergenColors[allergen] ?? defaultAllergenColor
+          return (
+            <span
+              key={allergen}
+              className={`rounded-full px-3 py-1 text-sm font-bold ${colors.mutedBg} ${colors.text}`}
+            >
+              May contain: {allergen}
+            </span>
+          )
+        })}
       </div>
     </div>
   )
