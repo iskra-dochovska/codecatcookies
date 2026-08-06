@@ -7,7 +7,7 @@ import lemon from '../assets/lemon.png'
 export type Cookie = {
   slug: string
   name: string
-  image: string
+  image?: string
   tagline: string
   scales?: { label: string; value: number }[]
   nutrition?: { label: string; value: string; indent?: boolean }[]
@@ -26,7 +26,7 @@ export const cookies: Cookie[] = [
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 2 },
-      { label: 'Thicccness', value: 3 },
+      { label: 'Thickness', value: 3 },
     ],
     nutrition: [
       { label: 'Calories', value: '265 kcal' },
@@ -50,7 +50,7 @@ export const cookies: Cookie[] = [
     scales: [
       { label: 'Sweetness', value: 5 },
       { label: 'Chewiness', value: 4 },
-      { label: 'Thicccness', value: 5 },
+      { label: 'Thickness', value: 5 },
     ],
     nutrition: [
       { label: 'Calories', value: '418 kcal' },
@@ -74,7 +74,7 @@ export const cookies: Cookie[] = [
     scales: [
       { label: 'Sweetness', value: 2 },
       { label: 'Chewiness', value: 3 },
-      { label: 'Thicccness', value: 2 },
+      { label: 'Thickness', value: 2 },
     ],
     nutrition: [
       { label: 'Calories', value: '250 kcal' },
@@ -98,7 +98,7 @@ export const cookies: Cookie[] = [
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
-      { label: 'Thicccness', value: 2 },
+      { label: 'Thickness', value: 2 },
     ],
     nutrition: [
       { label: 'Calories', value: '264 kcal' },
@@ -122,7 +122,7 @@ export const cookies: Cookie[] = [
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 4 },
-      { label: 'Thicccness', value: 3 },
+      { label: 'Thickness', value: 3 },
     ],
     nutrition: [
       { label: 'Calories', value: '287 kcal' },
@@ -133,6 +133,29 @@ export const cookies: Cookie[] = [
       { label: 'Fiber', value: '1g', indent: true },
       { label: 'Protein', value: '4g' },
       { label: 'Sodium', value: '76mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
+  },
+  {
+    slug: 'caramel',
+    name: 'Caramel',
+    tagline: 'Drinkable sugar',
+    scales: [
+      { label: 'Sweetness', value: 4 },
+      { label: 'Chewiness', value: 4 },
+      { label: 'Thickness', value: 1 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '305 kcal' },
+      { label: 'Total fat', value: '15g' },
+      { label: 'Saturated fat', value: '9g', indent: true },
+      { label: 'Carbohydrates', value: '38g' },
+      { label: 'Sugars', value: '26g', indent: true },
+      { label: 'Fiber', value: '0.4g', indent: true },
+      { label: 'Protein', value: '2g' },
+      { label: 'Sodium', value: '269mg' },
     ],
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],

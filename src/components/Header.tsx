@@ -20,7 +20,7 @@ function Header() {
         scrolled ? 'sm:bg-cookie-brown/80 sm:backdrop-blur-md' : ''
       }`}
     >
-      <div className="flex items-center justify-between px-8 py-4 sm:px-20">
+      <div className="flex items-center justify-between px-10 py-4 sm:px-32">
         <Link to="/" onClick={() => setOpen(false)}>
           <img src={logoMark} alt="codecatcookies" className="h-9 sm:hidden" />
           <img src={textLogo} alt="codecatcookies" className="hidden h-5 sm:block" />
@@ -29,21 +29,9 @@ function Header() {
         <nav className="hidden items-center gap-3 sm:flex">
           <Link
             to="/cookies"
-            className="rounded-full border-2 border-cookie-charcoal bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal shadow-[3px_3px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-charcoal)]"
+            className="rounded-full bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal uppercase transition-transform hover:-translate-y-0.5"
           >
             Cookies
-          </Link>
-          <Link
-            to="/where-to-buy"
-            className="rounded-full border-2 border-cookie-charcoal bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal shadow-[3px_3px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-charcoal)]"
-          >
-            Where to buy
-          </Link>
-          <Link
-            to="/about"
-            className="rounded-full border-2 border-cookie-charcoal bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal shadow-[3px_3px_0_var(--color-cookie-charcoal)] transition-transform hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-cookie-charcoal)]"
-          >
-            About us
           </Link>
         </nav>
 
@@ -106,37 +94,27 @@ function Header() {
           </button>
 
           <NavLink
+            to="/"
+            end
+            onClick={() => setOpen(false)}
+            className={({ isActive }) =>
+              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream uppercase ${
+                isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
+              }`
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
             to="/cookies"
             onClick={() => setOpen(false)}
             className={({ isActive }) =>
-              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream ${
+              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream uppercase ${
                 isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
               }`
             }
           >
             Cookies
-          </NavLink>
-          <NavLink
-            to="/where-to-buy"
-            onClick={() => setOpen(false)}
-            className={({ isActive }) =>
-              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream ${
-                isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
-              }`
-            }
-          >
-            Where to buy
-          </NavLink>
-          <NavLink
-            to="/about"
-            onClick={() => setOpen(false)}
-            className={({ isActive }) =>
-              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream ${
-                isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
-              }`
-            }
-          >
-            About us
           </NavLink>
         </div>
       </div>

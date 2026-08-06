@@ -7,12 +7,22 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
   return (
     <FramedSection id={cookie.slug} className="flex flex-col gap-6 scroll-mt-6">
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
-        <div className="w-48 flex-none overflow-hidden rounded-2xl border-[3px] border-cookie-charcoal sm:w-56">
-          <img src={cookie.image} alt={cookie.name} className="w-full object-cover" />
+        <div className="flex h-48 w-48 flex-none items-center justify-center rounded-2xl bg-cookie-charcoal/5 text-sm text-cookie-charcoal/50 sm:w-56">
+          Image
         </div>
         <div className="flex flex-col gap-3 text-center sm:text-left">
-          <h2 className="text-2xl font-black text-cookie-brown uppercase">{cookie.name}</h2>
-          <span className="mx-auto rounded-full border border-dashed border-cookie-rust bg-cookie-rust/10 px-3 py-1 font-mono text-xs text-cookie-rust sm:mx-0">
+          <h2 className="text-2xl font-black text-cookie-brown uppercase">
+            {cookie.slug === 'double-chocolate-peanut-butter' ? (
+              <>
+                Double chocolate
+                <br />
+                peanut butter
+              </>
+            ) : (
+              cookie.name
+            )}
+          </h2>
+          <span className="mx-auto w-56 rounded-full border border-cookie-rust bg-cookie-cream px-3 py-1 text-center font-mono text-xs font-bold text-cookie-rust sm:mx-0">
             {cookie.tagline}
           </span>
           {cookie.scales && <ScaleList scales={cookie.scales} className="mt-2" />}
@@ -21,7 +31,7 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
 
       {hasDetails && (
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-4 py-2 text-sm font-bold text-cookie-cream shadow-[3px_3px_0_var(--color-cookie-charcoal)] [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-sm font-bold text-cookie-cream [&::-webkit-details-marker]:hidden">
             Nutrition & allergens
             <svg
               viewBox="0 0 24 24"
@@ -61,7 +71,7 @@ function ScaleList({
         return (
           <div key={scale.label} className="flex flex-col items-center gap-1 sm:items-start">
             <span className="text-xs font-bold text-cookie-brown uppercase">{scale.label}</span>
-            <div className="flex h-3.5 w-40 gap-0.5 rounded-full border-2 border-cookie-charcoal p-0.5 sm:w-52">
+            <div className="flex h-3.5 w-40 gap-0.5 rounded-full bg-cookie-charcoal/10 p-0.5 sm:w-52">
               {[1, 2, 3, 4, 5].map((segment) => (
                 <span
                   key={segment}
@@ -87,7 +97,7 @@ function NutritionTable({ facts }: { facts: NonNullable<Cookie['nutrition']> }) 
           per cookie
         </span>
       </h3>
-      <dl className="flex flex-col gap-1 rounded-xl border-2 border-dashed border-cookie-charcoal/40 bg-cookie-cream/40 px-4 py-3 font-mono text-sm">
+      <dl className="flex flex-col gap-1 rounded-xl bg-cookie-cream/40 px-4 py-3 font-mono text-sm">
         {facts.map((fact) => (
           <div
             key={fact.label}
@@ -115,7 +125,7 @@ function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens
         {allergens.contains.map((allergen) => (
           <span
             key={allergen}
-            className="rounded-full border-2 border-cookie-charcoal bg-cookie-rust px-3 py-1 text-sm font-bold text-cookie-cream"
+            className="rounded-full bg-cookie-rust px-3 py-1 text-sm font-bold text-cookie-cream"
           >
             {allergen}
           </span>
@@ -123,7 +133,7 @@ function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens
         {allergens.mayContain?.map((allergen) => (
           <span
             key={allergen}
-            className="rounded-full border-2 border-dashed border-cookie-rust px-3 py-1 text-sm font-bold text-cookie-rust"
+            className="rounded-full bg-cookie-rust/10 px-3 py-1 text-sm font-bold text-cookie-rust"
           >
             May contain: {allergen}
           </span>
