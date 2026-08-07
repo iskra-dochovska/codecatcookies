@@ -2,14 +2,10 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { CookieCard } from '../components/CookieCard'
 import { cookies } from '../data/cookies'
-import { allergenColors, allergenLabels } from '../data/allergens'
-import { useLanguage } from '../i18n/LanguageContext'
-import { ui } from '../i18n/translations'
+import { allergenColors } from '../data/allergens'
 
 function Cookies() {
   const { hash } = useLocation()
-  const { lang } = useLanguage()
-  const t = ui[lang].cookiesPage
 
   useEffect(() => {
     if (!hash) return
@@ -24,7 +20,7 @@ function Cookies() {
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16">
       <div className="text-center">
         <h1 className="text-3xl font-black text-cookie-brown uppercase sm:text-4xl">
-          {t.heading}
+          Find your favorite
         </h1>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           {Object.entries(allergenColors).map(([allergen, colors]) => (
@@ -32,7 +28,7 @@ function Cookies() {
               key={allergen}
               className={`rounded-full px-3 py-1 text-xs font-bold ${colors.bg} ${colors.text}`}
             >
-              {allergenLabels[lang][allergen] ?? allergen}
+              {allergen}
             </span>
           ))}
         </div>
