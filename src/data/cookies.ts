@@ -141,7 +141,7 @@ export const cookies: Cookie[] = [
   {
     slug: 'caramel',
     name: 'Caramel',
-    tagline: 'Drinkable sugar',
+    tagline: 'Sticky sweet',
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
@@ -164,7 +164,7 @@ export const cookies: Cookie[] = [
   {
     slug: 'oatmeal',
     name: 'Oatmeal',
-    tagline: 'Breakfast made delicious',
+    tagline: 'Pass the oats brother',
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 3 },
@@ -179,6 +179,29 @@ export const cookies: Cookie[] = [
       { label: 'Fiber', value: '1.9g', indent: true },
       { label: 'Protein', value: '5g' },
       { label: 'Sodium', value: '146mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk', 'Honey'],
+    },
+  },
+  {
+    slug: 'cornflakes-and-oats',
+    name: 'Cornflakes & Oats',
+    tagline: 'Breakfast of champions',
+    scales: [
+      { label: 'Sweetness', value: 4 },
+      { label: 'Chewiness', value: 4 },
+      { label: 'Thickness', value: 3 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '297 kcal' },
+      { label: 'Total fat', value: '14.8g' },
+      { label: 'Saturated fat', value: '8.7g', indent: true },
+      { label: 'Carbohydrates', value: '37.7g' },
+      { label: 'Sugars', value: '17g', indent: true },
+      { label: 'Fiber', value: '1.4g', indent: true },
+      { label: 'Protein', value: '4g' },
+      { label: 'Sodium', value: '343mg' },
     ],
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],

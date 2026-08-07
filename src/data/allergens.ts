@@ -11,6 +11,11 @@ export const allergenColors: Record<string, { bg: string; mutedBg: string; text:
     mutedBg: 'bg-cookie-brown/40',
     text: 'text-cookie-cream',
   },
+  Honey: {
+    bg: 'bg-cookie-charcoal',
+    mutedBg: 'bg-cookie-charcoal/40',
+    text: 'text-cookie-cream',
+  },
 }
 
 export const defaultAllergenColor = {
