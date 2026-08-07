@@ -3,12 +3,13 @@ import coffeeAndCream from '../assets/coffee_and_cream.webp'
 import doubleChocolatePeanutButter from '../assets/double_choco_pb.png'
 import whiteChocolate from '../assets/white_chocolate.png'
 import lemon from '../assets/lemon.png'
+import type { Lang } from '../i18n/LanguageContext'
 
 export type Cookie = {
   slug: string
-  name: string
+  name: Record<Lang, string>
   image?: string
-  tagline: string
+  tagline: Record<Lang, string>
   scales?: { label: string; value: number }[]
   nutrition?: { label: string; value: string; indent?: boolean }[]
   allergens?: {
@@ -20,9 +21,9 @@ export type Cookie = {
 export const cookies: Cookie[] = [
   {
     slug: 'chocolate-chip',
-    name: 'Chocolate chip',
+    name: { en: 'Chocolate chip', mk: 'Чоколадни парченца' },
     image: chocolateChip,
-    tagline: 'Our take on a classic',
+    tagline: { en: 'Our take on a classic', mk: 'Нашата верзија на класика' },
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 2 },
@@ -44,9 +45,12 @@ export const cookies: Cookie[] = [
   },
   {
     slug: 'double-chocolate-peanut-butter',
-    name: 'Double chocolate peanut butter',
+    name: {
+      en: 'Double chocolate peanut butter',
+      mk: 'Двоен чоколаден путер со кикирики',
+    },
     image: doubleChocolatePeanutButter,
-    tagline: 'Nutty and sticky',
+    tagline: { en: 'Nutty and sticky', mk: 'Лепливо и со вкус на кикирики' },
     scales: [
       { label: 'Sweetness', value: 5 },
       { label: 'Chewiness', value: 4 },
@@ -68,9 +72,9 @@ export const cookies: Cookie[] = [
   },
   {
     slug: 'coffee-and-cream',
-    name: 'Coffee and cream',
+    name: { en: 'Coffee and cream', mk: 'Кафе и крема' },
     image: coffeeAndCream,
-    tagline: 'Double caffeinated',
+    tagline: { en: 'Double caffeinated', mk: 'Двојно кофеинско' },
     scales: [
       { label: 'Sweetness', value: 2 },
       { label: 'Chewiness', value: 3 },
@@ -92,9 +96,9 @@ export const cookies: Cookie[] = [
   },
   {
     slug: 'white-chocolate',
-    name: 'White chocolate',
+    name: { en: 'White chocolate', mk: 'Бело чоколадо' },
     image: whiteChocolate,
-    tagline: 'Milky, sweet goodness',
+    tagline: { en: 'Milky, sweet goodness', mk: 'Млечна, слатка убавина' },
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
@@ -116,9 +120,9 @@ export const cookies: Cookie[] = [
   },
   {
     slug: 'lemon',
-    name: 'Lemon',
+    name: { en: 'Lemon', mk: 'Лимон' },
     image: lemon,
-    tagline: 'Zesty and bright',
+    tagline: { en: 'Zesty and bright', mk: 'Свежо и живописно' },
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 4 },
@@ -140,8 +144,8 @@ export const cookies: Cookie[] = [
   },
   {
     slug: 'caramel',
-    name: 'Caramel',
-    tagline: 'Sticky sweet',
+    name: { en: 'Caramel', mk: 'Карамел' },
+    tagline: { en: 'Sticky sweet', mk: 'Лепливо слатко' },
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
@@ -163,8 +167,8 @@ export const cookies: Cookie[] = [
   },
   {
     slug: 'oatmeal',
-    name: 'Oatmeal',
-    tagline: 'Pass the oats brother',
+    name: { en: 'Oatmeal', mk: 'Овес' },
+    tagline: { en: 'Pass the oats brother', mk: 'Додади ги овесите, брате' },
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 3 },
@@ -186,8 +190,8 @@ export const cookies: Cookie[] = [
   },
   {
     slug: 'cornflakes-and-oats',
-    name: 'Cornflakes & Oats',
-    tagline: 'Breakfast of champions',
+    name: { en: 'Cornflakes & Oats', mk: 'Корнфлекс и овес' },
+    tagline: { en: 'Breakfast of champions', mk: 'Појадок на шампиони' },
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },

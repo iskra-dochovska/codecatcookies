@@ -2,10 +2,39 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import textLogo from '../assets/codecatcookies_text_light.svg'
 import logoMark from '../assets/codecatcookies_logo.svg'
+import { useLanguage, type Lang } from '../i18n/LanguageContext'
+import { ui } from '../i18n/translations'
+
+function LanguageToggle({ className }: { className?: string }) {
+  const { lang, setLang } = useLanguage()
+
+  const option = (value: Lang, label: string) => (
+    <button
+      type="button"
+      onClick={() => setLang(value)}
+      aria-pressed={lang === value}
+      className={`px-2 py-0.5 text-xs font-extrabold uppercase ${
+        lang === value ? 'text-cookie-charcoal' : 'text-cookie-charcoal/40'
+      }`}
+    >
+      {label}
+    </button>
+  )
+
+  return (
+    <div className={`flex items-center rounded-full bg-cookie-cream ${className ?? ''}`}>
+      {option('en', 'EN')}
+      <span className="text-cookie-charcoal/30">/</span>
+      {option('mk', 'MK')}
+    </div>
+  )
+}
 
 function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { lang } = useLanguage()
+  const t = ui[lang].nav
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -31,32 +60,36 @@ function Header() {
             to="/cookies"
             className="rounded-full bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal uppercase transition-transform hover:-translate-y-0.5"
           >
-            Cookies
+            {t.cookies}
           </Link>
+          <LanguageToggle />
         </nav>
 
-        <button
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          aria-expanded={open}
-          className="text-cookie-cream sm:hidden"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6"
-            aria-hidden="true"
+        <div className="flex items-center gap-3 sm:hidden">
+          <LanguageToggle />
+          <button
+            type="button"
+            onClick={() => setOpen((value) => !value)}
+            aria-label={open ? t.closeMenu : t.openMenu}
+            aria-expanded={open}
+            className="text-cookie-cream"
           >
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-6 w-6"
+              aria-hidden="true"
+            >
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div className={`fixed inset-0 z-50 sm:hidden ${open ? '' : 'pointer-events-none'}`}>
@@ -75,7 +108,7 @@ function Header() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            aria-label="Close menu"
+            aria-label={t.closeMenu}
             className="self-end text-cookie-cream"
           >
             <svg
@@ -103,7 +136,7 @@ function Header() {
               }`
             }
           >
-            Home
+            {t.home}
           </NavLink>
           <NavLink
             to="/cookies"
@@ -114,8 +147,10 @@ function Header() {
               }`
             }
           >
-            Cookies
+            {t.cookies}
           </NavLink>
+
+          <LanguageToggle className="self-start" />
         </div>
       </div>
     </header>

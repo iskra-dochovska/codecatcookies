@@ -1,4 +1,10 @@
+import { useLanguage } from '../i18n/LanguageContext'
+import { ui } from '../i18n/translations'
+
 function Footer() {
+  const { lang } = useLanguage()
+  const t = ui[lang].footer
+
   return (
     <footer className="w-full border-t-4 border-cookie-honey bg-cookie-brown px-6 py-6 text-sm text-cookie-cream">
       <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4">
@@ -42,9 +48,7 @@ function Footer() {
             info@codecatcookies.com
           </a>
         </div>
-        <span className="text-cookie-cream/70">
-          &copy; {new Date().getFullYear()} codecatcookies. All rights reserved.
-        </span>
+        <span className="text-cookie-cream/70">{t.copyright(new Date().getFullYear())}</span>
       </div>
     </footer>
   )
