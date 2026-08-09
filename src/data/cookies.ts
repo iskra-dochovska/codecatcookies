@@ -190,7 +190,7 @@ export const cookies: Cookie[] = [
     tagline: 'Breakfast of champions',
     scales: [
       { label: 'Sweetness', value: 4 },
-      { label: 'Chewiness', value: 4 },
+      { label: 'Chewiness', value: 2 },
       { label: 'Thickness', value: 3 },
     ],
     nutrition: [
@@ -202,6 +202,29 @@ export const cookies: Cookie[] = [
       { label: 'Fiber', value: '1.4g', indent: true },
       { label: 'Protein', value: '4g' },
       { label: 'Sodium', value: '343mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
+  },
+  {
+    slug: 'cinnamon-swirl',
+    name: 'Cinnamon Swirl',
+    tagline: 'Autumnal spice',
+    scales: [
+      { label: 'Sweetness', value: 4 },
+      { label: 'Chewiness', value: 2 },
+      { label: 'Thickness', value: 1 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '264 kcal' },
+      { label: 'Total fat', value: '14.8g' },
+      { label: 'Saturated fat', value: '9.1g', indent: true },
+      { label: 'Carbohydrates', value: '30.7g' },
+      { label: 'Sugars', value: '14.8g', indent: true },
+      { label: 'Fiber', value: '1.1g', indent: true },
+      { label: 'Protein', value: '3g' },
+      { label: 'Sodium', value: '48mg' },
     ],
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],
