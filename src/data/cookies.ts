@@ -85,6 +85,7 @@ export const cookies: Cookie[] = [
       { label: 'Fiber', value: '0.6g', indent: true },
       { label: 'Protein', value: '3g' },
       { label: 'Sodium', value: '78mg' },
+      { label: 'Caffeine', value: 'Yes' },
     ],
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],
@@ -225,6 +226,30 @@ export const cookies: Cookie[] = [
       { label: 'Fiber', value: '1.1g', indent: true },
       { label: 'Protein', value: '3g' },
       { label: 'Sodium', value: '48mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
+  },
+  {
+    slug: 'earl-grey',
+    name: 'Earl Grey',
+    tagline: 'Pinky up',
+    scales: [
+      { label: 'Sweetness', value: 4 },
+      { label: 'Chewiness', value: 4 },
+      { label: 'Thickness', value: 4 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '323 kcal' },
+      { label: 'Total fat', value: '15.3g' },
+      { label: 'Saturated fat', value: '9.2g', indent: true },
+      { label: 'Carbohydrates', value: '41.5g' },
+      { label: 'Sugars', value: '17.8g', indent: true },
+      { label: 'Fiber', value: '0.9g', indent: true },
+      { label: 'Protein', value: '4.3g' },
+      { label: 'Sodium', value: '332mg' },
+      { label: 'Caffeine', value: 'Yes' },
     ],
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk'],
