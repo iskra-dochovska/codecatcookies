@@ -3,9 +3,12 @@ import { useLocation } from 'react-router-dom'
 import { CookieCard } from '../components/CookieCard'
 import { cookies } from '../data/cookies'
 import { allergenColors } from '../data/allergens'
+import { useLanguage } from '../i18n/LanguageContext'
+import { allergenLabels, t } from '../i18n/translations'
 
 function Cookies() {
   const { hash } = useLocation()
+  const { lang } = useLanguage()
 
   useEffect(() => {
     if (!hash) return
@@ -28,7 +31,7 @@ function Cookies() {
               key={allergen}
               className={`rounded-full px-3 py-1 text-xs font-bold ${colors.bg} ${colors.text}`}
             >
-              {allergen}
+              {t(allergenLabels, allergen, lang)}
             </span>
           ))}
         </div>

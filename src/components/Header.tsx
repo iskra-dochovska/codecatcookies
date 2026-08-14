@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import textLogo from '../assets/codecatcookies_text_light.svg'
 import logoMark from '../assets/codecatcookies_logo.svg'
+import { useLanguage } from '../i18n/LanguageContext'
 
 function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { lang, toggleLang } = useLanguage()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -33,6 +35,13 @@ function Header() {
           >
             Cookies
           </Link>
+          <button
+            type="button"
+            onClick={toggleLang}
+            className="rounded-full border border-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-cream uppercase transition-colors hover:bg-cookie-cream hover:text-cookie-charcoal"
+          >
+            {lang === 'en' ? 'MK' : 'ENG'}
+          </button>
         </nav>
 
         <button
@@ -93,29 +102,43 @@ function Header() {
             </svg>
           </button>
 
-          <NavLink
-            to="/"
-            end
-            onClick={() => setOpen(false)}
-            className={({ isActive }) =>
-              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream uppercase ${
-                isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
-              }`
-            }
+          <nav className="flex flex-col gap-3">
+            <NavLink
+              to="/"
+              end
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                `rounded-full px-6 py-3 text-center text-lg font-semibold uppercase transition-colors ${
+                  isActive
+                    ? 'bg-cookie-cream text-cookie-charcoal'
+                    : 'bg-cookie-cream/10 text-cookie-cream hover:bg-cookie-cream/20'
+                }`
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/cookies"
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                `rounded-full px-6 py-3 text-center text-lg font-semibold uppercase transition-colors ${
+                  isActive
+                    ? 'bg-cookie-cream text-cookie-charcoal'
+                    : 'bg-cookie-cream/10 text-cookie-cream hover:bg-cookie-cream/20'
+                }`
+              }
+            >
+              Cookies
+            </NavLink>
+          </nav>
+
+          <button
+            type="button"
+            onClick={toggleLang}
+            className="mt-auto rounded-full border border-cookie-cream px-6 py-3 text-center text-lg font-semibold text-cookie-cream uppercase transition-colors hover:bg-cookie-cream hover:text-cookie-charcoal"
           >
-            Home
-          </NavLink>
-          <NavLink
-            to="/cookies"
-            onClick={() => setOpen(false)}
-            className={({ isActive }) =>
-              `-mx-8 block px-8 py-3 text-lg font-semibold text-cookie-cream uppercase ${
-                isActive ? 'bg-cookie-cream/20' : 'hover:bg-cookie-cream/10'
-              }`
-            }
-          >
-            Cookies
-          </NavLink>
+            {lang === 'en' ? 'MK' : 'ENG'}
+          </button>
         </div>
       </div>
     </header>

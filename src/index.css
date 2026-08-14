@@ -3,6 +3,10 @@
 @import "@fontsource/nunito/latin-500.css";
 @import "@fontsource/nunito/latin-700.css";
 @import "@fontsource/nunito/latin-900.css";
+@import "@fontsource/nunito/cyrillic-400.css";
+@import "@fontsource/nunito/cyrillic-500.css";
+@import "@fontsource/nunito/cyrillic-700.css";
+@import "@fontsource/nunito/cyrillic-900.css";
 @import "./styles/colors.css";
 @import "./styles/fonts.css";
 

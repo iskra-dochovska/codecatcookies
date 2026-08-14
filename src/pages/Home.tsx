@@ -1,48 +1,71 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import sushi from '../assets/sushi.png'
 import { cookies } from '../data/cookies'
 import { shops } from '../data/shops'
 import logoMark from '../assets/codecatcookies_logo.svg'
+import { useLanguage, type Lang } from '../i18n/LanguageContext'
 
-const faqs = [
-  {
-    question: (
-      <span>
-        Are <strong>codecatcookies</strong> only in Skopje?
-      </span>
-    ),
-    answer:
-      "Yes, for now we only sell in Skopje until we figure out how to get the cat a driver's licence.",
-  },
-  {
-    question: "How can I buy cookies for myself or an event I'm organizing?",
-    answer: (
-      <>
-        If you&apos;d like to place a larger order, feel free to email us at{' '}
-        <strong>info@codecatcookies.com</strong> with the cookies you&apos;d like and your
-        contact information and we&apos;ll be in touch. Please make sure to place your
-        order at least 48 hours in advance.
-      </>
-    ),
-  },
-  {
-    question: (
-      <span>
-        How do I start selling <strong>codecatcookies</strong> at my establishment?
-      </span>
-    ),
-    answer: (
-      <>
-        Email us over at <strong>info@codecatcookies.com</strong> and let&apos;s make it
-        happen!
-      </>
-    ),
-  },
-]
+function pickRandomCookies(count: number) {
+  const shuffled = [...cookies].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, count)
+}
+
+function getFaqs(lang: Lang) {
+  if (lang === 'mk') {
+    return [
+      {
+        question: (
+          <span>
+            Дали <strong>codecatcookies</strong> се само во Скопје?
+          </span>
+        ),
+        answer:
+          'Да, за сега продаваме само во Скопје се додека не научиме како да извадеме возачка за мачката.',
+      },
+      {
+        question: 'Како можам да купам колачиња за себе си или за настан што го организирам?',
+        answer: (
+          <>
+            Доколку би сакале да направите поголема нарачка, слободно контактирајте не на{' '}
+            <strong>info@codecatcookies.com</strong> со колачињата и количината што би ја
+            сакале заедно со вашиот телефонски број и ќе ве контактираме. Ве молиме да ја
+            направите вашата нарачка барем 48 часа унапред.
+          </>
+        ),
+      },
+    ]
+  }
+
+  return [
+    {
+      question: (
+        <span>
+          Are <strong>codecatcookies</strong> only in Skopje?
+        </span>
+      ),
+      answer:
+        "Yes, for now we only sell in Skopje until we figure out how to get the cat a driver's licence.",
+    },
+    {
+      question: "How can I buy cookies for myself or an event I'm organizing?",
+      answer: (
+        <>
+          If you&apos;d like to place a larger order, feel free to email us at{' '}
+          <strong>info@codecatcookies.com</strong> with the cookies you&apos;d like and your
+          contact information and we&apos;ll be in touch. Please make sure to place your
+          order at least 48 hours in advance.
+        </>
+      ),
+    },
+  ]
+}
 
 function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const { lang } = useLanguage()
+  const faqs = getFaqs(lang)
+  const featuredCookies = useMemo(() => pickRandomCookies(3), [])
 
   return (
     <>
@@ -51,8 +74,17 @@ function Home() {
           <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
             <img src={logoMark} alt="codecatcookies" className="w-28 sm:w-32" />
             <h1 className="text-5xl leading-[0.95] font-black text-balance text-cookie-cream uppercase sm:text-6xl">
-              The <span className="text-cookie-honey">only</span> cookies you want to
-              accept.
+              {lang === 'mk' ? (
+                <>
+                  <span className="text-cookie-honey">Единствените</span> колачиња кои
+                  сакате да ги прифатите.
+                </>
+              ) : (
+                <>
+                  The <span className="text-cookie-honey">only</span> cookies you want to
+                  accept.
+                </>
+              )}
             </h1>
             <span className="rounded-lg border-2 border-cookie-honey px-4 py-1.5 font-mono text-sm font-bold tracking-widest text-cookie-honey uppercase">
               Coming soon
@@ -66,7 +98,7 @@ function Home() {
 
       <section className="w-full bg-cookie-cream px-6 py-16">
         <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6">
-          {cookies.slice(0, 3).map((cookie, index) => (
+          {featuredCookies.map((cookie, index) => (
             <Link
               key={cookie.slug}
               to={`/cookies#${cookie.slug}`}
@@ -116,13 +148,25 @@ function Home() {
             </div>
             <div className="flex flex-col gap-4 text-center sm:pt-4 sm:text-left">
               <h2 className="text-xl font-black text-cookie-brown uppercase">
-                How did we get here?
+                {lang === 'mk' ? 'Како стигнавме тука?' : 'How did we get here?'}
               </h2>
               <p className="text-cookie-charcoal">
-                <strong>codecatcookies</strong> is what happens when a programmer quits their day job and
-                decides it&apos;s time to touch some grass. The little menace of a cat is
-                Sushi, she&apos;s the lifelong micromanager of the business and she
-                guarantees top notch quality with every batch baked.
+                {lang === 'mk' ? (
+                  <>
+                    <strong>codecatcookies</strong> е резултат на еден програмер што одлучи
+                    да си даде отказ од работа и да оди малку надвор на сонце. Малиот гремлин
+                    што личи на мачка се вика Суши, таа е доживотен микроменаџер на овој
+                    бизнис и гарантира беспрекорен квалитет за секоја тура колачиња што ја
+                    печиме.
+                  </>
+                ) : (
+                  <>
+                    <strong>codecatcookies</strong> is what happens when a programmer quits their day job and
+                    decides it&apos;s time to touch some grass. The little menace of a cat is
+                    Sushi, she&apos;s the lifelong micromanager of the business and she
+                    guarantees top notch quality with every batch baked.
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -154,11 +198,12 @@ function Home() {
       <section className="w-full bg-cookie-rust px-6 py-16">
         <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 text-center">
           <h2 className="text-2xl font-black text-cookie-cream uppercase sm:text-3xl">
-            Follow along
+            {lang === 'mk' ? 'Следете нè' : 'Follow along'}
           </h2>
           <p className="max-w-2xl text-cookie-cream/90">
-            If you&apos;re curious on how we make this whole thing happen, follow us over
-            on Instagram and see the inner workings of a sugar addict and a snappy siamese!
+            {lang === 'mk'
+              ? 'Ако сте љубопитни околу тоа како функционира цела оваа работа, следете нè на Инстаграм и откријте ги позадинските процеси на еден зависник од шеќер и една темпераментна сијамка.'
+              : "If you're curious on how we make this whole thing happen, follow us over on Instagram and see the inner workings of a sugar addict and a snappy siamese!"}
           </p>
           <img src={logoMark} alt="codecatcookies" className="w-36" />
           <a
@@ -175,7 +220,7 @@ function Home() {
       <section className="w-full bg-cookie-brown px-6 pt-16 pb-20">
         <div className="mx-auto w-full max-w-3xl">
           <h2 className="mb-6 text-center text-2xl font-black text-cookie-cream uppercase sm:text-3xl">
-            FAQ
+            {lang === 'mk' ? 'ЧПП' : 'FAQ'}
           </h2>
           <div className="flex flex-col gap-6">
             {faqs.map((faq, index) => {

@@ -1,5 +1,4 @@
 import chocolateChip from '../assets/choco_chip.png'
-import coffeeAndCream from '../assets/coffee_and_cream.webp'
 import doubleChocolatePeanutButter from '../assets/double_choco_pb.png'
 import whiteChocolate from '../assets/white_chocolate.png'
 import lemon from '../assets/lemon.png'
@@ -64,31 +63,6 @@ export const cookies: Cookie[] = [
     ],
     allergens: {
       contains: ['Wheat (gluten)', 'Egg', 'Milk', 'Peanuts'],
-    },
-  },
-  {
-    slug: 'coffee-and-cream',
-    name: 'Coffee and cream',
-    image: coffeeAndCream,
-    tagline: 'Double caffeinated',
-    scales: [
-      { label: 'Sweetness', value: 2 },
-      { label: 'Chewiness', value: 3 },
-      { label: 'Thickness', value: 2 },
-    ],
-    nutrition: [
-      { label: 'Calories', value: '250 kcal' },
-      { label: 'Total fat', value: '12g' },
-      { label: 'Saturated fat', value: '7g', indent: true },
-      { label: 'Carbohydrates', value: '32g' },
-      { label: 'Sugars', value: '15g', indent: true },
-      { label: 'Fiber', value: '0.6g', indent: true },
-      { label: 'Protein', value: '3g' },
-      { label: 'Sodium', value: '78mg' },
-      { label: 'Caffeine', value: 'Yes' },
-    ],
-    allergens: {
-      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
     },
   },
   {

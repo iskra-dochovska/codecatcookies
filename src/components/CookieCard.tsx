@@ -1,8 +1,11 @@
 import { FramedSection } from './CookieDecor'
 import type { Cookie } from '../data/cookies'
 import { allergenColors, defaultAllergenColor } from '../data/allergens'
+import { useLanguage, type Lang } from '../i18n/LanguageContext'
+import { allergenLabels, nutritionLabels, nutritionValues, scaleLabels, t, ui } from '../i18n/translations'
 
 export function CookieCard({ cookie }: { cookie: Cookie }) {
+  const { lang } = useLanguage()
   const hasDetails = Boolean(cookie.nutrition || cookie.allergens)
 
   return (
@@ -26,14 +29,14 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
           <span className="mx-auto w-56 rounded-full border border-cookie-rust bg-cookie-cream px-3 py-1 text-center font-mono text-xs font-bold text-cookie-rust sm:mx-0">
             {cookie.tagline}
           </span>
-          {cookie.scales && <ScaleList scales={cookie.scales} className="mt-2" />}
+          {cookie.scales && <ScaleList scales={cookie.scales} lang={lang} className="mt-2" />}
         </div>
       </div>
 
       {hasDetails && (
         <details className="group">
           <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-sm font-bold text-cookie-cream [&::-webkit-details-marker]:hidden">
-            Nutrition & allergens
+            {t(ui, 'nutritionAndAllergens', lang)}
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -49,8 +52,8 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
           </summary>
 
           <div className="flex flex-col gap-8 pt-6">
-            {cookie.nutrition && <NutritionTable facts={cookie.nutrition} />}
-            {cookie.allergens && <AllergensList allergens={cookie.allergens} />}
+            {cookie.nutrition && <NutritionTable facts={cookie.nutrition} lang={lang} />}
+            {cookie.allergens && <AllergensList allergens={cookie.allergens} lang={lang} />}
           </div>
         </details>
       )}
@@ -60,9 +63,11 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
 
 function ScaleList({
   scales,
+  lang,
   className,
 }: {
   scales: NonNullable<Cookie['scales']>
+  lang: Lang
   className?: string
 }) {
   return (
@@ -71,7 +76,9 @@ function ScaleList({
         const filled = Math.round(scale.value)
         return (
           <div key={scale.label} className="flex flex-col items-center gap-1 sm:items-start">
-            <span className="text-xs font-bold text-cookie-brown uppercase">{scale.label}</span>
+            <span className="text-xs font-bold text-cookie-brown uppercase">
+              {t(scaleLabels, scale.label, lang)}
+            </span>
             <div className="flex h-3.5 w-40 gap-0.5 rounded-full bg-cookie-charcoal/10 p-0.5 sm:w-52">
               {[1, 2, 3, 4, 5].map((segment) => (
                 <span
@@ -89,13 +96,19 @@ function ScaleList({
   )
 }
 
-function NutritionTable({ facts }: { facts: NonNullable<Cookie['nutrition']> }) {
+function NutritionTable({
+  facts,
+  lang,
+}: {
+  facts: NonNullable<Cookie['nutrition']>
+  lang: Lang
+}) {
   return (
     <div>
       <h3 className="mb-3 text-lg font-black text-cookie-brown uppercase">
-        Nutrition
+        {t(ui, 'nutrition', lang)}
         <span className="ml-2 font-mono text-sm font-normal text-cookie-charcoal/60 normal-case">
-          per cookie
+          {t(ui, 'perCookie', lang)}
         </span>
       </h3>
       <dl className="flex flex-col gap-1 rounded-xl bg-cookie-cream/40 px-4 py-3 font-mono text-sm">
@@ -106,22 +119,30 @@ function NutritionTable({ facts }: { facts: NonNullable<Cookie['nutrition']> }) 
               fact.indent ? 'pl-4 text-cookie-charcoal/70' : 'font-bold text-cookie-brown'
             }`}
           >
-            <dt>{fact.label}</dt>
-            <dd>{fact.value}</dd>
+            <dt>{t(nutritionLabels, fact.label, lang)}</dt>
+            <dd>{t(nutritionValues, fact.value, lang)}</dd>
           </div>
         ))}
       </dl>
       <p className="mt-2 text-xs text-cookie-charcoal/60">
-        Values are rough estimates, not exact calculations.
+        {t(ui, 'nutritionDisclaimer', lang)}
       </p>
     </div>
   )
 }
 
-function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens']> }) {
+function AllergensList({
+  allergens,
+  lang,
+}: {
+  allergens: NonNullable<Cookie['allergens']>
+  lang: Lang
+}) {
   return (
     <div>
-      <h3 className="mb-3 text-lg font-black text-cookie-brown uppercase">Allergens</h3>
+      <h3 className="mb-3 text-lg font-black text-cookie-brown uppercase">
+        {t(ui, 'allergens', lang)}
+      </h3>
       <div className="flex flex-wrap gap-2">
         {allergens.contains.map((allergen) => {
           const colors = allergenColors[allergen] ?? defaultAllergenColor
@@ -130,7 +151,7 @@ function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens
               key={allergen}
               className={`rounded-full px-3 py-1 text-sm font-bold ${colors.bg} ${colors.text}`}
             >
-              {allergen}
+              {t(allergenLabels, allergen, lang)}
             </span>
           )
         })}
@@ -141,7 +162,7 @@ function AllergensList({ allergens }: { allergens: NonNullable<Cookie['allergens
               key={allergen}
               className={`rounded-full px-3 py-1 text-sm font-bold ${colors.mutedBg} ${colors.text}`}
             >
-              May contain: {allergen}
+              {t(ui, 'mayContain', lang)}: {t(allergenLabels, allergen, lang)}
             </span>
           )
         })}
