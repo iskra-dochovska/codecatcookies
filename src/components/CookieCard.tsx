@@ -21,7 +21,13 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
               {cookie.price} {t(ui, 'currency', lang)}
             </span>
           </div>
-          <CartControls cookie={cookie} quantity={quantity} increment={increment} decrement={decrement} />
+          <CartControls
+            cookie={cookie}
+            quantity={quantity}
+            increment={increment}
+            decrement={decrement}
+            className="hidden sm:flex"
+          />
         </div>
         <div className="flex flex-col items-center gap-3 text-center sm:items-start sm:text-left">
           <h2 className="text-2xl font-black text-cookie-brown uppercase">
@@ -46,7 +52,7 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
 
       {hasDetails && (
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-sm font-bold text-cookie-cream [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-center text-sm font-bold text-cookie-cream [&::-webkit-details-marker]:hidden">
             {t(ui, 'nutritionAndAllergens', lang)}
             <svg
               viewBox="0 0 24 24"
@@ -68,6 +74,14 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
           </div>
         </details>
       )}
+
+      <CartControls
+        cookie={cookie}
+        quantity={quantity}
+        increment={increment}
+        decrement={decrement}
+        className="flex sm:hidden"
+      />
     </FramedSection>
   )
 }
@@ -77,20 +91,25 @@ function CartControls({
   quantity,
   increment,
   decrement,
+  className,
 }: {
   cookie: Cookie
   quantity: number
   increment: (slug: string) => void
   decrement: (slug: string) => void
+  className?: string
 }) {
+  const { lang } = useLanguage()
+
   return (
-    <div className="flex items-center justify-center gap-3 rounded-full bg-cookie-rust px-3 py-1.5 text-cookie-cream">
+    <div
+      className={`items-center justify-center gap-3 rounded-full bg-cookie-rust px-3 py-1.5 text-cookie-cream ${className ?? 'flex'}`}
+    >
       {quantity === 0 ? (
         <button
           type="button"
           onClick={() => increment(cookie.slug)}
-          aria-label="Add to cart"
-          className="flex h-5 w-5 items-center justify-center"
+          className="flex items-center gap-2 px-1 text-xs font-bold uppercase"
         >
           <svg
             viewBox="0 0 24 24"
@@ -99,13 +118,14 @@ function CartControls({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-4 w-4"
+            className="h-4 w-4 flex-none"
             aria-hidden="true"
           >
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
             <path d="M3 6h18" />
             <path d="M16 10a4 4 0 0 1-8 0" />
           </svg>
+          {t(ui, 'addToCart', lang)}
         </button>
       ) : (
         <div className="flex items-center gap-2">

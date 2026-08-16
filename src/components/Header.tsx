@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import textLogo from '../assets/codecatcookies_text_light.svg'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage } from '../i18n/LanguageContext'
+import { t, ui } from '../i18n/translations'
 import { useCart } from '../cart/CartContext'
 import { CartDrawer } from './CartDrawer'
 
@@ -68,7 +69,7 @@ function Header() {
             to="/cookies"
             className="rounded-full bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal uppercase transition-transform hover:-translate-y-0.5"
           >
-            Cookies
+            {t(ui, 'navCookies', lang)}
           </Link>
           <CartButton count={totalCount} onClick={() => setCartOpen(true)} />
           <button
@@ -154,7 +155,7 @@ function Header() {
                 }`
               }
             >
-              Home
+              {t(ui, 'navHome', lang)}
             </NavLink>
             <NavLink
               to="/cookies"
@@ -167,7 +168,7 @@ function Header() {
                 }`
               }
             >
-              Cookies
+              {t(ui, 'navCookies', lang)}
             </NavLink>
           </nav>
 

@@ -31,7 +31,9 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         }`}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-black text-cookie-brown uppercase">Your cart</h2>
+          <h2 className="text-lg font-black text-cookie-brown uppercase">
+            {t(ui, 'yourCart', lang)}
+          </h2>
           <button
             type="button"
             onClick={onClose}
@@ -56,7 +58,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
         {lines.length === 0 ? (
           <p className="text-sm text-cookie-charcoal/60">
-            Your cart is empty. Add some cookies!
+            {t(ui, 'emptyCartMessage', lang)}
           </p>
         ) : (
           <>
@@ -116,11 +118,11 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
             <div className="flex flex-col gap-1 border-t-2 border-dashed border-cookie-charcoal/30 pt-4 font-mono text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-cookie-charcoal/70">Cookies</span>
+                <span className="text-cookie-charcoal/70">{t(ui, 'cookiesCountLabel', lang)}</span>
                 <span className="font-bold text-cookie-brown">{totalCount}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-cookie-charcoal/70">Total</span>
+                <span className="text-cookie-charcoal/70">{t(ui, 'total', lang)}</span>
                 <span className="font-bold text-cookie-brown">
                   {total} {t(ui, 'currency', lang)}
                 </span>
@@ -136,7 +138,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                 {t(ui, 'checkout', lang)}
               </Link>
             ) : (
-              <p className="text-center text-xs text-cookie-charcoal/60">
+              <p className="text-center text-xs font-bold text-cookie-charcoal/60 uppercase">
                 {t(ui, 'checkoutMinNotice', lang).replace(
                   '{n}',
                   String(MIN_CHECKOUT_ITEMS - totalCount),

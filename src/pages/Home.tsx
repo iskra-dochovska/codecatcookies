@@ -4,41 +4,78 @@ import sushi from '../assets/sushi.png'
 import { cookies } from '../data/cookies'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
+import { t, ui } from '../i18n/translations'
 
 function pickRandomCookies(count: number) {
   const shuffled = [...cookies].sort(() => Math.random() - 0.5)
   return shuffled.slice(0, count)
 }
 
-const buySteps = [
-  {
-    title: 'Choose your cookies',
-    description: (
-      <>
-        Browse our Cookies page and add whatever you&apos;d like to buy to your cart. Our
-        cookies come in a box of 4, so the minimum order is 4 cookies.
-      </>
-    ),
-  },
-  {
-    title: 'Schedule your order',
-    description: (
-      <>
-        <strong>codecatcookies</strong> are always baked fresh and have to pass the
-        mandatory Sushi inspection, so your order must be placed at least a day in advance.
-      </>
-    ),
-  },
-  {
-    title: 'Pick up',
-    description: (
-      <>
-        Currently we only offer pickup until we build out our little shop. Your cookies
-        will be waiting your arrival!
-      </>
-    ),
-  },
-]
+function getBuySteps(lang: Lang) {
+  if (lang === 'mk') {
+    return [
+      {
+        title: 'Изберете ги вашите колачиња',
+        description: (
+          <>
+            Прелистајте ја страницата Колачиња и додадете во кошничката сè што сакате да
+            купите. Нашите колачиња доаѓаат во кутија од 4, па минималната нарачка е 4
+            колачиња.
+          </>
+        ),
+      },
+      {
+        title: 'Закажете ја вашата нарачка',
+        description: (
+          <>
+            <strong>codecatcookies</strong> секогаш се печат свежи и мора да ја поминат
+            задолжителната инспекција на Суши, па вашата нарачка мора да биде направена
+            барем еден ден однапред.
+          </>
+        ),
+      },
+      {
+        title: 'Подигање',
+        description: (
+          <>
+            Моментално нудиме само подигање додека не ја изградиме нашата мала продавница.
+            Вашите колачиња ќе ве чекаат!
+          </>
+        ),
+      },
+    ]
+  }
+
+  return [
+    {
+      title: 'Choose your cookies',
+      description: (
+        <>
+          Browse our Cookies page and add whatever you&apos;d like to buy to your cart. Our
+          cookies come in a box of 4, so the minimum order is 4 cookies.
+        </>
+      ),
+    },
+    {
+      title: 'Schedule your order',
+      description: (
+        <>
+          <strong>codecatcookies</strong> are always baked fresh and have to pass the
+          mandatory Sushi inspection, so your order must be placed at least a day in advance.
+        </>
+      ),
+    },
+    {
+      title: 'Pick up',
+      description: (
+        <>
+          Currently we only offer pickup until we build out our little shop. Your cookies
+          will be waiting your arrival!
+        </>
+      ),
+    },
+  ]
+}
 
 function getFaqs(lang: Lang) {
   if (lang === 'mk') {
@@ -94,6 +131,7 @@ function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const { lang } = useLanguage()
   const faqs = getFaqs(lang)
+  const buySteps = getBuySteps(lang)
   const featuredCookies = useMemo(() => pickRandomCookies(3), [])
 
   return (
@@ -102,7 +140,13 @@ function Home() {
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-10 sm:flex-row sm:justify-between">
           <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
             <img src={logoMark} alt="codecatcookies" className="w-28 sm:w-32" />
-            <h1 className="text-5xl leading-[0.95] font-black text-balance text-cookie-cream uppercase sm:text-6xl">
+            <h1
+              className={`font-black text-balance text-cookie-cream uppercase ${
+                lang === 'mk'
+                  ? 'text-3xl leading-[1.05] sm:text-4xl'
+                  : 'text-5xl leading-[0.95] sm:text-6xl'
+              }`}
+            >
               {lang === 'mk' ? (
                 <>
                   <span className="text-cookie-honey">Единствените</span> колачиња кои
@@ -115,9 +159,6 @@ function Home() {
                 </>
               )}
             </h1>
-            <span className="rounded-lg border-2 border-cookie-honey px-4 py-1.5 font-mono text-sm font-bold tracking-widest text-cookie-honey uppercase">
-              Coming soon
-            </span>
           </div>
           <div className="flex h-64 w-full max-w-sm items-center justify-center rounded-2xl border-2 border-dashed border-cookie-cream/40 text-sm text-cookie-cream/50 sm:h-80">
             Image
@@ -160,7 +201,7 @@ function Home() {
             to="/cookies"
             className="rounded-full bg-cookie-rust px-6 py-3 text-sm font-black text-cookie-cream uppercase transition-transform hover:-translate-y-0.5"
           >
-            See all cookies
+            {t(ui, 'seeAllCookies', lang)}
           </Link>
         </div>
       </section>
@@ -205,7 +246,7 @@ function Home() {
       <section className="w-full bg-cookie-cream px-6 py-16">
         <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-10 text-center">
           <h2 className="text-2xl font-black text-cookie-brown uppercase sm:text-3xl">
-            How to buy codecatcookies
+            {t(ui, 'howToBuy', lang)}
           </h2>
           <div className="grid w-full gap-6 sm:grid-cols-3">
             {buySteps.map((step, index) => (
@@ -244,7 +285,7 @@ function Home() {
             rel="noopener noreferrer"
             className="rounded-full bg-cookie-cream px-6 py-3 text-sm font-black text-cookie-brown uppercase transition-transform hover:-translate-y-0.5"
           >
-            Follow @codecatcookies
+            {t(ui, 'followButton', lang)}
           </a>
         </div>
       </section>

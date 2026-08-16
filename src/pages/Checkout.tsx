@@ -132,7 +132,7 @@ function Checkout() {
         <h1 className="text-3xl font-black text-cookie-brown uppercase">
           {t(ui, 'checkout', lang)}
         </h1>
-        <p className="text-cookie-charcoal/80">
+        <p className="font-bold text-cookie-charcoal/80 uppercase">
           {t(ui, 'checkoutMinNotice', lang).replace('{n}', String(MIN_CHECKOUT_ITEMS - totalCount))}
         </p>
         <Link

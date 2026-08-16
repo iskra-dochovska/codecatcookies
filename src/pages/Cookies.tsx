@@ -4,7 +4,7 @@ import { CookieCard } from '../components/CookieCard'
 import { cookies } from '../data/cookies'
 import { allergenColors } from '../data/allergens'
 import { useLanguage } from '../i18n/LanguageContext'
-import { allergenLabels, t } from '../i18n/translations'
+import { allergenLabels, t, ui } from '../i18n/translations'
 
 function Cookies() {
   const { hash } = useLocation()
@@ -23,7 +23,7 @@ function Cookies() {
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16">
       <div className="text-center">
         <h1 className="text-3xl font-black text-cookie-brown uppercase sm:text-4xl">
-          Find your favorite
+          {t(ui, 'findYourFavorite', lang)}
         </h1>
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           {Object.entries(allergenColors).map(([allergen, colors]) => (

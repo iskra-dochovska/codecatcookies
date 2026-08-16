@@ -38,6 +38,7 @@ export const allergenLabels: Dict = {
 
 export const ui: Dict = {
   currency: { en: 'den', mk: 'ден' },
+  addToCart: { en: 'Add to cart', mk: 'Додади во кошничка' },
   nutritionAndAllergens: { en: 'Nutrition & allergens', mk: 'Нутритивна вредност и алергени' },
   nutrition: { en: 'Nutrition', mk: 'Нутритивна вредност' },
   perCookie: { en: 'per cookie', mk: 'по колаче' },
@@ -49,8 +50,8 @@ export const ui: Dict = {
   },
   checkout: { en: 'Checkout', mk: 'Нарачај' },
   checkoutMinNotice: {
-    en: 'Add {n} more cookie(s) to checkout — minimum order is 4.',
-    mk: 'Додадете уште {n} колаче/а за нарачка — минимум е 4.',
+    en: 'Minimum order is 4 cookies, add {n} more to checkout.',
+    mk: 'Минималната нарачка е 4 колачиња, додадете уште {n} за нарачка.',
   },
   checkoutTitle: { en: 'Complete your order', mk: 'Завршете ја нарачката' },
   orderSummary: { en: 'Order summary', mk: 'Преглед на нарачка' },
@@ -93,4 +94,23 @@ export const ui: Dict = {
     mk: 'Ви благодариме за нарачката, проверете ја вашата е-пошта за потврда на нарачката.',
   },
   backToCookies: { en: 'Back to cookies', mk: 'Назад кон колачиња' },
+
+  navHome: { en: 'Home', mk: 'Почетна' },
+  navCookies: { en: 'Cookies', mk: 'Колачиња' },
+
+  yourCart: { en: 'Your cart', mk: 'Вашата кошничка' },
+  emptyCartMessage: {
+    en: 'Your cart is empty. Add some cookies!',
+    mk: 'Вашата кошничка е празна. Додадете колачиња!',
+  },
+  cookiesCountLabel: { en: 'Cookies', mk: 'Колачиња' },
+  total: { en: 'Total', mk: 'Вкупно' },
+
+  allRightsReserved: { en: 'All rights reserved.', mk: 'Сите права задржани.' },
+
+  findYourFavorite: { en: 'Find your favorite', mk: 'Пронајдете го вашето омилено' },
+
+  seeAllCookies: { en: 'See all cookies', mk: 'Погледнете ги сите колачиња' },
+  howToBuy: { en: 'How to buy codecatcookies', mk: 'Како да купите codecatcookies' },
+  followButton: { en: 'Follow @codecatcookies', mk: 'Следете @codecatcookies' },
 }
