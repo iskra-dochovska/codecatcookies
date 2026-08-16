@@ -70,17 +70,9 @@ export const ui: Dict = {
     mk: 'Нема слободни термини тој ден — нарачките бараат најмалку 24ч претходно. Изберете подоцнежен датум.',
   },
   pickupAddressLabel: { en: 'Pickup address', mk: 'Адреса за подигање' },
-  pickupAddressNotice: {
-    en: 'Orders are picked up at Prashka 9, 1000 Skopje. Please arrive within your selected time slot.',
-    mk: 'Нарачките се подигаат на Прашка 9, 1000 Скопје. Ве молиме доjдете во избраниот термин.',
-  },
-  advanceNoticeNotice: {
-    en: 'Pickup must be at least 24 hours from now.',
-    mk: 'Подигањето мора да биде најмалку 24 часа од сега.',
-  },
   cashPaymentNotice: {
-    en: 'Payment is made in cash at pickup.',
-    mk: 'Плаќањето се врши во готово при подигање.',
+    en: 'Payment: done in cash at pickup',
+    mk: 'Плаќање: во готово при подигање',
   },
   placeOrder: { en: 'Place order', mk: 'Потврди нарачка' },
   placingOrder: { en: 'Placing order…', mk: 'Се испраќа…' },

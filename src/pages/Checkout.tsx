@@ -166,7 +166,7 @@ function Checkout() {
           </div>
         ))}
         <div className="mt-2 flex items-center justify-between border-t-2 border-dashed border-cookie-charcoal/30 pt-2 font-mono text-sm">
-          <span className="text-cookie-charcoal/70">{t(ui, 'checkout', lang)}</span>
+          <span className="text-cookie-charcoal/70">{t(ui, 'total', lang)}</span>
           <span className="font-bold text-cookie-brown">
             {total} {t(ui, 'currency', lang)}
           </span>
@@ -236,8 +236,10 @@ function Checkout() {
               required
               min={minDate}
               value={date}
+              lang={lang === 'mk' ? 'mk-MK' : 'en-GB'}
+              onClick={(event) => event.currentTarget.showPicker?.()}
               onChange={(event) => handleDateChange(event.target.value)}
-              className="rounded-xl border border-cookie-charcoal/20 bg-white px-4 py-2 text-cookie-charcoal"
+              className="cursor-pointer rounded-xl border border-cookie-charcoal/20 bg-white px-4 py-2 text-cookie-charcoal"
             />
           </label>
 
@@ -282,13 +284,13 @@ function Checkout() {
           <p className="text-sm font-bold text-cookie-rust">{t(ui, 'noTimesAvailable', lang)}</p>
         )}
 
-        <div className="flex flex-col gap-1 rounded-xl bg-cookie-cream/60 px-4 py-3 text-sm text-cookie-charcoal/80">
+        <div className="flex flex-col items-center gap-1 rounded-xl border-2 border-cookie-rust bg-cookie-cream/60 px-4 py-3 text-center text-sm">
           <span className="font-bold text-cookie-brown uppercase">
             {t(ui, 'pickupAddressLabel', lang)}: {PICKUP_ADDRESS}
           </span>
-          <span>{t(ui, 'pickupAddressNotice', lang)}</span>
-          <span>{t(ui, 'advanceNoticeNotice', lang)}</span>
-          <span>{t(ui, 'cashPaymentNotice', lang)}</span>
+          <span className="font-bold text-cookie-brown uppercase">
+            {t(ui, 'cashPaymentNotice', lang)}
+          </span>
         </div>
 
         {submitError && (
