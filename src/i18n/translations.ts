@@ -89,8 +89,8 @@ export const ui: Dict = {
   },
   orderConfirmedTitle: { en: 'Order received!', mk: 'Нарачката е примена!' },
   orderConfirmedBody: {
-    en: "We'll see you at Prashka 9, 1000 Skopje at your chosen time.",
-    mk: 'Ве очекуваме на Прашка 9, 1000 Скопје во избраното време.',
+    en: 'Thank you for your order, please check your email for your order confirmation.',
+    mk: 'Ви благодариме за нарачката, проверете ја вашата е-пошта за потврда на нарачката.',
   },
   backToCookies: { en: 'Back to cookies', mk: 'Назад кон колачиња' },
 }

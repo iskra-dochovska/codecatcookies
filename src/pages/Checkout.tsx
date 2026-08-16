@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { FramedSection } from '../components/CookieDecor'
 import { cookies } from '../data/cookies'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
@@ -26,9 +26,12 @@ const TIME_SLOTS = (() => {
   return slots
 })()
 
+const CONFIRMATION_REDIRECT_MS = 4000
+
 function Checkout() {
   const { lang } = useLanguage()
   const { items, clear } = useCart()
+  const navigate = useNavigate()
 
   const lines = Object.entries(items).flatMap(([slug, quantity]) => {
     const cookie = cookies.find((c) => c.slug === slug)
@@ -64,6 +67,12 @@ function Checkout() {
       return slotDate.getTime() >= earliestPickup.getTime()
     })
   }, [date, earliestPickup])
+
+  useEffect(() => {
+    if (!submitted) return
+    const timeout = setTimeout(() => navigate('/'), CONFIRMATION_REDIRECT_MS)
+    return () => clearTimeout(timeout)
+  }, [submitted, navigate])
 
   const handleDateChange = (value: string) => {
     setDate(value)
@@ -113,12 +122,6 @@ function Checkout() {
           {t(ui, 'orderConfirmedTitle', lang)}
         </h1>
         <p className="text-cookie-charcoal/80">{t(ui, 'orderConfirmedBody', lang)}</p>
-        <Link
-          to="/cookies"
-          className="mx-auto rounded-full bg-cookie-rust px-6 py-2 text-sm font-bold text-cookie-cream uppercase"
-        >
-          {t(ui, 'backToCookies', lang)}
-        </Link>
       </section>
     )
   }
