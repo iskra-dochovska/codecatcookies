@@ -4,7 +4,9 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import Cookies from './pages/Cookies'
+import Checkout from './pages/Checkout'
 import { LanguageProvider } from './i18n/LanguageContext'
+import { CartProvider } from './cart/CartContext'
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
@@ -20,19 +22,22 @@ function ScrollToTop() {
 function App() {
   return (
     <LanguageProvider>
-      <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
-        <ScrollToTop />
-        <Header />
+      <CartProvider>
+        <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
+          <ScrollToTop />
+          <Header />
 
-        <main className="flex flex-1 flex-col">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/cookies" element={<Cookies />} />
-          </Routes>
-        </main>
+          <main className="flex flex-1 flex-col">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/cookies" element={<Cookies />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Routes>
+          </main>
 
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </CartProvider>
     </LanguageProvider>
   )
 }

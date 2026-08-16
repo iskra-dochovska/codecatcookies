@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import sushi from '../assets/sushi.png'
 import { cookies } from '../data/cookies'
-import { shops } from '../data/shops'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
 
@@ -10,6 +9,36 @@ function pickRandomCookies(count: number) {
   const shuffled = [...cookies].sort(() => Math.random() - 0.5)
   return shuffled.slice(0, count)
 }
+
+const buySteps = [
+  {
+    title: 'Choose your cookies',
+    description: (
+      <>
+        Browse our Cookies page and add whatever you&apos;d like to buy to your cart. Our
+        cookies come in a box of 4, so the minimum order is 4 cookies.
+      </>
+    ),
+  },
+  {
+    title: 'Schedule your order',
+    description: (
+      <>
+        <strong>codecatcookies</strong> are always baked fresh and have to pass the
+        mandatory Sushi inspection, so your order must be placed at least a day in advance.
+      </>
+    ),
+  },
+  {
+    title: 'Pick up',
+    description: (
+      <>
+        Currently we only offer pickup until we build out our little shop. Your cookies
+        will be waiting your arrival!
+      </>
+    ),
+  },
+]
 
 function getFaqs(lang: Lang) {
   if (lang === 'mk') {
@@ -102,14 +131,14 @@ function Home() {
             <Link
               key={cookie.slug}
               to={`/cookies#${cookie.slug}`}
-              className={`flex w-full flex-col items-center gap-6 rounded-2xl bg-cookie-honey p-6 sm:flex-row sm:items-start ${
+              className={`flex w-full flex-col items-center gap-6 rounded-2xl bg-cookie-honey p-6 sm:flex-row sm:items-start sm:justify-center sm:gap-12 ${
                 index % 2 === 1 ? 'sm:flex-row-reverse' : ''
               }`}
             >
               <div className="flex h-40 w-full flex-none items-center justify-center rounded-xl border-2 border-dashed border-cookie-charcoal/40 text-sm text-cookie-charcoal/50 sm:w-56">
                 Image
               </div>
-              <div className="flex flex-col gap-2 text-center sm:text-left">
+              <div className="flex flex-col items-center gap-2 text-center sm:w-56 sm:flex-none sm:items-start sm:text-left">
                 <h3 className="text-xl font-black text-cookie-brown uppercase">
                   {cookie.slug === 'double-chocolate-peanut-butter' ? (
                     <>
@@ -173,23 +202,26 @@ function Home() {
         </div>
       </section>
 
-      <section className="flex w-full min-h-[22rem] items-center bg-cookie-cream px-6 py-16">
-        <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 text-center">
+      <section className="w-full bg-cookie-cream px-6 py-16">
+        <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-10 text-center">
           <h2 className="text-2xl font-black text-cookie-brown uppercase sm:text-3xl">
-            Where can you buy our cookies?
+            How to buy codecatcookies
           </h2>
-          <p className="max-w-lg text-cookie-charcoal">
-            <strong>codecatcookies</strong> will soon be offered at your favorite cafes
-            around town, follow us for more!
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {shops.map((shop) => (
-              <span
-                key={shop.name}
-                className="rounded-full bg-white px-4 py-2 text-sm font-bold text-cookie-brown uppercase"
+          <div className="grid w-full gap-6 sm:grid-cols-3">
+            {buySteps.map((step, index) => (
+              <div
+                key={step.title}
+                className="flex flex-col items-center gap-4 rounded-2xl bg-cookie-honey p-6 text-center"
               >
-                {shop.name}
-              </span>
+                <div className="flex h-32 w-full items-center justify-center rounded-xl border-2 border-dashed border-cookie-charcoal/40 text-sm text-cookie-charcoal/50">
+                  Illustration
+                </div>
+                <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-cookie-rust text-sm font-black text-cookie-cream">
+                  {index + 1}
+                </span>
+                <h3 className="text-lg font-black text-cookie-brown uppercase">{step.title}</h3>
+                <p className="text-sm text-cookie-charcoal">{step.description}</p>
+              </div>
             ))}
           </div>
         </div>

@@ -8,6 +8,7 @@ export type Cookie = {
   name: string
   image?: string
   tagline: string
+  price: number
   scales?: { label: string; value: number }[]
   nutrition?: { label: string; value: string; indent?: boolean }[]
   allergens?: {
@@ -22,6 +23,7 @@ export const cookies: Cookie[] = [
     name: 'Chocolate chip',
     image: chocolateChip,
     tagline: 'Our take on a classic',
+    price: 60,
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 2 },
@@ -46,6 +48,7 @@ export const cookies: Cookie[] = [
     name: 'Double chocolate peanut butter',
     image: doubleChocolatePeanutButter,
     tagline: 'Nutty and sticky',
+    price: 80,
     scales: [
       { label: 'Sweetness', value: 5 },
       { label: 'Chewiness', value: 4 },
@@ -70,6 +73,7 @@ export const cookies: Cookie[] = [
     name: 'White chocolate',
     image: whiteChocolate,
     tagline: 'Milky, sweet goodness',
+    price: 80,
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
@@ -94,6 +98,7 @@ export const cookies: Cookie[] = [
     name: 'Lemon',
     image: lemon,
     tagline: 'Zesty and bright',
+    price: 90,
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 4 },
@@ -117,6 +122,7 @@ export const cookies: Cookie[] = [
     slug: 'caramel',
     name: 'Caramel',
     tagline: 'Sticky sweet',
+    price: 70,
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
@@ -140,6 +146,7 @@ export const cookies: Cookie[] = [
     slug: 'oatmeal',
     name: 'Oatmeal',
     tagline: 'Pass the oats brother',
+    price: 60,
     scales: [
       { label: 'Sweetness', value: 3 },
       { label: 'Chewiness', value: 3 },
@@ -163,6 +170,7 @@ export const cookies: Cookie[] = [
     slug: 'cornflakes-and-oats',
     name: 'Cornflakes & Oats',
     tagline: 'Breakfast of champions',
+    price: 70,
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 2 },
@@ -186,6 +194,7 @@ export const cookies: Cookie[] = [
     slug: 'cinnamon-swirl',
     name: 'Cinnamon Swirl',
     tagline: 'Autumnal spice',
+    price: 70,
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 2 },
@@ -209,6 +218,7 @@ export const cookies: Cookie[] = [
     slug: 'earl-grey',
     name: 'Earl Grey',
     tagline: 'Pinky up',
+    price: 80,
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },

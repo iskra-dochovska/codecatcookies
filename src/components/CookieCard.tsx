@@ -3,18 +3,27 @@ import type { Cookie } from '../data/cookies'
 import { allergenColors, defaultAllergenColor } from '../data/allergens'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
 import { allergenLabels, nutritionLabels, nutritionValues, scaleLabels, t, ui } from '../i18n/translations'
+import { useCart } from '../cart/CartContext'
 
 export function CookieCard({ cookie }: { cookie: Cookie }) {
   const { lang } = useLanguage()
+  const { items, increment, decrement } = useCart()
+  const quantity = items[cookie.slug] ?? 0
   const hasDetails = Boolean(cookie.nutrition || cookie.allergens)
 
   return (
     <FramedSection id={cookie.slug} className="flex flex-col gap-6 scroll-mt-6">
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
-        <div className="flex h-48 w-48 flex-none items-center justify-center rounded-2xl bg-cookie-charcoal/5 text-sm text-cookie-charcoal/50 sm:w-56">
-          Image
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative flex h-48 w-48 flex-none items-center justify-center rounded-2xl bg-cookie-charcoal/5 text-sm text-cookie-charcoal/50 sm:w-56">
+            Image
+            <span className="absolute top-2 right-2 rounded-full bg-cookie-rust px-2 py-1 font-mono text-xs font-bold text-cookie-cream">
+              {cookie.price} {t(ui, 'currency', lang)}
+            </span>
+          </div>
+          <CartControls cookie={cookie} quantity={quantity} increment={increment} decrement={decrement} />
         </div>
-        <div className="flex flex-col gap-3 text-center sm:text-left">
+        <div className="flex flex-col items-center gap-3 text-center sm:items-start sm:text-left">
           <h2 className="text-2xl font-black text-cookie-brown uppercase">
             {cookie.slug === 'double-chocolate-peanut-butter' ? (
               <>
@@ -26,10 +35,12 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
               cookie.name
             )}
           </h2>
-          <span className="mx-auto w-56 rounded-full border border-cookie-rust bg-cookie-cream px-3 py-1 text-center font-mono text-xs font-bold text-cookie-rust sm:mx-0">
-            {cookie.tagline}
-          </span>
-          {cookie.scales && <ScaleList scales={cookie.scales} lang={lang} className="mt-2" />}
+          <div className="flex w-56 flex-col items-center gap-3 sm:w-auto sm:items-start">
+            <span className="w-full rounded-full border border-cookie-rust bg-cookie-cream px-3 py-1 text-center font-mono text-xs font-bold text-cookie-rust">
+              {cookie.tagline}
+            </span>
+            {cookie.scales && <ScaleList scales={cookie.scales} lang={lang} className="w-full" />}
+          </div>
         </div>
       </div>
 
@@ -61,6 +72,66 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
   )
 }
 
+function CartControls({
+  cookie,
+  quantity,
+  increment,
+  decrement,
+}: {
+  cookie: Cookie
+  quantity: number
+  increment: (slug: string) => void
+  decrement: (slug: string) => void
+}) {
+  return (
+    <div className="flex items-center justify-center gap-3 rounded-full bg-cookie-rust px-3 py-1.5 text-cookie-cream">
+      {quantity === 0 ? (
+        <button
+          type="button"
+          onClick={() => increment(cookie.slug)}
+          aria-label="Add to cart"
+          className="flex h-5 w-5 items-center justify-center"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+            aria-hidden="true"
+          >
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+            <path d="M3 6h18" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+        </button>
+      ) : (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => decrement(cookie.slug)}
+            aria-label="Decrease quantity"
+            className="flex h-5 w-5 items-center justify-center text-lg font-bold"
+          >
+            −
+          </button>
+          <span className="w-4 text-center text-sm font-bold">{quantity}</span>
+          <button
+            type="button"
+            onClick={() => increment(cookie.slug)}
+            aria-label="Increase quantity"
+            className="flex h-5 w-5 items-center justify-center text-lg font-bold"
+          >
+            +
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ScaleList({
   scales,
   lang,
@@ -79,7 +150,7 @@ function ScaleList({
             <span className="text-xs font-bold text-cookie-brown uppercase">
               {t(scaleLabels, scale.label, lang)}
             </span>
-            <div className="flex h-3.5 w-40 gap-0.5 rounded-full bg-cookie-charcoal/10 p-0.5 sm:w-52">
+            <div className="flex h-3.5 w-full gap-0.5 rounded-full bg-cookie-charcoal/10 p-0.5 sm:w-52">
               {[1, 2, 3, 4, 5].map((segment) => (
                 <span
                   key={segment}
