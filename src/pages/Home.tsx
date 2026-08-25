@@ -254,9 +254,6 @@ function Home() {
                 key={step.title}
                 className="flex flex-col items-center gap-4 rounded-2xl bg-cookie-honey p-6 text-center"
               >
-                <div className="flex h-32 w-full items-center justify-center rounded-xl border-2 border-dashed border-cookie-charcoal/40 text-sm text-cookie-charcoal/50">
-                  Illustration
-                </div>
                 <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-cookie-rust text-sm font-black text-cookie-cream">
                   {index + 1}
                 </span>
