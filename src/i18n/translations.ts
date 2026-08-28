@@ -103,6 +103,7 @@ export const ui: Dict = {
   phone: { en: 'Phone number', mk: 'Телефонски број' },
   pickupDate: { en: 'Pickup date', mk: 'Датум за подигање' },
   pickupTime: { en: 'Pickup time', mk: 'Час за подигање' },
+  selectDate: { en: 'Select a date', mk: 'Изберете датум' },
   selectTime: { en: 'Select a time', mk: 'Изберете час' },
   noTimesAvailable: {
     en: 'No pickup times left that day — orders need at least 24h notice. Pick a later date.',

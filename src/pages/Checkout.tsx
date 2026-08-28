@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FramedSection } from '../components/CookieDecor'
+import DatePicker from '../components/DatePicker'
+import TimeSelect from '../components/TimeSelect'
 import { cookies } from '../data/cookies'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
 import { useLanguage } from '../i18n/LanguageContext'
@@ -231,15 +233,12 @@ function Checkout() {
             <span className="text-sm font-bold text-cookie-brown uppercase">
               {t(ui, 'pickupDate', lang)}
             </span>
-            <input
-              type="date"
-              required
-              min={minDate}
+            <DatePicker
               value={date}
-              lang={lang === 'mk' ? 'mk-MK' : 'en-GB'}
-              onClick={(event) => event.currentTarget.showPicker?.()}
-              onChange={(event) => handleDateChange(event.target.value)}
-              className="cursor-pointer rounded-xl border border-cookie-charcoal/20 bg-white px-4 py-2 text-cookie-charcoal"
+              onChange={handleDateChange}
+              min={minDate}
+              lang={lang}
+              placeholder={t(ui, 'selectDate', lang)}
             />
           </label>
 
@@ -247,36 +246,13 @@ function Checkout() {
             <span className="text-sm font-bold text-cookie-brown uppercase">
               {t(ui, 'pickupTime', lang)}
             </span>
-            <div className="relative">
-              <select
-                required
-                value={time}
-                disabled={!date || availableTimes.length === 0}
-                onChange={(event) => setTime(event.target.value)}
-                className="w-full appearance-none rounded-xl border border-cookie-charcoal/20 bg-white px-4 py-2 pr-9 text-cookie-charcoal disabled:opacity-50"
-              >
-                <option value="" disabled>
-                  {t(ui, 'selectTime', lang)}
-                </option>
-                {availableTimes.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-cookie-charcoal/50"
-                aria-hidden="true"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </div>
+            <TimeSelect
+              value={time}
+              onChange={setTime}
+              options={availableTimes}
+              disabled={!date || availableTimes.length === 0}
+              placeholder={t(ui, 'selectTime', lang)}
+            />
           </label>
         </div>
 
