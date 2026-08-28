@@ -7,7 +7,6 @@ export type Cookie = {
   slug: string
   name: string
   image?: string
-  tagline: string
   price: number
   scales?: { label: string; value: number }[]
   nutrition?: { label: string; value: string; indent?: boolean }[]
@@ -22,7 +21,6 @@ export const cookies: Cookie[] = [
     slug: 'chocolate-chip',
     name: 'Chocolate chip',
     image: chocolateChip,
-    tagline: 'Our take on a classic',
     price: 60,
     scales: [
       { label: 'Sweetness', value: 3 },
@@ -44,35 +42,9 @@ export const cookies: Cookie[] = [
     },
   },
   {
-    slug: 'double-chocolate-peanut-butter',
-    name: 'Double chocolate peanut butter',
-    image: doubleChocolatePeanutButter,
-    tagline: 'Nutty and sticky',
-    price: 80,
-    scales: [
-      { label: 'Sweetness', value: 5 },
-      { label: 'Chewiness', value: 4 },
-      { label: 'Thickness', value: 5 },
-    ],
-    nutrition: [
-      { label: 'Calories', value: '418 kcal' },
-      { label: 'Total fat', value: '25.5g' },
-      { label: 'Saturated fat', value: '11.8g', indent: true },
-      { label: 'Carbohydrates', value: '43g' },
-      { label: 'Sugars', value: '22.5g', indent: true },
-      { label: 'Fiber', value: '3g', indent: true },
-      { label: 'Protein', value: '8g' },
-      { label: 'Sodium', value: '189mg' },
-    ],
-    allergens: {
-      contains: ['Wheat (gluten)', 'Egg', 'Milk', 'Peanuts'],
-    },
-  },
-  {
     slug: 'white-chocolate',
     name: 'White chocolate',
     image: whiteChocolate,
-    tagline: 'Milky, sweet goodness',
     price: 80,
     scales: [
       { label: 'Sweetness', value: 4 },
@@ -94,10 +66,56 @@ export const cookies: Cookie[] = [
     },
   },
   {
+    slug: 'double-chocolate-peanut-butter',
+    name: 'Double chocolate peanut butter',
+    image: doubleChocolatePeanutButter,
+    price: 80,
+    scales: [
+      { label: 'Sweetness', value: 5 },
+      { label: 'Chewiness', value: 4 },
+      { label: 'Thickness', value: 5 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '418 kcal' },
+      { label: 'Total fat', value: '25.5g' },
+      { label: 'Saturated fat', value: '11.8g', indent: true },
+      { label: 'Carbohydrates', value: '43g' },
+      { label: 'Sugars', value: '22.5g', indent: true },
+      { label: 'Fiber', value: '3g', indent: true },
+      { label: 'Protein', value: '8g' },
+      { label: 'Sodium', value: '189mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk', 'Peanuts'],
+    },
+  },
+  {
+    slug: 'dark-chocolate-orange',
+    name: 'Dark Chocolate & Orange',
+    price: 100,
+    scales: [
+      { label: 'Sweetness', value: 3 },
+      { label: 'Chewiness', value: 4 },
+      { label: 'Thickness', value: 3 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '323 kcal' },
+      { label: 'Total fat', value: '16.8g' },
+      { label: 'Saturated fat', value: '10.1g', indent: true },
+      { label: 'Carbohydrates', value: '39.3g' },
+      { label: 'Sugars', value: '20.8g', indent: true },
+      { label: 'Fiber', value: '1.8g', indent: true },
+      { label: 'Protein', value: '3.9g' },
+      { label: 'Sodium', value: '260mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
+  },
+  {
     slug: 'lemon',
     name: 'Lemon',
     image: lemon,
-    tagline: 'Zesty and bright',
     price: 90,
     scales: [
       { label: 'Sweetness', value: 3 },
@@ -121,7 +139,6 @@ export const cookies: Cookie[] = [
   {
     slug: 'caramel',
     name: 'Caramel',
-    tagline: 'Sticky sweet',
     price: 70,
     scales: [
       { label: 'Sweetness', value: 4 },
@@ -143,57 +160,8 @@ export const cookies: Cookie[] = [
     },
   },
   {
-    slug: 'oatmeal',
-    name: 'Oatmeal',
-    tagline: 'Pass the oats brother',
-    price: 60,
-    scales: [
-      { label: 'Sweetness', value: 3 },
-      { label: 'Chewiness', value: 3 },
-      { label: 'Thickness', value: 3 },
-    ],
-    nutrition: [
-      { label: 'Calories', value: '262 kcal' },
-      { label: 'Total fat', value: '11g' },
-      { label: 'Saturated fat', value: '6.2g', indent: true },
-      { label: 'Carbohydrates', value: '36g' },
-      { label: 'Sugars', value: '15.7g', indent: true },
-      { label: 'Fiber', value: '1.9g', indent: true },
-      { label: 'Protein', value: '5g' },
-      { label: 'Sodium', value: '146mg' },
-    ],
-    allergens: {
-      contains: ['Wheat (gluten)', 'Egg', 'Milk', 'Honey'],
-    },
-  },
-  {
-    slug: 'dark-chocolate-orange',
-    name: 'Dark Chocolate & Orange',
-    tagline: 'Tart, sweet, and a little sexy',
-    price: 100,
-    scales: [
-      { label: 'Sweetness', value: 3 },
-      { label: 'Chewiness', value: 4 },
-      { label: 'Thickness', value: 3 },
-    ],
-    nutrition: [
-      { label: 'Calories', value: '323 kcal' },
-      { label: 'Total fat', value: '16.8g' },
-      { label: 'Saturated fat', value: '10.1g', indent: true },
-      { label: 'Carbohydrates', value: '39.3g' },
-      { label: 'Sugars', value: '20.8g', indent: true },
-      { label: 'Fiber', value: '1.8g', indent: true },
-      { label: 'Protein', value: '3.9g' },
-      { label: 'Sodium', value: '260mg' },
-    ],
-    allergens: {
-      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
-    },
-  },
-  {
     slug: 'cinnamon-swirl',
     name: 'Cinnamon Swirl',
-    tagline: 'Autumnal spice',
     price: 70,
     scales: [
       { label: 'Sweetness', value: 4 },
@@ -215,9 +183,31 @@ export const cookies: Cookie[] = [
     },
   },
   {
+    slug: 'oatmeal',
+    name: 'Oatmeal',
+    price: 60,
+    scales: [
+      { label: 'Sweetness', value: 3 },
+      { label: 'Chewiness', value: 3 },
+      { label: 'Thickness', value: 3 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '262 kcal' },
+      { label: 'Total fat', value: '11g' },
+      { label: 'Saturated fat', value: '6.2g', indent: true },
+      { label: 'Carbohydrates', value: '36g' },
+      { label: 'Sugars', value: '15.7g', indent: true },
+      { label: 'Fiber', value: '1.9g', indent: true },
+      { label: 'Protein', value: '5g' },
+      { label: 'Sodium', value: '146mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk', 'Honey'],
+    },
+  },
+  {
     slug: 'earl-grey',
     name: 'Earl Grey',
-    tagline: 'Pinky up',
     price: 80,
     scales: [
       { label: 'Sweetness', value: 4 },

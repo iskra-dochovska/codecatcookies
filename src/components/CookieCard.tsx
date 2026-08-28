@@ -2,7 +2,15 @@ import { FramedSection } from './CookieDecor'
 import type { Cookie } from '../data/cookies'
 import { allergenColors, defaultAllergenColor } from '../data/allergens'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
-import { allergenLabels, nutritionLabels, nutritionValues, scaleLabels, t, ui } from '../i18n/translations'
+import {
+  allergenLabels,
+  cookieTaglines,
+  nutritionLabels,
+  nutritionValues,
+  scaleLabels,
+  t,
+  ui,
+} from '../i18n/translations'
 import { useCart } from '../cart/CartContext'
 
 export function CookieCard({ cookie }: { cookie: Cookie }) {
@@ -43,7 +51,7 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
           </h2>
           <div className="flex w-56 flex-col items-center gap-3 sm:w-auto sm:items-start">
             <span className="w-full rounded-full border border-cookie-rust bg-cookie-cream px-3 py-1 text-center font-mono text-xs font-bold text-cookie-rust">
-              {cookie.tagline}
+              {t(cookieTaglines, cookie.slug, lang)}
             </span>
             {cookie.scales && <ScaleList scales={cookie.scales} lang={lang} className="w-full" />}
           </div>

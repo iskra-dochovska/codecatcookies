@@ -4,11 +4,12 @@ import sushi from '../assets/sushi.png'
 import { cookies } from '../data/cookies'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
-import { t, ui } from '../i18n/translations'
+import { cookieTaglines, t, ui } from '../i18n/translations'
 
-function pickRandomCookies(count: number) {
-  const shuffled = [...cookies].sort(() => Math.random() - 0.5)
-  return shuffled.slice(0, count)
+const featuredSlugs = ['dark-chocolate-orange', 'white-chocolate', 'caramel']
+
+function getFeaturedCookies() {
+  return featuredSlugs.map((slug) => cookies.find((cookie) => cookie.slug === slug)!)
 }
 
 function getBuySteps(lang: Lang) {
@@ -132,7 +133,7 @@ function Home() {
   const { lang } = useLanguage()
   const faqs = getFaqs(lang)
   const buySteps = getBuySteps(lang)
-  const featuredCookies = useMemo(() => pickRandomCookies(3), [])
+  const featuredCookies = useMemo(() => getFeaturedCookies(), [])
 
   return (
     <>
@@ -192,7 +193,7 @@ function Home() {
                   )}
                 </h3>
                 <span className="mx-auto w-56 rounded-full border border-cookie-rust bg-cookie-cream px-3 py-1 text-center font-mono text-xs font-bold text-cookie-rust sm:mx-0">
-                  {cookie.tagline}
+                  {t(cookieTaglines, cookie.slug, lang)}
                 </span>
               </div>
             </Link>
