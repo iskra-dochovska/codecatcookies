@@ -29,6 +29,7 @@ const TIME_SLOTS = (() => {
 })()
 
 const CONFIRMATION_REDIRECT_MS = 4000
+const NOTES_MAX_LENGTH = 500
 
 function CheckoutHead() {
   return (
@@ -280,10 +281,10 @@ function Checkout() {
           </span>
           <textarea
             value={notes}
-            onChange={(event) => setNotes(event.target.value)}
-            rows={3}
+            onChange={(event) => setNotes(event.target.value.slice(0, NOTES_MAX_LENGTH))}
+            maxLength={NOTES_MAX_LENGTH}
             placeholder={t(ui, 'orderNotesPlaceholder', lang)}
-            className="rounded-xl border border-cookie-charcoal/20 bg-white px-4 py-2 text-cookie-charcoal placeholder:text-cookie-charcoal/40"
+            className="h-24 resize-none overflow-y-auto rounded-xl border border-cookie-charcoal/20 bg-white px-4 py-2 text-cookie-charcoal placeholder:text-cookie-charcoal/40"
           />
         </label>
 

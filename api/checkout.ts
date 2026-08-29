@@ -29,6 +29,19 @@ type OrderPayload = {
   total: number
 }
 
+const NOTES_MAX_LENGTH = 500
+const CONTROL_CHAR_PATTERN = /[\x00-\x08\x0b\x0c\x0e-\x1f]/
+const SQL_INJECTION_PATTERN =
+  /(\bunion\s+select\b|\bdrop\s+table\b|\binsert\s+into\b.*\bvalues\b|\bdelete\s+from\b|\bor\s+1\s*=\s*1\b|'\s*or\s*'|\/\*|\*\/|;\s*(drop|delete|update|insert)\b|xp_cmdshell)/i
+
+function isSafeNotes(notes: string) {
+  return (
+    notes.length <= NOTES_MAX_LENGTH &&
+    !CONTROL_CHAR_PATTERN.test(notes) &&
+    !SQL_INJECTION_PATTERN.test(notes)
+  )
+}
+
 function isOrderPayload(body: unknown): body is OrderPayload {
   if (!body || typeof body !== 'object') return false
   const b = body as Record<string, unknown>
@@ -39,7 +52,7 @@ function isOrderPayload(body: unknown): body is OrderPayload {
     typeof b.phone === 'string' &&
     typeof b.date === 'string' &&
     typeof b.time === 'string' &&
-    (b.notes === undefined || typeof b.notes === 'string') &&
+    (b.notes === undefined || (typeof b.notes === 'string' && isSafeNotes(b.notes))) &&
     Array.isArray(b.lines) &&
     b.lines.length > 0 &&
     b.lines.every(
