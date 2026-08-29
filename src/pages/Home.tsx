@@ -5,6 +5,50 @@ import { cookies } from '../data/cookies'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
 import { cookieTaglines, t, ui } from '../i18n/translations'
+import { SITE_URL, SITE_NAME } from '../seo'
+
+const FAQ_JSON_LD_EN = [
+  {
+    question: 'Are codecatcookies only in Skopje?',
+    answer:
+      "Yes, for now we only sell in Skopje until we figure out how to get the cat a driver's licence.",
+  },
+  {
+    question: "How can I buy cookies for myself or an event I'm organizing?",
+    answer:
+      "If you'd like to place a larger order, feel free to email us at info@codecatcookies.com with the cookies you'd like and your contact information and we'll be in touch. Please make sure to place your order at least 48 hours in advance.",
+  },
+]
+
+const bakeryJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Bakery',
+  name: SITE_NAME,
+  image: `${SITE_URL}/logo.svg`,
+  url: SITE_URL,
+  email: 'info@codecatcookies.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Prashka 9',
+    addressLocality: 'Skopje',
+    postalCode: '1000',
+    addressCountry: 'MK',
+  },
+  sameAs: ['https://www.instagram.com/codecatcookies/'],
+}
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_JSON_LD_EN.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+}
 
 const featuredSlugs = ['dark-chocolate-orange', 'white-chocolate', 'caramel']
 
@@ -137,6 +181,16 @@ function Home() {
 
   return (
     <>
+      <title>codecatcookies — Fresh baked cookies in Skopje</title>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bakeryJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       <section className="bg-cookie-brown px-6 py-16 sm:py-24">
         <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-10 sm:flex-row sm:justify-between">
           <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">

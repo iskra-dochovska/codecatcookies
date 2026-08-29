@@ -109,6 +109,11 @@ export const ui: Dict = {
     en: 'No pickup times left that day — orders need at least 24h notice. Pick a later date.',
     mk: 'Нема слободни термини тој ден — нарачките бараат најмалку 24ч претходно. Изберете подоцнежен датум.',
   },
+  orderNotes: { en: 'Order notes (optional)', mk: 'Забелешки (по желба)' },
+  orderNotesPlaceholder: {
+    en: 'Allergies, custom requests, anything else we should know…',
+    mk: 'Алергии, посебни барања, нешто друго што треба да знаеме…',
+  },
   pickupAddressLabel: { en: 'Pickup address', mk: 'Адреса за подигање' },
   cashPaymentNotice: {
     en: 'Payment: done in cash at pickup',

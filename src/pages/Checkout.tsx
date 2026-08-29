@@ -30,6 +30,15 @@ const TIME_SLOTS = (() => {
 
 const CONFIRMATION_REDIRECT_MS = 4000
 
+function CheckoutHead() {
+  return (
+    <>
+      <title>Checkout — codecatcookies</title>
+      <meta name="robots" content="noindex, nofollow" />
+    </>
+  )
+}
+
 function Checkout() {
   const { lang } = useLanguage()
   const { items, clear } = useCart()
@@ -48,6 +57,7 @@ function Checkout() {
   const [emailTouched, setEmailTouched] = useState(false)
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
+  const [notes, setNotes] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
@@ -98,6 +108,7 @@ function Checkout() {
           phone,
           date,
           time,
+          notes,
           lines: lines.map((line) => ({
             name: line.cookie.name,
             quantity: line.quantity,
@@ -120,6 +131,7 @@ function Checkout() {
   if (submitted) {
     return (
       <section className="mx-auto flex w-full max-w-xl flex-col gap-6 px-6 py-16 text-center">
+        <CheckoutHead />
         <h1 className="text-3xl font-black text-cookie-brown uppercase">
           {t(ui, 'orderConfirmedTitle', lang)}
         </h1>
@@ -131,6 +143,7 @@ function Checkout() {
   if (totalCount < MIN_CHECKOUT_ITEMS) {
     return (
       <section className="mx-auto flex w-full max-w-xl flex-col gap-6 px-6 py-16 text-center">
+        <CheckoutHead />
         <h1 className="text-3xl font-black text-cookie-brown uppercase">
           {t(ui, 'checkout', lang)}
         </h1>
@@ -149,6 +162,7 @@ function Checkout() {
 
   return (
     <section className="mx-auto flex w-full max-w-xl flex-col gap-8 px-6 py-16">
+      <CheckoutHead />
       <h1 className="text-center text-3xl font-black text-cookie-brown uppercase">
         {t(ui, 'checkoutTitle', lang)}
       </h1>
@@ -259,6 +273,19 @@ function Checkout() {
         {date && availableTimes.length === 0 && (
           <p className="text-sm font-bold text-cookie-rust">{t(ui, 'noTimesAvailable', lang)}</p>
         )}
+
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-cookie-brown uppercase">
+            {t(ui, 'orderNotes', lang)}
+          </span>
+          <textarea
+            value={notes}
+            onChange={(event) => setNotes(event.target.value)}
+            rows={3}
+            placeholder={t(ui, 'orderNotesPlaceholder', lang)}
+            className="rounded-xl border border-cookie-charcoal/20 bg-white px-4 py-2 text-cookie-charcoal placeholder:text-cookie-charcoal/40"
+          />
+        </label>
 
         <div className="flex flex-col items-center gap-1 rounded-xl border-2 border-cookie-rust bg-cookie-cream/60 px-4 py-3 text-center text-sm">
           <span className="font-bold text-cookie-brown uppercase">

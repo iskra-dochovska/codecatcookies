@@ -24,6 +24,7 @@ type OrderPayload = {
   phone: string
   date: string
   time: string
+  notes?: string
   lines: OrderLine[]
   total: number
 }
@@ -38,6 +39,7 @@ function isOrderPayload(body: unknown): body is OrderPayload {
     typeof b.phone === 'string' &&
     typeof b.date === 'string' &&
     typeof b.time === 'string' &&
+    (b.notes === undefined || typeof b.notes === 'string') &&
     Array.isArray(b.lines) &&
     b.lines.length > 0 &&
     b.lines.every(
@@ -143,6 +145,19 @@ function renderPickupBlock(prettyDate: string, time: string) {
 
 const CASH_NOTICE_HTML = `<p style="margin:0 0 24px 0;color:${BRAND.rust};font-size:14px;font-weight:700;text-align:center;">Payment is made in cash at pickup.</p>`
 
+function renderNotesBlock(notes: string | undefined) {
+  if (!notes || !notes.trim()) return ''
+  return `
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:rgba(40,40,40,0.05);border-radius:12px;margin-bottom:16px;">
+                  <tr>
+                    <td style="padding:16px 18px;">
+                      <p style="margin:0 0 6px 0;color:${BRAND.brown};font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.03em;">Notes</p>
+                      <p style="margin:0;color:${BRAND.charcoal};font-size:14px;white-space:pre-wrap;">${escapeHtml(notes)}</p>
+                    </td>
+                  </tr>
+                </table>`
+}
+
 export function buildCustomerEmail(payload: OrderPayload) {
   const { fullName, date, time, lines, total } = payload
   const safeName = escapeHtml(fullName)
@@ -164,7 +179,7 @@ export function buildCustomerEmail(payload: OrderPayload) {
 }
 
 export function buildBusinessEmail(payload: OrderPayload) {
-  const { fullName, email, phone, date, time, lines, total } = payload
+  const { fullName, email, phone, date, time, notes, lines, total } = payload
   const safeName = escapeHtml(fullName)
   const safeEmail = escapeHtml(email)
   const fullPhone = `+389${phone}`
@@ -187,6 +202,7 @@ export function buildBusinessEmail(payload: OrderPayload) {
                 ${contactBlock}
                 ${renderOrderSummary(lines, total)}
                 ${renderPickupBlock(prettyDate, time)}
+                ${renderNotesBlock(notes)}
                 ${CASH_NOTICE_HTML}`
 
   const html = renderShell(`New order from ${safeName}`, bodyHtml)
@@ -194,7 +210,8 @@ export function buildBusinessEmail(payload: OrderPayload) {
   const itemsText = lines
     .map((line) => `${line.name} x ${line.quantity} — ${line.price * line.quantity} den`)
     .join('\n')
-  const text = `${fullName}\n${email}\n${fullPhone}\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}\n\n${itemsText}\n\nTotal: ${total} den (cash on pickup)`
+  const notesText = notes && notes.trim() ? `\n\nNotes: ${notes}` : ''
+  const text = `${fullName}\n${email}\n${fullPhone}\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}\n\n${itemsText}\n\nTotal: ${total} den (cash on pickup)${notesText}`
 
   return { html, text }
 }
