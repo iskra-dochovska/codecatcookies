@@ -6,7 +6,7 @@ const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'info@codecatcookies.com'
 const FROM = `codecatcookies <${FROM_EMAIL}>`
 const BUSINESS_EMAIL = 'info@codecatcookies.com'
 const PICKUP_ADDRESS = 'Prashka 9, 1000 Skopje'
-const LOGO_URL = 'https://codecatcookies.com/logo.svg'
+const LOGO_URL = 'https://www.codecatcookies.com/logo.svg'
 
 const BRAND = {
   brown: '#542916',
