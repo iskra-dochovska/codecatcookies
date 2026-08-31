@@ -206,6 +206,29 @@ export const cookies: Cookie[] = [
     },
   },
   {
+    slug: 'triple-chocolate',
+    name: 'Triple Chocolate',
+    price: 90,
+    scales: [
+      { label: 'Sweetness', value: 4 },
+      { label: 'Chewiness', value: 4 },
+      { label: 'Thickness', value: 4 },
+    ],
+    nutrition: [
+      { label: 'Calories', value: '305 kcal' },
+      { label: 'Total fat', value: '17.2g' },
+      { label: 'Saturated fat', value: '10g', indent: true },
+      { label: 'Carbohydrates', value: '35.1g' },
+      { label: 'Sugars', value: '16.3g', indent: true },
+      { label: 'Fiber', value: '2.5g', indent: true },
+      { label: 'Protein', value: '4.5g' },
+      { label: 'Sodium', value: '259mg' },
+    ],
+    allergens: {
+      contains: ['Wheat (gluten)', 'Egg', 'Milk'],
+    },
+  },
+  {
     slug: 'earl-grey',
     name: 'Earl Grey',
     price: 80,

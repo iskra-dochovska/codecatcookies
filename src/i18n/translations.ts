@@ -73,6 +73,10 @@ export const cookieTaglines: Dict = {
     en: 'Even your cookie is sophisticated',
     mk: 'Дури и кукисот ти е софистициран',
   },
+  'triple-chocolate': {
+    en: 'There will never be enough chocolate',
+    mk: 'Никогаш нема доволно чоколадо',
+  },
 }
 
 export const ui: Dict = {
