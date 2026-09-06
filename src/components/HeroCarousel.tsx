@@ -27,6 +27,9 @@ function HeroCarousel() {
           key={src}
           src={src}
           alt=""
+          loading={index === 0 ? 'eager' : 'lazy'}
+          fetchPriority={index === 0 ? 'high' : 'low'}
+          decoding="async"
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
             index === activeIndex ? 'opacity-100' : 'opacity-0'
           }`}
