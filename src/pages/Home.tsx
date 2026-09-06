@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import sushi from '../assets/sushi.png'
+import HeroCarousel from '../components/HeroCarousel'
 import { cookies } from '../data/cookies'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
@@ -215,8 +216,8 @@ function Home() {
               )}
             </h1>
           </div>
-          <div className="flex h-64 w-full max-w-sm items-center justify-center rounded-2xl border-2 border-dashed border-cookie-cream/40 text-sm text-cookie-cream/50 sm:h-80">
-            Image
+          <div className="h-64 w-full max-w-sm sm:h-80">
+            <HeroCarousel />
           </div>
         </div>
       </section>
