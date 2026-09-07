@@ -22,19 +22,22 @@ function HeroCarousel() {
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-2xl">
-      {IMAGES.map((src, index) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          loading={index === 0 ? 'eager' : 'lazy'}
-          fetchPriority={index === 0 ? 'high' : 'low'}
-          decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
-            index === activeIndex ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-      ))}
+      <div
+        className="flex h-full w-full transition-transform duration-500 ease-in-out"
+        style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+      >
+        {IMAGES.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            loading={index === 0 ? 'eager' : 'lazy'}
+            fetchPriority={index === 0 ? 'high' : 'low'}
+            decoding="async"
+            className="h-full w-full flex-shrink-0 object-cover"
+          />
+        ))}
+      </div>
     </div>
   )
 }

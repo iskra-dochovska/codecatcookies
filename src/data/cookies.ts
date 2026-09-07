@@ -208,7 +208,7 @@ export const cookies: Cookie[] = [
   {
     slug: 'triple-chocolate',
     name: 'Triple Chocolate',
-    price: 90,
+    price: 110,
     scales: [
       { label: 'Sweetness', value: 4 },
       { label: 'Chewiness', value: 4 },
