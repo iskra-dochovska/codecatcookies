@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import sushi from '../assets/sushi.png'
 import HeroCarousel from '../components/HeroCarousel'
-import { cookies } from '../data/cookies'
+import { useCookies, type Cookie } from '../data/CookiesContext'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
-import { cookieTaglines, t, ui } from '../i18n/translations'
+import { t, ui } from '../i18n/translations'
 import { SITE_URL, SITE_NAME } from '../seo'
 
 const FAQ_JSON_LD_EN = [
@@ -53,8 +53,10 @@ const faqJsonLd = {
 
 const featuredSlugs = ['dark-chocolate-orange', 'white-chocolate', 'caramel']
 
-function getFeaturedCookies() {
-  return featuredSlugs.map((slug) => cookies.find((cookie) => cookie.slug === slug)!)
+function getFeaturedCookies(cookies: Cookie[]) {
+  return featuredSlugs
+    .map((slug) => cookies.find((cookie) => cookie.slug === slug))
+    .filter((cookie): cookie is Cookie => Boolean(cookie))
 }
 
 function getBuySteps(lang: Lang) {
@@ -176,9 +178,10 @@ function getFaqs(lang: Lang) {
 function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const { lang } = useLanguage()
+  const { cookies } = useCookies()
   const faqs = getFaqs(lang)
   const buySteps = getBuySteps(lang)
-  const featuredCookies = useMemo(() => getFeaturedCookies(), [])
+  const featuredCookies = useMemo(() => getFeaturedCookies(cookies), [cookies])
 
   return (
     <>
@@ -248,7 +251,7 @@ function Home() {
                   )}
                 </h3>
                 <span className="mx-auto w-56 rounded-full border border-cookie-rust bg-cookie-cream px-3 py-1 text-center font-mono text-xs font-bold text-cookie-rust sm:mx-0">
-                  {t(cookieTaglines, cookie.slug, lang)}
+                  {cookie.tagline[lang]}
                 </span>
               </div>
             </Link>

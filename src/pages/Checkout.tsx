@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FramedSection } from '../components/CookieDecor'
 import DatePicker from '../components/DatePicker'
 import TimeSelect from '../components/TimeSelect'
-import { cookies } from '../data/cookies'
+import { useCookies } from '../data/CookiesContext'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { t, ui } from '../i18n/translations'
@@ -43,6 +43,7 @@ function CheckoutHead() {
 function Checkout() {
   const { lang } = useLanguage()
   const { items, clear } = useCart()
+  const { cookies, loading: cookiesLoading } = useCookies()
   const navigate = useNavigate()
 
   const lines = Object.entries(items).flatMap(([slug, quantity]) => {
@@ -110,12 +111,10 @@ function Checkout() {
           date,
           time,
           notes,
-          lines: lines.map((line) => ({
-            name: line.cookie.name,
+          items: lines.map((line) => ({
+            slug: line.cookie.slug,
             quantity: line.quantity,
-            price: line.cookie.price,
           })),
-          total,
         }),
       })
       if (!response.ok) throw new Error('checkout request failed')
@@ -137,6 +136,15 @@ function Checkout() {
           {t(ui, 'orderConfirmedTitle', lang)}
         </h1>
         <p className="text-cookie-charcoal/80">{t(ui, 'orderConfirmedBody', lang)}</p>
+      </section>
+    )
+  }
+
+  if (cookiesLoading) {
+    return (
+      <section className="mx-auto flex w-full max-w-xl flex-col gap-6 px-6 py-16 text-center">
+        <CheckoutHead />
+        <p className="font-bold text-cookie-charcoal/60 uppercase">{t(ui, 'loading', lang)}</p>
       </section>
     )
   }

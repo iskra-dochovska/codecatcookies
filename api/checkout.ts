@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { Resend } from 'resend'
+import { createClient } from '@supabase/supabase-js'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'info@codecatcookies.com'
@@ -7,6 +8,12 @@ const FROM = `codecatcookies <${FROM_EMAIL}>`
 const BUSINESS_EMAIL = 'info@codecatcookies.com'
 const PICKUP_ADDRESS = 'Prashka 9, 1000 Skopje'
 const LOGO_URL = 'https://www.codecatcookies.com/logo.svg'
+
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+
+const FOIL_COST_PER_COOKIE = 1.12
+const BOX_COST = 9.5
+const COOKIES_PER_BOX = 4
 
 const BRAND = {
   brown: '#542916',
@@ -29,6 +36,18 @@ type OrderPayload = {
   total: number
 }
 
+type CheckoutItem = { slug: string; quantity: number }
+
+type CheckoutRequestBody = {
+  fullName: string
+  email: string
+  phone: string
+  date: string
+  time: string
+  notes?: string
+  items: CheckoutItem[]
+}
+
 const NOTES_MAX_LENGTH = 500
 const CONTROL_CHAR_PATTERN = /[\x00-\x08\x0b\x0c\x0e-\x1f]/
 const SQL_INJECTION_PATTERN =
@@ -42,7 +61,7 @@ function isSafeNotes(notes: string) {
   )
 }
 
-function isOrderPayload(body: unknown): body is OrderPayload {
+function isCheckoutRequestBody(body: unknown): body is CheckoutRequestBody {
   if (!body || typeof body !== 'object') return false
   const b = body as Record<string, unknown>
   return (
@@ -53,17 +72,17 @@ function isOrderPayload(body: unknown): body is OrderPayload {
     typeof b.date === 'string' &&
     typeof b.time === 'string' &&
     (b.notes === undefined || (typeof b.notes === 'string' && isSafeNotes(b.notes))) &&
-    Array.isArray(b.lines) &&
-    b.lines.length > 0 &&
-    b.lines.every(
-      (line): line is OrderLine =>
-        Boolean(line) &&
-        typeof line === 'object' &&
-        typeof (line as OrderLine).name === 'string' &&
-        typeof (line as OrderLine).quantity === 'number' &&
-        typeof (line as OrderLine).price === 'number',
-    ) &&
-    typeof b.total === 'number'
+    Array.isArray(b.items) &&
+    b.items.length > 0 &&
+    b.items.every(
+      (item): item is CheckoutItem =>
+        Boolean(item) &&
+        typeof item === 'object' &&
+        typeof (item as CheckoutItem).slug === 'string' &&
+        typeof (item as CheckoutItem).quantity === 'number' &&
+        Number.isInteger((item as CheckoutItem).quantity) &&
+        (item as CheckoutItem).quantity > 0,
+    )
   )
 }
 
@@ -235,14 +254,71 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return
   }
 
-  if (!isOrderPayload(req.body)) {
+  if (!isCheckoutRequestBody(req.body)) {
     res.status(400).json({ error: 'Invalid order payload' })
     return
   }
 
-  const { fullName, email } = req.body
-  const businessEmail = buildBusinessEmail(req.body)
-  const customerEmail = buildCustomerEmail(req.body)
+  const { fullName, email, phone, date, time, notes, items } = req.body
+
+  const slugs = items.map((item) => item.slug)
+  const { data: cookieRows, error: cookiesError } = await supabase
+    .from('cookies')
+    .select('slug, name, price, production_cost')
+    .in('slug', slugs)
+
+  if (cookiesError || !cookieRows) {
+    console.error('cookie lookup failure', cookiesError)
+    res.status(502).json({ error: 'Failed to place order' })
+    return
+  }
+
+  const cookiesBySlug = new Map(cookieRows.map((row) => [row.slug, row]))
+  if (!slugs.every((slug) => cookiesBySlug.has(slug))) {
+    res.status(400).json({ error: 'Invalid order payload' })
+    return
+  }
+
+  const lines: OrderLine[] = items.map((item) => {
+    const cookie = cookiesBySlug.get(item.slug)!
+    return { name: cookie.name, quantity: item.quantity, price: cookie.price }
+  })
+  const total = lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
+
+  const orderItems = items.map((item) => {
+    const cookie = cookiesBySlug.get(item.slug)!
+    const unitCost = cookie.production_cost + FOIL_COST_PER_COOKIE + BOX_COST / COOKIES_PER_BOX
+    return {
+      cookie_slug: item.slug,
+      cookie_name: cookie.name,
+      quantity: item.quantity,
+      unit_price: cookie.price,
+      unit_cost: unitCost,
+    }
+  })
+
+  const { error: createOrderError } = await supabase.rpc('create_order', {
+    order_data: {
+      full_name: fullName,
+      email,
+      phone,
+      pickup_date: date,
+      pickup_time: time,
+      notes: notes ?? null,
+      total,
+    },
+    items: orderItems,
+  })
+
+  if (createOrderError) {
+    console.error('order creation failure', createOrderError)
+    res.status(502).json({ error: 'Failed to place order' })
+    return
+  }
+
+  const orderPayload: OrderPayload = { fullName, email, phone, date, time, notes, lines, total }
+  const businessEmail = buildBusinessEmail(orderPayload)
+  const customerEmail = buildCustomerEmail(orderPayload)
 
   try {
     const [businessResult, customerResult] = await Promise.allSettled([

@@ -13,6 +13,10 @@ dist-ssr
 *.local
 .env
 
+# Supabase CLI local state
+supabase/.branches
+supabase/.temp
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,3 +27,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.vercel
+.env*

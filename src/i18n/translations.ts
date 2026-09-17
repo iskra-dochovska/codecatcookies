@@ -36,49 +36,6 @@ export const allergenLabels: Dict = {
   Honey: { en: 'Honey', mk: 'Мед' },
 }
 
-export const cookieTaglines: Dict = {
-  'chocolate-chip': {
-    en: 'Classics have never tasted so good',
-    mk: 'Класичен вкус никогаш не бил поубав',
-  },
-  'double-chocolate-peanut-butter': {
-    en: 'Sticky centered hugged by a lotta chocolate',
-    mk: 'Полнета средина гушната од мнооогу чоколадо',
-  },
-  'white-chocolate': {
-    en: 'The fairest in the land',
-    mk: 'Најубавата на целиот свет',
-  },
-  lemon: {
-    en: 'Pucker up and give me a smooch',
-    mk: 'Спреми се за благо киселки бакнежи',
-  },
-  caramel: {
-    en: 'Sugar in its stickiest form',
-    mk: 'Шеќер во најлеплива варијанта',
-  },
-  oatmeal: {
-    en: 'Cheeky little breakfast treat',
-    mk: 'Почасти се малку за доручек',
-  },
-  'dark-chocolate-orange': {
-    en: 'Match made in heaven',
-    mk: 'Едноставно врвна комбинација',
-  },
-  'cinnamon-swirl': {
-    en: 'The best pick me up for rainy days',
-    mk: 'Најдобрата утеха на врнежливи денови',
-  },
-  'earl-grey': {
-    en: 'Even your cookie is sophisticated',
-    mk: 'Дури и кукисот ти е софистициран',
-  },
-  'triple-chocolate': {
-    en: 'There will never be enough chocolate',
-    mk: 'Никогаш нема доволно чоколадо',
-  },
-}
-
 export const ui: Dict = {
   currency: { en: 'den', mk: 'ден' },
   addToCart: { en: 'Add to cart', mk: 'Додади во кошничка' },
@@ -91,6 +48,7 @@ export const ui: Dict = {
     en: 'Values are rough estimates, not exact calculations.',
     mk: 'Вредностите се груби проценки, не точни пресметки.',
   },
+  loading: { en: 'Loading...', mk: 'Се вчитува...' },
   checkout: { en: 'Checkout', mk: 'Нарачај' },
   checkoutMinNotice: {
     en: 'Minimum order is 4 cookies, add {n} more to checkout.',

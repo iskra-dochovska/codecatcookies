@@ -5,8 +5,10 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import Cookies from './pages/Cookies'
 import Checkout from './pages/Checkout'
+import Admin from './pages/admin/Admin'
 import { LanguageProvider } from './i18n/LanguageContext'
 import { CartProvider } from './cart/CartContext'
+import { CookiesProvider } from './data/CookiesContext'
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation()
@@ -20,24 +22,30 @@ function ScrollToTop() {
 }
 
 function App() {
+  const { pathname } = useLocation()
+  const isAdminRoute = pathname.startsWith('/admin')
+
   return (
     <LanguageProvider>
-      <CartProvider>
-        <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
-          <ScrollToTop />
-          <Header />
+      <CookiesProvider>
+        <CartProvider>
+          <div className="flex min-h-svh flex-col bg-cookie-cream text-cookie-charcoal">
+            <ScrollToTop />
+            {!isAdminRoute && <Header />}
 
-          <main className="flex flex-1 flex-col">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/cookies" element={<Cookies />} />
-              <Route path="/checkout" element={<Checkout />} />
-            </Routes>
-          </main>
+            <main className="flex flex-1 flex-col">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/cookies" element={<Cookies />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/admin" element={<Admin />} />
+              </Routes>
+            </main>
 
-          <Footer />
-        </div>
-      </CartProvider>
+            {!isAdminRoute && <Footer />}
+          </div>
+        </CartProvider>
+      </CookiesProvider>
     </LanguageProvider>
   )
 }

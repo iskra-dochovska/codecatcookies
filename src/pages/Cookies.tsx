@@ -1,15 +1,16 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { CookieCard } from '../components/CookieCard'
-import { cookies } from '../data/cookies'
+import { useCookies } from '../data/CookiesContext'
 import { allergenColors } from '../data/allergens'
 import { useLanguage } from '../i18n/LanguageContext'
-import { allergenLabels, cookieTaglines, t, ui } from '../i18n/translations'
+import { allergenLabels, t, ui } from '../i18n/translations'
 import { SITE_URL } from '../seo'
 
 function Cookies() {
   const { hash } = useLocation()
   const { lang } = useLanguage()
+  const { cookies, loading } = useCookies()
 
   const productsJsonLd = useMemo(
     () => ({
@@ -19,7 +20,7 @@ function Cookies() {
         '@type': 'Product',
         position: index + 1,
         name: cookie.name,
-        description: t(cookieTaglines, cookie.slug, 'en'),
+        description: cookie.tagline.en,
         url: `${SITE_URL}/cookies#${cookie.slug}`,
         ...(cookie.image ? { image: `${SITE_URL}${cookie.image}` } : {}),
         offers: {
@@ -30,7 +31,7 @@ function Cookies() {
         },
       })),
     }),
-    [],
+    [cookies],
   )
 
   useEffect(() => {
@@ -65,9 +66,13 @@ function Cookies() {
         </div>
       </div>
 
-      {cookies.map((cookie) => (
-        <CookieCard key={cookie.slug} cookie={cookie} />
-      ))}
+      {loading ? (
+        <p className="text-center font-bold text-cookie-charcoal/60 uppercase">
+          {t(ui, 'loading', lang)}
+        </p>
+      ) : (
+        cookies.map((cookie) => <CookieCard key={cookie.slug} cookie={cookie} />)
+      )}
     </section>
   )
 }

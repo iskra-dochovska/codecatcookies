@@ -1,12 +1,13 @@
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
-import { cookies } from '../data/cookies'
+import { useCookies } from '../data/CookiesContext'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { t, ui } from '../i18n/translations'
 
 export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { items, increment, decrement, remove, totalCount } = useCart()
+  const { cookies } = useCookies()
   const { lang } = useLanguage()
 
   const lines = Object.entries(items).flatMap(([slug, quantity]) => {
