@@ -6,8 +6,9 @@ import { useOrders } from './orders'
 import OrdersTab from './tabs/OrdersTab'
 import StatsTab from './tabs/StatsTab'
 import DataTab from './tabs/DataTab'
+import PromoCodesTab from './tabs/PromoCodesTab'
 
-const TABS = ['orders', 'statistics', 'costs'] as const
+const TABS = ['orders', 'statistics', 'costs', 'promos'] as const
 type Tab = (typeof TABS)[number]
 
 function LogoutIcon() {
@@ -188,6 +189,7 @@ function AdminDashboard() {
             {tab === 'orders' && <OrdersTab orders={orders} setOrders={setOrders} />}
             {tab === 'statistics' && <StatsTab orders={orders} />}
             {tab === 'costs' && <DataTab />}
+            {tab === 'promos' && <PromoCodesTab />}
           </>
         )}
       </main>

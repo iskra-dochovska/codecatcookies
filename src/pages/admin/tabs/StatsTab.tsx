@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useCookies } from '../../../data/CookiesContext'
-import { DISCOUNT_PER_COOKIE, type OrderRow } from '../orders'
+import { DISCOUNT_PER_COOKIE } from '../../../lib/discount'
+import type { OrderRow } from '../orders'
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, hour) => hour)
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']

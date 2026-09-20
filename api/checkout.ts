@@ -14,6 +14,7 @@ const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SE
 const FOIL_COST_PER_COOKIE = 1.12
 const BOX_COST = 9.5
 const COOKIES_PER_BOX = 4
+const DISCOUNT_PER_COOKIE = 10
 
 const BRAND = {
   brown: '#542916',
@@ -34,6 +35,7 @@ type OrderPayload = {
   notes?: string
   lines: OrderLine[]
   total: number
+  discountAmount: number
 }
 
 type CheckoutItem = { slug: string; quantity: number }
@@ -45,6 +47,7 @@ type CheckoutRequestBody = {
   date: string
   time: string
   notes?: string
+  promoCode?: string
   items: CheckoutItem[]
 }
 
@@ -52,6 +55,7 @@ const NOTES_MAX_LENGTH = 500
 const CONTROL_CHAR_PATTERN = /[\x00-\x08\x0b\x0c\x0e-\x1f]/
 const SQL_INJECTION_PATTERN =
   /(\bunion\s+select\b|\bdrop\s+table\b|\binsert\s+into\b.*\bvalues\b|\bdelete\s+from\b|\bor\s+1\s*=\s*1\b|'\s*or\s*'|\/\*|\*\/|;\s*(drop|delete|update|insert)\b|xp_cmdshell)/i
+const PROMO_CODE_PATTERN = /^[A-Za-z0-9_-]{1,40}$/
 
 function isSafeNotes(notes: string) {
   return (
@@ -72,6 +76,9 @@ function isCheckoutRequestBody(body: unknown): body is CheckoutRequestBody {
     typeof b.date === 'string' &&
     typeof b.time === 'string' &&
     (b.notes === undefined || (typeof b.notes === 'string' && isSafeNotes(b.notes))) &&
+    (b.promoCode === undefined ||
+      (typeof b.promoCode === 'string' &&
+        (b.promoCode === '' || PROMO_CODE_PATTERN.test(b.promoCode)))) &&
     Array.isArray(b.items) &&
     b.items.length > 0 &&
     b.items.every(
@@ -151,10 +158,19 @@ function renderShell(headingHtml: string, bodyHtml: string) {
 </html>`
 }
 
-function renderOrderSummary(lines: OrderLine[], total: number) {
+function renderDiscountRow(discountAmount: number) {
+  return `
+        <tr>
+          <td style="padding:6px 0;color:${BRAND.charcoal};font-size:14px;">Promo discount</td>
+          <td style="padding:6px 0;color:${BRAND.rust};font-size:14px;font-weight:700;text-align:right;">-${discountAmount} den</td>
+        </tr>`
+}
+
+function renderOrderSummary(lines: OrderLine[], total: number, discountAmount: number) {
   return `
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:2px dashed rgba(40,40,40,0.2);border-bottom:2px dashed rgba(40,40,40,0.2);padding:12px 0;margin-bottom:20px;">
                   ${renderItemRows(lines)}
+                  ${discountAmount > 0 ? renderDiscountRow(discountAmount) : ''}
                   <tr>
                     <td style="padding:10px 0 0 0;color:${BRAND.brown};font-size:14px;font-weight:800;border-top:2px dashed rgba(40,40,40,0.2);">Total</td>
                     <td style="padding:10px 0 0 0;color:${BRAND.brown};font-size:14px;font-weight:800;text-align:right;border-top:2px dashed rgba(40,40,40,0.2);">${total} den</td>
@@ -191,12 +207,12 @@ function renderNotesBlock(notes: string | undefined) {
 }
 
 export function buildCustomerEmail(payload: OrderPayload) {
-  const { fullName, date, time, lines, total } = payload
+  const { fullName, date, time, lines, total, discountAmount } = payload
   const safeName = escapeHtml(fullName)
   const prettyDate = formatPickupDate(date)
 
   const bodyHtml = `
-                ${renderOrderSummary(lines, total)}
+                ${renderOrderSummary(lines, total, discountAmount)}
                 ${renderPickupBlock(prettyDate, time)}
                 ${CASH_NOTICE_HTML}`
 
@@ -205,13 +221,14 @@ export function buildCustomerEmail(payload: OrderPayload) {
   const itemsText = lines
     .map((line) => `${line.name} x ${line.quantity} — ${line.price * line.quantity} den`)
     .join('\n')
-  const text = `Thanks for your order, ${fullName}!\n\n${itemsText}\n\nTotal: ${total} den, payable in cash on pickup.\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}`
+  const discountText = discountAmount > 0 ? `\nPromo discount: -${discountAmount} den` : ''
+  const text = `Thanks for your order, ${fullName}!\n\n${itemsText}${discountText}\n\nTotal: ${total} den, payable in cash on pickup.\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}`
 
   return { html, text }
 }
 
 export function buildBusinessEmail(payload: OrderPayload) {
-  const { fullName, email, phone, date, time, notes, lines, total } = payload
+  const { fullName, email, phone, date, time, notes, lines, total, discountAmount } = payload
   const safeName = escapeHtml(fullName)
   const safeEmail = escapeHtml(email)
   const fullPhone = `+389${phone}`
@@ -232,7 +249,7 @@ export function buildBusinessEmail(payload: OrderPayload) {
 
   const bodyHtml = `
                 ${contactBlock}
-                ${renderOrderSummary(lines, total)}
+                ${renderOrderSummary(lines, total, discountAmount)}
                 ${renderPickupBlock(prettyDate, time)}
                 ${renderNotesBlock(notes)}
                 ${CASH_NOTICE_HTML}`
@@ -242,8 +259,9 @@ export function buildBusinessEmail(payload: OrderPayload) {
   const itemsText = lines
     .map((line) => `${line.name} x ${line.quantity} — ${line.price * line.quantity} den`)
     .join('\n')
+  const discountText = discountAmount > 0 ? `\nPromo discount: -${discountAmount} den` : ''
   const notesText = notes && notes.trim() ? `\n\nNotes: ${notes}` : ''
-  const text = `${fullName}\n${email}\n${fullPhone}\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}\n\n${itemsText}\n\nTotal: ${total} den (cash on pickup)${notesText}`
+  const text = `${fullName}\n${email}\n${fullPhone}\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}\n\n${itemsText}${discountText}\n\nTotal: ${total} den (cash on pickup)${notesText}`
 
   return { html, text }
 }
@@ -259,12 +277,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return
   }
 
-  const { fullName, email, phone, date, time, notes, items } = req.body
+  const { fullName, email, phone, date, time, notes, promoCode, items } = req.body
 
   const slugs = items.map((item) => item.slug)
   const { data: cookieRows, error: cookiesError } = await supabase
     .from('cookies')
-    .select('slug, name, price, production_cost')
+    .select('slug, name, price, production_cost, purchasable')
     .in('slug', slugs)
 
   if (cookiesError || !cookieRows) {
@@ -274,7 +292,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const cookiesBySlug = new Map(cookieRows.map((row) => [row.slug, row]))
-  if (!slugs.every((slug) => cookiesBySlug.has(slug))) {
+  if (!slugs.every((slug) => cookiesBySlug.get(slug)?.purchasable)) {
     res.status(400).json({ error: 'Invalid order payload' })
     return
   }
@@ -297,7 +315,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   })
 
-  const { error: createOrderError } = await supabase.rpc('create_order', {
+  const { data: orderResult, error: createOrderError } = await supabase.rpc('create_order', {
     order_data: {
       full_name: fullName,
       email,
@@ -308,15 +326,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       total,
     },
     items: orderItems,
+    promo_code: promoCode?.trim() || null,
   })
 
   if (createOrderError) {
+    if (createOrderError.message?.includes('invalid_promo_code')) {
+      res.status(400).json({ error: 'invalid_promo_code' })
+      return
+    }
     console.error('order creation failure', createOrderError)
     res.status(502).json({ error: 'Failed to place order' })
     return
   }
 
-  const orderPayload: OrderPayload = { fullName, email, phone, date, time, notes, lines, total }
+  const discountApplied = Boolean((orderResult as { discount_applied?: boolean } | null)?.discount_applied)
+  const quantity = items.reduce((sum, item) => sum + item.quantity, 0)
+  const discountAmount = discountApplied ? DISCOUNT_PER_COOKIE * quantity : 0
+
+  const orderPayload: OrderPayload = {
+    fullName,
+    email,
+    phone,
+    date,
+    time,
+    notes,
+    lines,
+    total: total - discountAmount,
+    discountAmount,
+  }
   const businessEmail = buildBusinessEmail(orderPayload)
   const customerEmail = buildCustomerEmail(orderPayload)
 

@@ -61,6 +61,7 @@ export function CookiesProvider({ children }: { children: ReactNode }) {
     supabase
       .from('cookies')
       .select('slug, name, price, image_path, tagline_en, tagline_mk, scales, nutrition, allergens')
+      .eq('purchasable', true)
       .order('price', { ascending: true })
       .then(({ data, error }) => {
         if (cancelled) return

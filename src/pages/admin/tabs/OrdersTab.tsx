@@ -29,9 +29,10 @@ function OrdersTab({
   }
 
   async function toggleDiscount(id: string, discount: boolean) {
-    const { error } = await supabase.from('orders').update({ discount }).eq('id', id)
+    const updates = discount ? { discount } : { discount, promo_code: null }
+    const { error } = await supabase.from('orders').update(updates).eq('id', id)
     if (!error) {
-      setOrders((prev) => prev.map((order) => (order.id === id ? { ...order, discount } : order)))
+      setOrders((prev) => prev.map((order) => (order.id === id ? { ...order, ...updates } : order)))
     }
   }
 
@@ -82,6 +83,7 @@ function OrdersTab({
               <th className="px-3 py-2">Items</th>
               <th className="px-3 py-2">Notes</th>
               <th className="px-3 py-2 text-center">Discount</th>
+              <th className="px-3 py-2">Code</th>
               <th className="px-3 py-2 text-center">Total</th>
               <th className="px-3 py-2" />
             </tr>
@@ -117,6 +119,9 @@ function OrdersTab({
                       className="h-4 w-4 accent-cookie-rust"
                     />
                   </div>
+                </td>
+                <td className="px-3 py-2 font-mono text-cookie-charcoal/70">
+                  {order.promo_code ?? '—'}
                 </td>
                 <td className="px-3 py-2 text-center font-mono font-bold text-cookie-brown">
                   {effectiveTotal(order)} den

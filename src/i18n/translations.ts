@@ -76,6 +76,12 @@ export const ui: Dict = {
     en: 'Allergies, custom requests, anything else we should know…',
     mk: 'Алергии, посебни барања, нешто друго што треба да знаеме…',
   },
+  promoCode: { en: 'Promo code (optional)', mk: 'Промо код (по желба)' },
+  promoCodePlaceholder: { en: 'Enter code', mk: 'Внесете код' },
+  invalidPromoCode: {
+    en: 'This promo code is invalid or no longer active.',
+    mk: 'Овој промо код е неважечки или веќе не е активен.',
+  },
   pickupAddressLabel: { en: 'Pickup address', mk: 'Адреса за подигање' },
   cashPaymentNotice: {
     en: 'Payment: done in cash at pickup',

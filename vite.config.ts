@@ -2,13 +2,22 @@ import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// Runs api/checkout.ts in-process during `vite dev`, so plain `npm run dev`
-// exercises the real handler without needing `vercel dev`.
+// Runs api/*.ts handlers in-process during `vite dev`, so plain `npm run dev`
+// exercises the real handlers without needing `vercel dev`.
+const API_ROUTE_PATTERN = /^\/[a-zA-Z0-9_-]+$/
+
 function localApiPlugin(): Plugin {
   return {
     name: 'local-api-dev',
     configureServer(server) {
-      server.middlewares.use('/api/checkout', async (req, res) => {
+      server.middlewares.use('/api', async (req, res, next) => {
+        const pathname = (req.url ?? '/').split('?')[0]
+        if (!API_ROUTE_PATTERN.test(pathname)) {
+          next()
+          return
+        }
+        const modulePath = `/api${pathname}.ts`
+
         const chunks: Buffer[] = []
         for await (const chunk of req) chunks.push(chunk as Buffer)
         const bodyText = Buffer.concat(chunks).toString('utf-8')
@@ -35,10 +44,10 @@ function localApiPlugin(): Plugin {
         }
 
         try {
-          const mod = await server.ssrLoadModule('/api/checkout.ts')
+          const mod = await server.ssrLoadModule(modulePath)
           await mod.default(vercelReq, vercelRes)
         } catch (error) {
-          console.error('[local-api-dev] api/checkout.ts threw:', error)
+          console.error(`[local-api-dev] ${modulePath} threw:`, error)
           if (!res.headersSent) vercelRes.status(500).json({ error: 'Local API handler crashed' })
         }
       })

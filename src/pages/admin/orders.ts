@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { DISCOUNT_PER_COOKIE } from '../../lib/discount'
 
 export type OrderItemRow = {
   id: string
@@ -24,10 +25,9 @@ export type OrderRow = {
   total: number
   status: OrderStatus
   discount: boolean
+  promo_code: string | null
   order_items: OrderItemRow[]
 }
-
-export const DISCOUNT_PER_COOKIE = 10
 
 export function orderQuantity(order: OrderRow) {
   return order.order_items.reduce((sum, item) => sum + item.quantity, 0)

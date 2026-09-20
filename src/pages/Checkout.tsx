@@ -7,6 +7,7 @@ import { useCookies } from '../data/CookiesContext'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { t, ui } from '../i18n/translations'
+import { DISCOUNT_PER_COOKIE } from '../lib/discount'
 
 const PICKUP_ADDRESS = 'Prashka 9, 1000 Skopje'
 
@@ -52,6 +53,7 @@ function Checkout() {
   })
   const totalCount = lines.reduce((sum, line) => sum + line.quantity, 0)
   const total = lines.reduce((sum, line) => sum + line.cookie.price * line.quantity, 0)
+  const discountedTotal = Math.max(0, total - DISCOUNT_PER_COOKIE * totalCount)
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -60,9 +62,12 @@ function Checkout() {
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [notes, setNotes] = useState('')
+  const [promoCode, setPromoCode] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
+  const [promoError, setPromoError] = useState(false)
+  const [promoValid, setPromoValid] = useState(false)
 
   const minDate = useMemo(() => {
     const tomorrow = new Date()
@@ -93,12 +98,44 @@ function Checkout() {
     setTime('')
   }
 
+  const handlePromoCodeChange = (value: string) => {
+    setPromoCode(value)
+    setPromoValid(false)
+    setPromoError(false)
+  }
+
+  const handlePromoBlur = async () => {
+    const code = promoCode.trim()
+    if (!code) {
+      setPromoValid(false)
+      setPromoError(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/validate-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      })
+      const body = await response.json().catch(() => null)
+      if (promoCode.trim() !== code) return
+
+      setPromoValid(Boolean(body?.valid))
+      setPromoError(!body?.valid)
+    } catch {
+      if (promoCode.trim() !== code) return
+      setPromoValid(false)
+    }
+  }
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     if (!date || !time || submitting) return
 
     setSubmitting(true)
     setSubmitError(false)
+    setPromoError(false)
 
     try {
       const response = await fetch('/api/checkout', {
@@ -111,13 +148,24 @@ function Checkout() {
           date,
           time,
           notes,
+          promoCode: promoCode.trim(),
           items: lines.map((line) => ({
             slug: line.cookie.slug,
             quantity: line.quantity,
           })),
         }),
       })
-      if (!response.ok) throw new Error('checkout request failed')
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null)
+        if (body?.error === 'invalid_promo_code') {
+          setPromoValid(false)
+          setPromoError(true)
+        } else {
+          setSubmitError(true)
+        }
+        return
+      }
 
       clear()
       setSubmitted(true)
@@ -192,10 +240,40 @@ function Checkout() {
         ))}
         <div className="mt-2 flex items-center justify-between border-t-2 border-dashed border-cookie-charcoal/30 pt-2 font-mono text-sm">
           <span className="text-cookie-charcoal/70">{t(ui, 'total', lang)}</span>
-          <span className="font-bold text-cookie-brown">
-            {total} {t(ui, 'currency', lang)}
-          </span>
+          {promoValid ? (
+            <span className="flex items-center gap-2">
+              <span className="text-cookie-charcoal/40 line-through">
+                {total} {t(ui, 'currency', lang)}
+              </span>
+              <span className="font-bold text-cookie-brown">
+                {discountedTotal} {t(ui, 'currency', lang)}
+              </span>
+            </span>
+          ) : (
+            <span className="font-bold text-cookie-brown">
+              {total} {t(ui, 'currency', lang)}
+            </span>
+          )}
         </div>
+
+        <label className="mt-2 flex flex-col gap-1">
+          <span className="text-sm font-bold text-cookie-brown uppercase">
+            {t(ui, 'promoCode', lang)}
+          </span>
+          <input
+            type="text"
+            value={promoCode}
+            onChange={(event) => handlePromoCodeChange(event.target.value)}
+            onBlur={handlePromoBlur}
+            placeholder={t(ui, 'promoCodePlaceholder', lang)}
+            className={`rounded-xl border bg-white px-4 py-2 text-cookie-charcoal ${
+              promoError ? 'border-cookie-rust' : 'border-cookie-charcoal/20'
+            }`}
+          />
+          {promoError && (
+            <p className="text-xs font-bold text-cookie-rust">{t(ui, 'invalidPromoCode', lang)}</p>
+          )}
+        </label>
       </FramedSection>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
