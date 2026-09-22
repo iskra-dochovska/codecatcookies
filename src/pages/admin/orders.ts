@@ -13,6 +13,14 @@ export type OrderItemRow = {
 
 export type OrderStatus = 'pending' | 'completed'
 
+export type OrderPackagingRow = {
+  id: string
+  packaging_item_id: string | null
+  packaging_item_name: string
+  quantity: number
+  unit_price: number
+}
+
 export type OrderRow = {
   id: string
   created_at: string
@@ -27,10 +35,15 @@ export type OrderRow = {
   discount: boolean
   promo_code: string | null
   order_items: OrderItemRow[]
+  order_packaging: OrderPackagingRow[]
 }
 
 export function orderQuantity(order: OrderRow) {
   return order.order_items.reduce((sum, item) => sum + item.quantity, 0)
+}
+
+export function packagingCost(order: OrderRow) {
+  return order.order_packaging.reduce((sum, item) => sum + item.quantity * item.unit_price, 0)
 }
 
 export function effectiveTotal(order: OrderRow) {
@@ -56,7 +69,7 @@ export function useOrders() {
 
     supabase
       .from('orders')
-      .select('*, order_items(*)')
+      .select('*, order_items(*), order_packaging(*)')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
         if (cancelled) return

@@ -11,9 +11,6 @@ const LOGO_URL = 'https://www.codecatcookies.com/logo.svg'
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
-const FOIL_COST_PER_COOKIE = 1.12
-const BOX_COST = 9.5
-const COOKIES_PER_BOX = 4
 const DISCOUNT_PER_COOKIE = 10
 
 const BRAND = {
@@ -305,13 +302,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const orderItems = items.map((item) => {
     const cookie = cookiesBySlug.get(item.slug)!
-    const unitCost = cookie.production_cost + FOIL_COST_PER_COOKIE + BOX_COST / COOKIES_PER_BOX
     return {
       cookie_slug: item.slug,
       cookie_name: cookie.name,
       quantity: item.quantity,
       unit_price: cookie.price,
-      unit_cost: unitCost,
+      unit_cost: cookie.production_cost,
     }
   })
 

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useCookies } from '../../../data/CookiesContext'
 import { DISCOUNT_PER_COOKIE } from '../../../lib/discount'
-import type { OrderRow } from '../orders'
+import { packagingCost, type OrderRow } from '../orders'
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, hour) => hour)
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -17,6 +17,7 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
     let totalCookiesSold = 0
     let discountCount = 0
     let discountTotal = 0
+    let packagingTotal = 0
     const unitsBySlug = new Map<string, number>()
     const hourCounts = new Array(24).fill(0)
     const dayCounts = new Array(7).fill(0)
@@ -36,9 +37,14 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
         unitsBySlug.set(item.cookie_slug, (unitsBySlug.get(item.cookie_slug) ?? 0) + item.quantity)
       }
 
+      const orderPackagingCost = packagingCost(order)
+      packagingTotal += orderPackagingCost
+
       const discountAmount = order.discount ? DISCOUNT_PER_COOKIE * quantity : 0
-      revenue += order.total - discountAmount
-      profit += orderProfit - discountAmount
+      if (order.status === 'completed') {
+        revenue += order.total - discountAmount
+        profit += orderProfit - discountAmount - orderPackagingCost
+      }
       if (order.discount) {
         discountCount += 1
         discountTotal += discountAmount
@@ -68,6 +74,7 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       totalCookiesSold,
       discountCount,
       discountTotal,
+      packagingTotal,
       cookieSales,
       topCustomers,
       maxCustomerUnits,
@@ -81,11 +88,18 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
           <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total profit</p>
           <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
             {stats.profit.toFixed(0)} den
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
+          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Packaging costs</p>
+          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+            {stats.packagingTotal.toFixed(0)} den
           </p>
         </div>
 
