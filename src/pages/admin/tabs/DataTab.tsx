@@ -182,7 +182,7 @@ function IngredientsSection({
 
       {error && <p className="text-sm font-bold text-cookie-rust">{error}</p>}
 
-      <div className="max-h-96 overflow-auto rounded-lg border border-cookie-charcoal/10">
+      <div className="hidden max-h-96 overflow-auto rounded-lg border border-cookie-charcoal/10 sm:block">
         <table className="w-full min-w-[420px] text-left text-sm">
           <thead>
             <tr className="sticky top-0 bg-cookie-brown text-xs font-bold text-cookie-cream uppercase">
@@ -391,6 +391,196 @@ function IngredientsSection({
         )}
       </div>
 
+      <div className="flex flex-col gap-2 sm:hidden">
+        {draft && (
+          <div className="flex flex-col gap-2 rounded-lg border border-cookie-charcoal/15 bg-cookie-honey/30 p-3">
+            <input
+              type="text"
+              autoFocus
+              placeholder="Name"
+              value={draft.name}
+              onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+              className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+            />
+            <div className="flex gap-2">
+              <select
+                value={draft.unit}
+                onChange={(event) => setDraft({ ...draft, unit: event.target.value as IngredientUnit })}
+                className="flex-1 rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+              >
+                <option value="gram">Gram</option>
+                <option value="item">Item</option>
+              </select>
+              <input
+                type="number"
+                step="any"
+                placeholder="Price"
+                value={draft.price}
+                onChange={(event) => setDraft({ ...draft, price: event.target.value })}
+                className="w-24 rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleConfirmDraft}
+                aria-label="Confirm new ingredient"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-cookie-rust text-cookie-cream"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-3.5 w-3.5"
+                  aria-hidden="true"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDraft(null)}
+                aria-label="Cancel"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-cookie-charcoal/30 text-cookie-charcoal/60"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-3 w-3"
+                  aria-hidden="true"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {ingredients.map((ingredient) =>
+          editingId === ingredient.id && editDraft ? (
+            <div
+              key={ingredient.id}
+              className="flex flex-col gap-2 rounded-lg border border-cookie-charcoal/15 bg-cookie-honey/30 p-3"
+            >
+              <input
+                type="text"
+                autoFocus
+                value={editDraft.name}
+                onChange={(event) => setEditDraft({ ...editDraft, name: event.target.value })}
+                className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+              />
+              <div className="flex gap-2">
+                <select
+                  value={editDraft.unit}
+                  onChange={(event) =>
+                    setEditDraft({ ...editDraft, unit: event.target.value as IngredientUnit })
+                  }
+                  className="flex-1 rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+                >
+                  <option value="gram">Gram</option>
+                  <option value="item">Item</option>
+                </select>
+                <input
+                  type="number"
+                  step="any"
+                  value={editDraft.price}
+                  onChange={(event) => setEditDraft({ ...editDraft, price: event.target.value })}
+                  className="w-24 rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={handleConfirmEdit}
+                  aria-label="Save ingredient"
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-cookie-rust text-cookie-cream"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-3.5 w-3.5"
+                    aria-hidden="true"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingId(null)
+                    setEditDraft(null)
+                  }}
+                  aria-label="Cancel"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-cookie-charcoal/30 text-cookie-charcoal/60"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-3 w-3"
+                    aria-hidden="true"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              key={ingredient.id}
+              className="flex items-center justify-between gap-3 rounded-lg border border-cookie-charcoal/15 bg-white p-3"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-bold text-cookie-brown">{ingredient.name}</p>
+                <p className="text-xs text-cookie-charcoal/50">{ingredient.unit}</p>
+              </div>
+              <div className="flex flex-none items-center gap-3">
+                <span className="font-mono text-sm text-cookie-charcoal/70">
+                  {formatDen(ingredient.price_per_unit)} den
+                </span>
+                <button
+                  type="button"
+                  onClick={() => startEdit(ingredient)}
+                  aria-label="Edit ingredient"
+                  title="Edit"
+                  className="text-cookie-charcoal/60 hover:text-cookie-brown"
+                >
+                  <EditIcon />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(ingredient)}
+                  aria-label="Delete ingredient"
+                  title="Delete"
+                  className="text-cookie-charcoal/60 hover:text-cookie-rust"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+            </div>
+          ),
+        )}
+        {!loading && !draft && ingredients.length === 0 && (
+          <p className="px-1 py-4 text-sm text-cookie-charcoal/50">No ingredients yet.</p>
+        )}
+      </div>
+
       {confirmDelete && (
         <ConfirmModal
           message={
@@ -487,7 +677,7 @@ function PackagingSection({
 
       {error && <p className="text-sm font-bold text-cookie-rust">{error}</p>}
 
-      <div className="max-h-96 overflow-auto rounded-lg border border-cookie-charcoal/10">
+      <div className="hidden max-h-96 overflow-auto rounded-lg border border-cookie-charcoal/10 sm:block">
         <table className="w-full min-w-[360px] text-left text-sm">
           <thead>
             <tr className="sticky top-0 bg-cookie-brown text-xs font-bold text-cookie-cream uppercase">
@@ -667,6 +857,171 @@ function PackagingSection({
         </table>
         {!loading && !draft && items.length === 0 && (
           <p className="px-4 py-6 text-sm text-cookie-charcoal/50">No packaging items yet.</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2 sm:hidden">
+        {draft && (
+          <div className="flex flex-col gap-2 rounded-lg border border-cookie-charcoal/15 bg-cookie-honey/30 p-3">
+            <input
+              type="text"
+              autoFocus
+              placeholder="Name"
+              value={draft.name}
+              onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+              className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+            />
+            <input
+              type="number"
+              step="any"
+              placeholder="Price"
+              value={draft.price}
+              onChange={(event) => setDraft({ ...draft, price: event.target.value })}
+              className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleConfirmDraft}
+                aria-label="Confirm new packaging item"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-cookie-rust text-cookie-cream"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-3.5 w-3.5"
+                  aria-hidden="true"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDraft(null)}
+                aria-label="Cancel"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-cookie-charcoal/30 text-cookie-charcoal/60"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-3 w-3"
+                  aria-hidden="true"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {items.map((item) =>
+          editingId === item.id && editDraft ? (
+            <div
+              key={item.id}
+              className="flex flex-col gap-2 rounded-lg border border-cookie-charcoal/15 bg-cookie-honey/30 p-3"
+            >
+              <input
+                type="text"
+                autoFocus
+                value={editDraft.name}
+                onChange={(event) => setEditDraft({ ...editDraft, name: event.target.value })}
+                className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+              />
+              <input
+                type="number"
+                step="any"
+                value={editDraft.price}
+                onChange={(event) => setEditDraft({ ...editDraft, price: event.target.value })}
+                className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm text-cookie-charcoal"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={handleConfirmEdit}
+                  aria-label="Save packaging item"
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-cookie-rust text-cookie-cream"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-3.5 w-3.5"
+                    aria-hidden="true"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingId(null)
+                    setEditDraft(null)
+                  }}
+                  aria-label="Cancel"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-cookie-charcoal/30 text-cookie-charcoal/60"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-3 w-3"
+                    aria-hidden="true"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              key={item.id}
+              className="flex items-center justify-between gap-3 rounded-lg border border-cookie-charcoal/15 bg-white p-3"
+            >
+              <p className="truncate font-bold text-cookie-brown">{item.name}</p>
+              <div className="flex flex-none items-center gap-3">
+                <span className="font-mono text-sm text-cookie-charcoal/70">
+                  {formatDen(item.price)} den
+                </span>
+                <button
+                  type="button"
+                  onClick={() => startEdit(item)}
+                  aria-label="Edit packaging item"
+                  title="Edit"
+                  className="text-cookie-charcoal/60 hover:text-cookie-brown"
+                >
+                  <EditIcon />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(item)}
+                  aria-label="Delete packaging item"
+                  title="Delete"
+                  className="text-cookie-charcoal/60 hover:text-cookie-rust"
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+            </div>
+          ),
+        )}
+        {!loading && !draft && items.length === 0 && (
+          <p className="px-1 py-4 text-sm text-cookie-charcoal/50">No packaging items yet.</p>
         )}
       </div>
 

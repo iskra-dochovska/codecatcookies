@@ -242,7 +242,7 @@ function PromoCodesTab() {
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border border-cookie-charcoal/15 bg-white">
+      <div className="hidden overflow-x-auto rounded-lg border border-cookie-charcoal/15 bg-white sm:block">
         <table className="w-full min-w-[480px] text-left text-sm">
           <thead>
             <tr className="bg-cookie-brown text-xs font-bold text-cookie-cream uppercase">
@@ -287,6 +287,43 @@ function PromoCodesTab() {
         </table>
         {!loading && codes.length === 0 && (
           <p className="px-4 py-6 text-sm text-cookie-charcoal/50">No promo codes yet.</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2 sm:hidden">
+        {codes.map((promo) => (
+          <div
+            key={promo.id}
+            className="flex items-center justify-between gap-3 rounded-lg border border-cookie-charcoal/15 bg-white p-3"
+          >
+            <div className="min-w-0">
+              <p className="truncate font-mono font-bold text-cookie-brown">{promo.code}</p>
+              <p className="font-mono text-xs text-cookie-charcoal/50">
+                {promo.uses} / {promo.max_uses ?? '∞'} uses
+              </p>
+            </div>
+            <div className="flex flex-none items-center gap-3">
+              <input
+                type="checkbox"
+                checked={promo.active}
+                onChange={(event) => toggleActive(promo.id, event.target.checked)}
+                aria-label="Promo code active"
+                className="h-4 w-4 accent-cookie-rust"
+              />
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(promo)}
+                aria-label="Delete promo code"
+                title="Delete"
+                className="text-cookie-charcoal/60 hover:text-cookie-rust"
+              >
+                <TrashIcon />
+              </button>
+            </div>
+          </div>
+        ))}
+        {!loading && codes.length === 0 && (
+          <p className="px-1 py-4 text-sm text-cookie-charcoal/50">No promo codes yet.</p>
         )}
       </div>
 
