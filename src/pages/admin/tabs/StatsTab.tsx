@@ -1,15 +1,27 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useCookies } from '../../../data/CookiesContext'
+import { supabase } from '../../../lib/supabaseClient'
 import { DISCOUNT_PER_COOKIE } from '../../../lib/discount'
+import { formatDen } from '../../../lib/format'
 import { packagingCost, type OrderRow } from '../orders'
 
 const HOUR_LABELS = Array.from({ length: 24 }, (_, hour) => hour)
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const TOP_CUSTOMERS_LIMIT = 5
 
+type CookieCost = { slug: string; name: string; price: number; production_cost: number }
+
 function StatsTab({ orders }: { orders: OrderRow[] }) {
   const { cookies } = useCookies()
   const [timeView, setTimeView] = useState<'hour' | 'day'>('hour')
+  const [cookieCosts, setCookieCosts] = useState<CookieCost[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('cookies')
+      .select('slug, name, price, production_cost')
+      .then(({ data }) => setCookieCosts((data as CookieCost[] | null) ?? []))
+  }, [])
 
   const stats = useMemo(() => {
     let profit = 0
@@ -18,6 +30,8 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
     let discountCount = 0
     let discountTotal = 0
     let packagingTotal = 0
+    let productionTotal = 0
+    let revenueOrderCount = 0
     const unitsBySlug = new Map<string, number>()
     const hourCounts = new Array(24).fill(0)
     const dayCounts = new Array(7).fill(0)
@@ -30,8 +44,10 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
 
       let quantity = 0
       let orderProfit = 0
+      let orderProductionCost = 0
       for (const item of order.order_items) {
         orderProfit += item.quantity * (item.unit_price - item.unit_cost)
+        orderProductionCost += item.quantity * item.unit_cost
         totalCookiesSold += item.quantity
         quantity += item.quantity
         unitsBySlug.set(item.cookie_slug, (unitsBySlug.get(item.cookie_slug) ?? 0) + item.quantity)
@@ -44,6 +60,8 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       if (order.status === 'completed') {
         revenue += order.total - discountAmount
         profit += orderProfit - discountAmount - orderPackagingCost
+        revenueOrderCount += 1
+        productionTotal += orderProductionCost
       }
       if (order.discount) {
         discountCount += 1
@@ -59,11 +77,20 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       .map((cookie) => ({ slug: cookie.slug, name: cookie.name, quantity: unitsBySlug.get(cookie.slug) ?? 0 }))
       .sort((a, b) => b.quantity - a.quantity)
 
+    const cookieProfitability = cookieCosts
+      .map((cookie) => ({
+        slug: cookie.slug,
+        name: cookie.name,
+        margin: cookie.price - cookie.production_cost,
+      }))
+      .sort((a, b) => b.margin - a.margin)
+
     const topCustomers = [...customersByEmail.values()]
       .sort((a, b) => b.quantity - a.quantity)
       .slice(0, TOP_CUSTOMERS_LIMIT)
 
     const maxUnits = Math.max(1, ...cookieSales.map((c) => c.quantity))
+    const maxMargin = Math.max(1, ...cookieProfitability.map((c) => c.margin))
     const maxCustomerUnits = Math.max(1, ...topCustomers.map((c) => c.quantity))
     const maxHourCount = Math.max(1, ...hourCounts)
     const maxDayCount = Math.max(1, ...dayCounts)
@@ -75,24 +102,35 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       discountCount,
       discountTotal,
       packagingTotal,
+      productionTotal,
+      revenueOrderCount,
       cookieSales,
+      cookieProfitability,
       topCustomers,
       maxCustomerUnits,
       hourCounts,
       dayCounts,
       maxUnits,
+      maxMargin,
       maxHourCount,
       maxDayCount,
     }
-  }, [orders, cookies])
+  }, [orders, cookies, cookieCosts])
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
           <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total profit</p>
           <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
             {stats.profit.toFixed(0)} den
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
+          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Production costs</p>
+          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+            {stats.productionTotal.toFixed(0)} den
           </p>
         </div>
 
@@ -107,6 +145,9 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
           <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total revenue</p>
           <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
             {stats.revenue.toFixed(0)} den
+          </p>
+          <p className="mt-1 text-xs text-cookie-charcoal/50">
+            {stats.revenueOrderCount} order{stats.revenueOrderCount === 1 ? '' : 's'}
           </p>
         </div>
 
@@ -151,6 +192,35 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
           </div>
         </div>
 
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
+          <p className="mb-3 text-xs font-bold text-cookie-charcoal/60 uppercase">
+            Cookies by profitability
+          </p>
+          <div className="flex flex-col gap-2">
+            {stats.cookieProfitability.length === 0 && (
+              <p className="text-sm text-cookie-charcoal/50">No cookies yet.</p>
+            )}
+            {stats.cookieProfitability.map((cookie) => (
+              <div key={cookie.slug} className="flex items-center gap-3">
+                <span className="w-40 flex-none truncate text-xs font-bold text-cookie-brown">
+                  {cookie.name}
+                </span>
+                <div className="h-2.5 flex-1 rounded-full bg-cookie-charcoal/10">
+                  <div
+                    className="h-2.5 rounded-full bg-cookie-rust"
+                    style={{ width: `${Math.max(0, (cookie.margin / stats.maxMargin) * 100)}%` }}
+                  />
+                </div>
+                <span className="w-16 flex-none text-right font-mono text-xs text-cookie-charcoal/70">
+                  {formatDen(cookie.margin)} den
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">
@@ -206,32 +276,32 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
             </div>
           )}
         </div>
-      </div>
 
-      <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-        <p className="mb-3 text-xs font-bold text-cookie-charcoal/60 uppercase">
-          Top {TOP_CUSTOMERS_LIMIT} customers
-        </p>
-        <div className="flex flex-col gap-2">
-          {stats.topCustomers.length === 0 && (
-            <p className="text-sm text-cookie-charcoal/50">No orders yet.</p>
-          )}
-          {stats.topCustomers.map((customer) => (
-            <div key={customer.email} className="flex items-center gap-3">
-              <span className="w-48 flex-none truncate text-sm font-bold text-cookie-brown">
-                {customer.name}
-              </span>
-              <div className="h-3 flex-1 rounded-full bg-cookie-charcoal/10">
-                <div
-                  className="h-3 rounded-full bg-cookie-rust"
-                  style={{ width: `${(customer.quantity / stats.maxCustomerUnits) * 100}%` }}
-                />
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
+          <p className="mb-3 text-xs font-bold text-cookie-charcoal/60 uppercase">
+            Top {TOP_CUSTOMERS_LIMIT} customers
+          </p>
+          <div className="flex flex-col gap-2">
+            {stats.topCustomers.length === 0 && (
+              <p className="text-sm text-cookie-charcoal/50">No orders yet.</p>
+            )}
+            {stats.topCustomers.map((customer) => (
+              <div key={customer.email} className="flex items-center gap-3">
+                <span className="w-48 flex-none truncate text-sm font-bold text-cookie-brown">
+                  {customer.name}
+                </span>
+                <div className="h-3 flex-1 rounded-full bg-cookie-charcoal/10">
+                  <div
+                    className="h-3 rounded-full bg-cookie-rust"
+                    style={{ width: `${(customer.quantity / stats.maxCustomerUnits) * 100}%` }}
+                  />
+                </div>
+                <span className="w-8 flex-none text-right font-mono text-sm text-cookie-charcoal/70">
+                  {customer.quantity}
+                </span>
               </div>
-              <span className="w-8 flex-none text-right font-mono text-sm text-cookie-charcoal/70">
-                {customer.quantity}
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
