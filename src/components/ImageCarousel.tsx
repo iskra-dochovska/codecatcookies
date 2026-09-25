@@ -6,6 +6,23 @@ export type CarouselImage = { src: string; alt: string; focalY?: number }
 const AUTO_ADVANCE_MS = 4000
 const SWIPE_THRESHOLD_PX = 40
 
+function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-6 w-6"
+      aria-hidden="true"
+    >
+      {direction === 'left' ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
+    </svg>
+  )
+}
+
 function Lightbox({
   images,
   index,
@@ -19,6 +36,14 @@ function Lightbox({
 }) {
   const touchStartX = useRef<number | null>(null)
 
+  function goPrev() {
+    onIndexChange((index - 1 + images.length) % images.length)
+  }
+
+  function goNext() {
+    onIndexChange((index + 1) % images.length)
+  }
+
   function handleTouchStart(event: React.TouchEvent) {
     touchStartX.current = event.touches[0].clientX
   }
@@ -28,7 +53,8 @@ function Lightbox({
     const delta = event.changedTouches[0].clientX - touchStartX.current
     touchStartX.current = null
     if (Math.abs(delta) < SWIPE_THRESHOLD_PX) return
-    onIndexChange(delta < 0 ? (index + 1) % images.length : (index - 1 + images.length) % images.length)
+    if (delta < 0) goNext()
+    else goPrev()
   }
 
   return createPortal(
@@ -38,11 +64,40 @@ function Lightbox({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <img
-        src={images[index].src}
-        alt={images[index].alt}
-        className="max-h-full max-w-full rounded-2xl object-contain"
-      />
+      <div className="relative">
+        <img
+          src={images[index].src}
+          alt={images[index].alt}
+          className="max-h-[calc(100vh-3rem)] max-w-[calc(100vw-3rem)] rounded-2xl object-contain"
+        />
+
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                goPrev()
+              }}
+              aria-label="Previous image"
+              className="absolute top-1/2 left-0 hidden h-11 w-11 -translate-x-[calc(100%+12px)] -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-cookie-cream hover:bg-black/60 sm:flex"
+            >
+              <ChevronIcon direction="left" />
+            </button>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                goNext()
+              }}
+              aria-label="Next image"
+              className="absolute top-1/2 right-0 hidden h-11 w-11 translate-x-[calc(100%+12px)] -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-cookie-cream hover:bg-black/60 sm:flex"
+            >
+              <ChevronIcon direction="right" />
+            </button>
+          </>
+        )}
+      </div>
 
       {images.length > 1 && (
         <div
@@ -97,17 +152,31 @@ export function ImageCarousel({
   className?: string
   eagerFirst?: boolean
 }) {
-  const [index, setIndex] = useState(0)
+  const count = images.length
+  // Slide track is [lastClone, ...images, firstClone] when there's more than one
+  // image, so wrapping past either end can animate forward/backward instead of
+  // snapping back across the whole strip.
+  const track = count > 1 ? [images[count - 1], ...images, images[0]] : images
+  const [position, setPosition] = useState(1)
+  const [instant, setInstant] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const touchStartX = useRef<number | null>(null)
 
-  useEffect(() => {
-    if (images.length < 2) return
-    const id = setInterval(() => setIndex((current) => (current + 1) % images.length), AUTO_ADVANCE_MS)
-    return () => clearInterval(id)
-  }, [images.length])
+  const activeIndex = count > 1 ? (((position - 1) % count) + count) % count : 0
 
-  if (images.length === 0) {
+  useEffect(() => {
+    if (count < 2 || lightboxOpen) return
+    const id = setInterval(() => setPosition((current) => current + 1), AUTO_ADVANCE_MS)
+    return () => clearInterval(id)
+  }, [count, lightboxOpen])
+
+  useEffect(() => {
+    if (!instant) return
+    const raf = requestAnimationFrame(() => setInstant(false))
+    return () => cancelAnimationFrame(raf)
+  }, [instant])
+
+  if (count === 0) {
     return (
       <div
         className={`flex items-center justify-center bg-cookie-charcoal/5 text-sm text-cookie-charcoal/50 ${className ?? ''}`}
@@ -115,6 +184,21 @@ export function ImageCarousel({
         Image
       </div>
     )
+  }
+
+  function goToIndex(nextIndex: number) {
+    setPosition(nextIndex + 1)
+  }
+
+  function handleTransitionEnd() {
+    if (count < 2) return
+    if (position === 0) {
+      setInstant(true)
+      setPosition(count)
+    } else if (position === count + 1) {
+      setInstant(true)
+      setPosition(1)
+    }
   }
 
   function handleTouchStart(event: React.TouchEvent) {
@@ -126,9 +210,7 @@ export function ImageCarousel({
     const delta = event.changedTouches[0].clientX - touchStartX.current
     touchStartX.current = null
     if (Math.abs(delta) < SWIPE_THRESHOLD_PX) return
-    setIndex((current) =>
-      delta < 0 ? (current + 1) % images.length : (current - 1 + images.length) % images.length,
-    )
+    setPosition((current) => (delta < 0 ? current + 1 : current - 1))
   }
 
   return (
@@ -139,12 +221,13 @@ export function ImageCarousel({
         onTouchEnd={handleTouchEnd}
       >
         <div
-          className="flex h-full w-full transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${index * 100}%)` }}
+          className={`flex h-full w-full ${instant ? '' : 'transition-transform duration-500 ease-in-out'}`}
+          style={{ transform: `translateX(-${position * 100}%)` }}
+          onTransitionEnd={handleTransitionEnd}
         >
-          {images.map((image, i) => (
+          {track.map((image, i) => (
             <button
-              key={image.src}
+              key={i}
               type="button"
               onClick={() => setLightboxOpen(true)}
               aria-label="View full image"
@@ -153,8 +236,8 @@ export function ImageCarousel({
               <img
                 src={image.src}
                 alt={image.alt}
-                loading={eagerFirst && i === 0 ? 'eager' : 'lazy'}
-                fetchPriority={eagerFirst && i === 0 ? 'high' : 'low'}
+                loading={eagerFirst && i === 1 ? 'eager' : 'lazy'}
+                fetchPriority={eagerFirst && i === 1 ? 'high' : 'low'}
                 decoding="async"
                 style={{ objectPosition: `center ${image.focalY ?? 50}%` }}
                 className="h-full w-full object-cover"
@@ -163,16 +246,16 @@ export function ImageCarousel({
           ))}
         </div>
 
-        {images.length > 1 && (
+        {count > 1 && (
           <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5">
             {images.map((image, i) => (
               <button
                 key={image.src}
                 type="button"
-                onClick={() => setIndex(i)}
+                onClick={() => goToIndex(i)}
                 aria-label={`Show image ${i + 1}`}
                 className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                  i === index ? 'bg-cookie-cream' : 'bg-cookie-cream/50'
+                  i === activeIndex ? 'bg-cookie-cream' : 'bg-cookie-cream/50'
                 }`}
               />
             ))}
@@ -183,8 +266,8 @@ export function ImageCarousel({
       {lightboxOpen && (
         <Lightbox
           images={images}
-          index={index}
-          onIndexChange={setIndex}
+          index={activeIndex}
+          onIndexChange={goToIndex}
           onClose={() => setLightboxOpen(false)}
         />
       )}

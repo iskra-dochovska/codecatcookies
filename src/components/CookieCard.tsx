@@ -1,5 +1,6 @@
 import { ImageCarousel, type CarouselImage } from './ImageCarousel'
 import { FramedSection } from './CookieDecor'
+import bestSellerIcon from '../assets/best_seller.svg'
 import type { Cookie } from '../data/CookiesContext'
 import { allergenColors, defaultAllergenColor } from '../data/allergens'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
@@ -28,7 +29,7 @@ export function CookieCard({ cookie, isBestSeller }: { cookie: Cookie; isBestSel
   return (
     <FramedSection id={cookie.slug} className="relative flex flex-col gap-6 scroll-mt-6">
       {isBestSeller && <BestSellerBadge />}
-      <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
+      <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-[14rem_1fr] sm:gap-8">
         <div className="flex flex-col items-center gap-4">
           <div className="relative h-48 w-48 flex-none rounded-2xl sm:w-56">
             <ImageCarousel images={images} className="h-full w-full rounded-2xl" />
@@ -63,32 +64,40 @@ export function CookieCard({ cookie, isBestSeller }: { cookie: Cookie; isBestSel
             {cookie.scales && <ScaleList scales={cookie.scales} lang={lang} className="w-full" />}
           </div>
         </div>
+
+        {hasDetails && (
+          <details className="group sm:col-span-2">
+            <summary className="flex w-full cursor-pointer list-none items-center justify-center gap-2 rounded-full border border-cookie-rust bg-cookie-rust/10 px-4 py-1.5 text-center text-xs font-bold text-cookie-rust [&::-webkit-details-marker]:hidden sm:ml-64 sm:w-auto">
+              {t(ui, 'nutritionAndAllergens', lang)}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4 transition-transform group-open:rotate-180"
+                aria-hidden="true"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </summary>
+
+            <div className="flex flex-col gap-8 pt-6 sm:flex-row sm:gap-12">
+              {cookie.nutrition && (
+                <div className="sm:flex-[2]">
+                  <NutritionTable facts={cookie.nutrition} lang={lang} />
+                </div>
+              )}
+              {cookie.allergens && (
+                <div className="sm:flex-1">
+                  <AllergensList allergens={cookie.allergens} lang={lang} />
+                </div>
+              )}
+            </div>
+          </details>
+        )}
       </div>
-
-      {hasDetails && (
-        <details className="group">
-          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-full bg-cookie-rust px-4 py-2 text-center text-sm font-bold text-cookie-cream [&::-webkit-details-marker]:hidden">
-            {t(ui, 'nutritionAndAllergens', lang)}
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4 transition-transform group-open:rotate-180"
-              aria-hidden="true"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </summary>
-
-          <div className="flex flex-col gap-8 pt-6">
-            {cookie.nutrition && <NutritionTable facts={cookie.nutrition} lang={lang} />}
-            {cookie.allergens && <AllergensList allergens={cookie.allergens} lang={lang} />}
-          </div>
-        </details>
-      )}
 
       <CartControls
         cookie={cookie}
@@ -103,19 +112,8 @@ export function CookieCard({ cookie, isBestSeller }: { cookie: Cookie; isBestSel
 
 function BestSellerBadge() {
   return (
-    <span title="Best seller" className="absolute -top-3 -left-3 z-10 h-16 w-16">
-      <svg viewBox="0 0 100 100" className="h-full w-full">
-        <defs>
-          <path id="best-seller-circle" d="M 50,50 m -34,0 a 34,34 0 1,1 68,0 a 34,34 0 1,1 -68,0" />
-        </defs>
-        <circle cx="50" cy="50" r="48" className="fill-cookie-rust" />
-        <text fontSize="10.5" fontWeight="700" letterSpacing="1.5" className="fill-white">
-          <textPath href="#best-seller-circle" startOffset="0%">
-            BEST SELLER • BEST SELLER •
-          </textPath>
-        </text>
-      </svg>
-      <span className="sr-only">Best seller</span>
+    <span className="absolute -top-14 -left-4 z-10 h-28 w-28 sm:-top-16 sm:-left-16 sm:h-32 sm:w-32">
+      <img src={bestSellerIcon} alt="Best seller" className="h-full w-full" />
     </span>
   )
 }
