@@ -47,8 +47,30 @@ function Footer() {
             info@codecatcookies.com
           </a>
         </div>
-        <span className="text-cookie-cream/70">
+        <span className="flex items-center gap-2 text-cookie-cream/70">
           &copy; {new Date().getFullYear()} codecatcookies. {t(ui, 'allRightsReserved', lang)}
+          <a
+            href="https://www.instagram.com/poison_grl/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Photos by @poison_grl"
+            className="flex items-center gap-1 hover:text-cookie-cream hover:underline"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+              <circle cx="12" cy="13" r="3.5" />
+            </svg>
+            by @poison_grl
+          </a>
         </span>
       </div>
     </footer>

@@ -12,6 +12,11 @@ function Cookies() {
   const { lang } = useLanguage()
   const { cookies, loading } = useCookies()
 
+  const bestSellerSlug = useMemo(() => {
+    const topSeller = [...cookies].sort((a, b) => b.unitsSold - a.unitsSold)[0]
+    return topSeller && topSeller.unitsSold > 0 ? topSeller.slug : null
+  }, [cookies])
+
   const productsJsonLd = useMemo(
     () => ({
       '@context': 'https://schema.org',
@@ -22,7 +27,7 @@ function Cookies() {
         name: cookie.name,
         description: cookie.tagline.en,
         url: `${SITE_URL}/cookies#${cookie.slug}`,
-        ...(cookie.image ? { image: `${SITE_URL}${cookie.image}` } : {}),
+        ...(cookie.images[0] ? { image: `${SITE_URL}${cookie.images[0].src}` } : {}),
         offers: {
           '@type': 'Offer',
           price: cookie.price,
@@ -71,7 +76,9 @@ function Cookies() {
           {t(ui, 'loading', lang)}
         </p>
       ) : (
-        cookies.map((cookie) => <CookieCard key={cookie.slug} cookie={cookie} />)
+        cookies.map((cookie) => (
+          <CookieCard key={cookie.slug} cookie={cookie} isBestSeller={cookie.slug === bestSellerSlug} />
+        ))
       )}
     </section>
   )

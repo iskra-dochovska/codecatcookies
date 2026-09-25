@@ -1,3 +1,4 @@
+import { ImageCarousel, type CarouselImage } from './ImageCarousel'
 import { FramedSection } from './CookieDecor'
 import type { Cookie } from '../data/CookiesContext'
 import { allergenColors, defaultAllergenColor } from '../data/allergens'
@@ -12,18 +13,25 @@ import {
 } from '../i18n/translations'
 import { useCart } from '../cart/CartContext'
 
-export function CookieCard({ cookie }: { cookie: Cookie }) {
+export function CookieCard({ cookie, isBestSeller }: { cookie: Cookie; isBestSeller?: boolean }) {
   const { lang } = useLanguage()
   const { items, increment, decrement } = useCart()
   const quantity = items[cookie.slug] ?? 0
   const hasDetails = Boolean(cookie.nutrition || cookie.allergens)
 
+  const images: CarouselImage[] = cookie.images.map((image) => ({
+    src: image.src,
+    alt: cookie.name,
+    focalY: image.focalY,
+  }))
+
   return (
-    <FramedSection id={cookie.slug} className="flex flex-col gap-6 scroll-mt-6">
+    <FramedSection id={cookie.slug} className="relative flex flex-col gap-6 scroll-mt-6">
+      {isBestSeller && <BestSellerBadge />}
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
         <div className="flex flex-col items-center gap-4">
-          <div className="relative flex h-48 w-48 flex-none items-center justify-center rounded-2xl bg-cookie-charcoal/5 text-sm text-cookie-charcoal/50 sm:w-56">
-            Image
+          <div className="relative h-48 w-48 flex-none rounded-2xl sm:w-56">
+            <ImageCarousel images={images} className="h-full w-full rounded-2xl" />
             <span className="absolute top-2 right-2 rounded-full bg-cookie-rust px-2 py-1 font-mono text-xs font-bold text-cookie-cream">
               {cookie.price} {t(ui, 'currency', lang)}
             </span>
@@ -90,6 +98,25 @@ export function CookieCard({ cookie }: { cookie: Cookie }) {
         className="flex sm:hidden"
       />
     </FramedSection>
+  )
+}
+
+function BestSellerBadge() {
+  return (
+    <span title="Best seller" className="absolute -top-3 -left-3 z-10 h-16 w-16">
+      <svg viewBox="0 0 100 100" className="h-full w-full">
+        <defs>
+          <path id="best-seller-circle" d="M 50,50 m -34,0 a 34,34 0 1,1 68,0 a 34,34 0 1,1 -68,0" />
+        </defs>
+        <circle cx="50" cy="50" r="48" className="fill-cookie-rust" />
+        <text fontSize="10.5" fontWeight="700" letterSpacing="1.5" className="fill-white">
+          <textPath href="#best-seller-circle" startOffset="0%">
+            BEST SELLER • BEST SELLER •
+          </textPath>
+        </text>
+      </svg>
+      <span className="sr-only">Best seller</span>
+    </span>
   )
 }
 

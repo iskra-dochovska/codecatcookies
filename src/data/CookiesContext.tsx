@@ -1,11 +1,14 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
+export type CookieImage = { src: string; focalY: number }
+
 export type Cookie = {
   slug: string
   name: string
-  image?: string
+  images: CookieImage[]
   price: number
+  unitsSold: number
   tagline: { en: string; mk: string }
   scales?: { label: string; value: number }[]
   nutrition?: { label: string; value: string; indent?: boolean }[]
@@ -27,7 +30,8 @@ type CookieRow = {
   slug: string
   name: string
   price: number
-  image_path: string | null
+  units_sold: number
+  cookie_images: { path: string; position: number; focal_y: number }[]
   tagline_en: string
   tagline_mk: string
   scales: { label: string; value: number }[]
@@ -40,7 +44,10 @@ function mapRow(row: CookieRow): Cookie {
     slug: row.slug,
     name: row.name,
     price: row.price,
-    image: row.image_path ?? undefined,
+    unitsSold: row.units_sold,
+    images: [...row.cookie_images]
+      .sort((a, b) => a.position - b.position)
+      .map((image) => ({ src: image.path, focalY: image.focal_y })),
     tagline: { en: row.tagline_en, mk: row.tagline_mk },
     scales: row.scales.length ? row.scales : undefined,
     nutrition: row.nutrition.length ? row.nutrition : undefined,
@@ -60,7 +67,9 @@ export function CookiesProvider({ children }: { children: ReactNode }) {
 
     supabase
       .from('cookies')
-      .select('slug, name, price, image_path, tagline_en, tagline_mk, scales, nutrition, allergens')
+      .select(
+        'slug, name, price, units_sold, cookie_images(path, position, focal_y), tagline_en, tagline_mk, scales, nutrition, allergens',
+      )
       .eq('purchasable', true)
       .order('price', { ascending: true })
       .then(({ data, error }) => {
