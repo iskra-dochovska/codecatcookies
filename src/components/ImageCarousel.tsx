@@ -6,17 +6,63 @@ export type CarouselImage = { src: string; alt: string; focalY?: number }
 const AUTO_ADVANCE_MS = 4000
 const SWIPE_THRESHOLD_PX = 40
 
-function Lightbox({ image, onClose }: { image: CarouselImage; onClose: () => void }) {
+function Lightbox({
+  images,
+  index,
+  onIndexChange,
+  onClose,
+}: {
+  images: CarouselImage[]
+  index: number
+  onIndexChange: (index: number) => void
+  onClose: () => void
+}) {
+  const touchStartX = useRef<number | null>(null)
+
+  function handleTouchStart(event: React.TouchEvent) {
+    touchStartX.current = event.touches[0].clientX
+  }
+
+  function handleTouchEnd(event: React.TouchEvent) {
+    if (touchStartX.current === null) return
+    const delta = event.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(delta) < SWIPE_THRESHOLD_PX) return
+    onIndexChange(delta < 0 ? (index + 1) % images.length : (index - 1 + images.length) % images.length)
+  }
+
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6"
       onClick={onClose}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <img
-        src={image.src}
-        alt={image.alt}
+        src={images[index].src}
+        alt={images[index].alt}
         className="max-h-full max-w-full rounded-2xl object-contain"
       />
+
+      {images.length > 1 && (
+        <div
+          className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {images.map((image, i) => (
+            <button
+              key={image.src}
+              type="button"
+              onClick={() => onIndexChange(i)}
+              aria-label={`Show image ${i + 1}`}
+              className={`h-2 w-2 rounded-full transition-colors ${
+                i === index ? 'bg-cookie-cream' : 'bg-cookie-cream/40'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
       <button
         type="button"
         onClick={onClose}
@@ -134,7 +180,14 @@ export function ImageCarousel({
         )}
       </div>
 
-      {lightboxOpen && <Lightbox image={images[index]} onClose={() => setLightboxOpen(false)} />}
+      {lightboxOpen && (
+        <Lightbox
+          images={images}
+          index={index}
+          onIndexChange={setIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </>
   )
 }

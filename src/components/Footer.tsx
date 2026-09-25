@@ -47,8 +47,9 @@ function Footer() {
             info@codecatcookies.com
           </a>
         </div>
-        <span className="flex items-center gap-2 text-cookie-cream/70">
-          &copy; {new Date().getFullYear()} codecatcookies. {t(ui, 'allRightsReserved', lang)}
+        <div className="flex flex-col items-center gap-1 text-center text-cookie-cream/70 sm:flex-row sm:gap-2">
+          <span>&copy; {new Date().getFullYear()} codecatcookies.</span>
+          <span>{t(ui, 'allRightsReserved', lang)}</span>
           <a
             href="https://www.instagram.com/poison_grl/"
             target="_blank"
@@ -71,7 +72,7 @@ function Footer() {
             </svg>
             by @poison_grl
           </a>
-        </span>
+        </div>
       </div>
     </footer>
   )

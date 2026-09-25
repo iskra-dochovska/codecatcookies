@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import sushi from '../assets/sushi.png'
 import HeroCarousel from '../components/HeroCarousel'
+import { ImageCarousel, type CarouselImage } from '../components/ImageCarousel'
 import { useCookies, type Cookie } from '../data/CookiesContext'
 import logoMark from '../assets/codecatcookies_logo.svg'
 import { useLanguage, type Lang } from '../i18n/LanguageContext'
@@ -235,8 +236,16 @@ function Home() {
                 index % 2 === 1 ? 'sm:flex-row-reverse' : ''
               }`}
             >
-              <div className="flex h-40 w-full flex-none items-center justify-center rounded-xl border-2 border-dashed border-cookie-charcoal/40 text-sm text-cookie-charcoal/50 sm:w-56">
-                Image
+              <div
+                className="h-48 w-48 flex-none sm:w-56"
+                onClick={(event) => event.preventDefault()}
+              >
+                <ImageCarousel
+                  images={cookie.images.map(
+                    (image): CarouselImage => ({ src: image.src, alt: cookie.name, focalY: image.focalY }),
+                  )}
+                  className="h-full w-full rounded-xl"
+                />
               </div>
               <div className="flex flex-col items-center gap-2 text-center sm:w-56 sm:flex-none sm:items-start sm:text-left">
                 <h3 className="text-xl font-black text-cookie-brown uppercase">
