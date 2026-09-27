@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useCookies } from '../../../data/CookiesContext'
+import { useClickOutside } from '../../../hooks/useClickOutside'
 import { supabase } from '../../../lib/supabaseClient'
 import { formatDen } from '../../../lib/format'
 import { packagingCost, type OrderRow } from '../orders'
@@ -7,13 +8,100 @@ import { packagingCost, type OrderRow } from '../orders'
 const HOUR_LABELS = Array.from({ length: 24 }, (_, hour) => hour)
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const TOP_CUSTOMERS_LIMIT = 5
+const ALL_MONTHS = 'all'
 
 type CookieCost = { slug: string; name: string; price: number; production_cost: number }
+
+function pad(value: number) {
+  return value.toString().padStart(2, '0')
+}
+
+function monthKey(date: Date) {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}`
+}
+
+function formatMonthLabel(key: string) {
+  const [year, month] = key.split('-').map(Number)
+  return new Date(year, month - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+}
+
+function MonthSelect({
+  value,
+  options,
+  onChange,
+}: {
+  value: string
+  options: { key: string; label: string }[]
+  onChange: (value: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  useClickOutside(containerRef, () => setOpen(false), open)
+
+  const selectedLabel = options.find((option) => option.key === value)?.label ?? ''
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex min-w-[9.5rem] cursor-pointer items-center justify-between gap-2 rounded-full border bg-white px-4 py-1.5 text-left text-xs font-bold text-cookie-charcoal uppercase transition-colors ${
+          open ? 'border-cookie-rust' : 'border-cookie-charcoal/20'
+        }`}
+      >
+        <span>{selectedLabel}</span>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-3.5 w-3.5 shrink-0 text-cookie-charcoal/50"
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="absolute right-0 z-20 mt-2 max-h-56 w-48 overflow-y-auto rounded-xl border border-cookie-charcoal/20 bg-white p-1 shadow-lg"
+        >
+          {options.map((option) => (
+            <button
+              key={option.key}
+              type="button"
+              role="option"
+              aria-selected={option.key === value}
+              onClick={() => {
+                onChange(option.key)
+                setOpen(false)
+              }}
+              className={`w-full cursor-pointer rounded-lg px-3 py-1.5 text-left text-xs font-bold uppercase ${
+                option.key === value
+                  ? 'bg-cookie-rust text-cookie-cream'
+                  : 'text-cookie-charcoal hover:bg-cookie-cream'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function StatsTab({ orders }: { orders: OrderRow[] }) {
   const { cookies } = useCookies()
   const [timeView, setTimeView] = useState<'hour' | 'day'>('hour')
   const [cookieCosts, setCookieCosts] = useState<CookieCost[]>([])
+  const currentMonthKey = useMemo(() => monthKey(new Date()), [])
+  const [monthFilter, setMonthFilter] = useState(currentMonthKey)
 
   useEffect(() => {
     supabase
@@ -21,6 +109,24 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       .select('slug, name, price, production_cost')
       .then(({ data }) => setCookieCosts((data as CookieCost[] | null) ?? []))
   }, [])
+
+  const monthOptions = useMemo(() => {
+    const keys = new Set(orders.map((order) => monthKey(new Date(order.created_at))))
+    keys.add(currentMonthKey)
+    const sortedKeys = [...keys].sort().reverse()
+    return [
+      { key: ALL_MONTHS, label: 'All time' },
+      ...sortedKeys.map((key) => ({ key, label: formatMonthLabel(key) })),
+    ]
+  }, [orders, currentMonthKey])
+
+  const filteredOrders = useMemo(
+    () =>
+      monthFilter === ALL_MONTHS
+        ? orders
+        : orders.filter((order) => monthKey(new Date(order.created_at)) === monthFilter),
+    [orders, monthFilter],
+  )
 
   const stats = useMemo(() => {
     let profit = 0
@@ -36,7 +142,7 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
     const dayCounts = new Array(7).fill(0)
     const customersByEmail = new Map<string, { name: string; email: string; quantity: number }>()
 
-    for (const order of orders) {
+    for (const order of filteredOrders) {
       const placedAt = new Date(order.created_at)
       hourCounts[placedAt.getHours()] += 1
       dayCounts[placedAt.getDay()] += 1
@@ -114,10 +220,15 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       maxHourCount,
       maxDayCount,
     }
-  }, [orders, cookies, cookieCosts])
+  }, [filteredOrders, cookies, cookieCosts])
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Statistics</p>
+        <MonthSelect value={monthFilter} options={monthOptions} onChange={setMonthFilter} />
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
           <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total profit</p>

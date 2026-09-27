@@ -6,6 +6,8 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'info@codecatcookies.com'
 const FROM = `codecatcookies <${FROM_EMAIL}>`
 const BUSINESS_EMAIL = 'info@codecatcookies.com'
+// Zero-width spaces after each hyphen stop email clients from auto-linking this as a phone number.
+const PICKUP_CONTACT = 'Искра, +389-​71-​245-​330'
 const PICKUP_ADDRESS = 'Prashka 9, 1000 Skopje'
 const LOGO_URL = 'https://www.codecatcookies.com/logo.svg'
 
@@ -180,6 +182,7 @@ function renderPickupBlock(prettyDate: string, time: string) {
                     <td style="padding:16px 18px;">
                       <p style="margin:0 0 6px 0;color:${BRAND.brown};font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.03em;">Pickup</p>
                       <p style="margin:0;color:${BRAND.charcoal};font-size:14px;">${prettyDate} at ${time}</p>
+                      <p style="margin:0;color:${BRAND.charcoal};font-size:14px;">${PICKUP_CONTACT}</p>
                       <p style="margin:0;color:${BRAND.charcoal};font-size:14px;">${PICKUP_ADDRESS}</p>
                     </td>
                   </tr>
@@ -217,7 +220,7 @@ export function buildCustomerEmail(payload: OrderPayload) {
     .map((line) => `${line.name} x ${line.quantity} — ${line.price * line.quantity} den`)
     .join('\n')
   const discountText = discountAmount > 0 ? `\nPromo discount: -${discountAmount} den` : ''
-  const text = `Thanks for your order, ${fullName}!\n\n${itemsText}${discountText}\n\nTotal: ${total} den, payable in cash on pickup.\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}`
+  const text = `Thanks for your order, ${fullName}!\n\n${itemsText}${discountText}\n\nTotal: ${total} den, payable in cash on pickup.\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_CONTACT}\n${PICKUP_ADDRESS}`
 
   return { html, text }
 }
@@ -256,7 +259,7 @@ export function buildBusinessEmail(payload: OrderPayload) {
     .join('\n')
   const discountText = discountAmount > 0 ? `\nPromo discount: -${discountAmount} den` : ''
   const notesText = notes && notes.trim() ? `\n\nNotes: ${notes}` : ''
-  const text = `${fullName}\n${email}\n${fullPhone}\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_ADDRESS}\n\n${itemsText}${discountText}\n\nTotal: ${total} den (cash on pickup)${notesText}`
+  const text = `${fullName}\n${email}\n${fullPhone}\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_CONTACT}\n${PICKUP_ADDRESS}\n\n${itemsText}${discountText}\n\nTotal: ${total} den (cash on pickup)${notesText}`
 
   return { html, text }
 }
