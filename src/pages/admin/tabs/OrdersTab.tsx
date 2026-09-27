@@ -7,11 +7,13 @@ import ConfirmModal from '../ConfirmModal'
 import {
   effectiveTotal,
   formatPickupCell,
+  orderQuantity,
   packagingCost,
   type OrderPackagingRow,
   type OrderRow,
   type OrderStatus,
 } from '../orders'
+import { MANUAL_DISCOUNT_PER_COOKIE } from '../../../lib/discount'
 
 type PackagingItem = { id: string; name: string; price: number }
 
@@ -807,12 +809,14 @@ function OrderCard({
           type="checkbox"
           checked={order.discount}
           onChange={(event) => onToggleDiscount(order.id, event.target.checked)}
-          aria-label="10 den per cookie discount applied"
+          aria-label="Discount applied"
           className="h-4 w-4 accent-cookie-rust"
         />
         Discount
-        {order.promo_code && (
-          <span className="font-mono text-cookie-charcoal/50 normal-case">({order.promo_code})</span>
+        {order.discount && (
+          <span className="font-mono text-cookie-charcoal/50 normal-case">
+            (-{order.discount_amount} den{order.promo_code ? ` · ${order.promo_code}` : ''})
+          </span>
         )}
       </label>
 
@@ -1003,10 +1007,14 @@ function OrdersTab({
   }
 
   async function toggleDiscount(id: string, discount: boolean) {
-    const updates = discount ? { discount } : { discount, promo_code: null }
+    const order = orders.find((candidate) => candidate.id === id)
+    if (!order) return
+    const updates = discount
+      ? { discount, discount_amount: MANUAL_DISCOUNT_PER_COOKIE * orderQuantity(order) }
+      : { discount, discount_amount: 0, promo_code: null }
     const { error } = await supabase.from('orders').update(updates).eq('id', id)
     if (!error) {
-      setOrders((prev) => prev.map((order) => (order.id === id ? { ...order, ...updates } : order)))
+      setOrders((prev) => prev.map((candidate) => (candidate.id === id ? { ...candidate, ...updates } : candidate)))
     }
   }
 
@@ -1097,7 +1105,7 @@ function OrdersTab({
                       type="checkbox"
                       checked={order.discount}
                       onChange={(event) => toggleDiscount(order.id, event.target.checked)}
-                      aria-label="10 den per cookie discount applied"
+                      aria-label="Discount applied"
                       className="h-4 w-4 accent-cookie-rust"
                     />
                   </div>

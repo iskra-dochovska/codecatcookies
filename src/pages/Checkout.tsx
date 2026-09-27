@@ -7,7 +7,7 @@ import { useCookies } from '../data/CookiesContext'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { t, ui } from '../i18n/translations'
-import { DISCOUNT_PER_COOKIE } from '../lib/discount'
+import { calculateDiscount, type DiscountConfig } from '../lib/discount'
 
 const PICKUP_ADDRESS = 'Prashka 9, 1000 Skopje'
 
@@ -53,7 +53,6 @@ function Checkout() {
   })
   const totalCount = lines.reduce((sum, line) => sum + line.quantity, 0)
   const total = lines.reduce((sum, line) => sum + line.cookie.price * line.quantity, 0)
-  const discountedTotal = Math.max(0, total - DISCOUNT_PER_COOKIE * totalCount)
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -68,6 +67,16 @@ function Checkout() {
   const [submitError, setSubmitError] = useState(false)
   const [promoError, setPromoError] = useState(false)
   const [promoValid, setPromoValid] = useState(false)
+  const [promoDiscount, setPromoDiscount] = useState<DiscountConfig | null>(null)
+
+  const discountedTotal =
+    promoValid && promoDiscount
+      ? total -
+        calculateDiscount(
+          promoDiscount,
+          lines.map((line) => ({ price: line.cookie.price, quantity: line.quantity })),
+        )
+      : total
 
   const minDate = useMemo(() => {
     const tomorrow = new Date()
@@ -102,6 +111,7 @@ function Checkout() {
     setPromoCode(value)
     setPromoValid(false)
     setPromoError(false)
+    setPromoDiscount(null)
   }
 
   const handlePromoBlur = async () => {
@@ -109,6 +119,7 @@ function Checkout() {
     if (!code) {
       setPromoValid(false)
       setPromoError(false)
+      setPromoDiscount(null)
       return
     }
 
@@ -121,11 +132,22 @@ function Checkout() {
       const body = await response.json().catch(() => null)
       if (promoCode.trim() !== code) return
 
-      setPromoValid(Boolean(body?.valid))
-      setPromoError(!body?.valid)
+      const valid = Boolean(body?.valid)
+      setPromoValid(valid)
+      setPromoError(!valid)
+      setPromoDiscount(
+        valid
+          ? {
+              discountType: body.discountType,
+              discountScope: body.discountScope,
+              discountValue: body.discountValue,
+            }
+          : null,
+      )
     } catch {
       if (promoCode.trim() !== code) return
       setPromoValid(false)
+      setPromoDiscount(null)
     }
   }
 

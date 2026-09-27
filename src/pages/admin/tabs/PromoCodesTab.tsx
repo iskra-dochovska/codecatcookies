@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabaseClient'
 import ConfirmModal from '../ConfirmModal'
 
+type DiscountType = 'fixed' | 'percent'
+type DiscountScope = 'per_cookie' | 'total'
+
 type PromoCode = {
   id: string
   code: string
@@ -9,9 +12,18 @@ type PromoCode = {
   uses: number
   active: boolean
   created_at: string
+  discount_type: DiscountType
+  discount_scope: DiscountScope
+  discount_value: number
 }
 
 type UsageType = 'once' | 'unlimited'
+
+function formatDiscount(promo: Pick<PromoCode, 'discount_type' | 'discount_scope' | 'discount_value'>) {
+  const amount = promo.discount_type === 'percent' ? `${promo.discount_value}%` : `${promo.discount_value} den`
+  const scope = promo.discount_scope === 'per_cookie' ? 'per cookie' : 'off total'
+  return `${amount} ${scope}`
+}
 
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 const CODE_LENGTH = 8
@@ -100,7 +112,13 @@ function TrashIcon() {
 function PromoCodesTab() {
   const [codes, setCodes] = useState<PromoCode[]>([])
   const [loading, setLoading] = useState(true)
-  const [draft, setDraft] = useState<{ code: string; usageType: UsageType } | null>(null)
+  const [draft, setDraft] = useState<{
+    code: string
+    usageType: UsageType
+    discountType: DiscountType
+    discountScope: DiscountScope
+    discountValue: string
+  } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<PromoCode | null>(null)
   const [error, setError] = useState('')
 
@@ -117,17 +135,31 @@ function PromoCodesTab() {
 
   function startDraft() {
     setError('')
-    setDraft({ code: generateCode(), usageType: 'unlimited' })
+    setDraft({
+      code: generateCode(),
+      usageType: 'unlimited',
+      discountType: 'fixed',
+      discountScope: 'per_cookie',
+      discountValue: '10',
+    })
   }
 
   async function confirmDraft() {
     if (!draft) return
     const code = draft.code.trim().toUpperCase()
-    if (!code) return
+    const discountValue = Number(draft.discountValue)
+    if (!code || !Number.isFinite(discountValue) || discountValue <= 0) return
     setError('')
     const { data, error: insertError } = await supabase
       .from('promo_codes')
-      .insert({ code, max_uses: draft.usageType === 'once' ? 1 : null, active: true })
+      .insert({
+        code,
+        max_uses: draft.usageType === 'once' ? 1 : null,
+        active: true,
+        discount_type: draft.discountType,
+        discount_scope: draft.discountScope,
+        discount_value: discountValue,
+      })
       .select()
       .single()
     if (insertError) {
@@ -173,7 +205,7 @@ function PromoCodesTab() {
       {error && <p className="text-sm font-bold text-cookie-rust">{error}</p>}
 
       {draft && (
-        <div className="flex flex-col gap-4 rounded-lg border border-cookie-charcoal/15 bg-white p-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 rounded-lg border border-cookie-charcoal/15 bg-white p-4 sm:flex-row sm:flex-wrap sm:items-end">
           <div className="flex flex-col gap-1">
             <span className="text-xs font-bold text-cookie-charcoal/60 uppercase">Code</span>
             <div className="flex items-center gap-2">
@@ -221,6 +253,64 @@ function PromoCodesTab() {
             </div>
           </div>
 
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-bold text-cookie-charcoal/60 uppercase">Discount</span>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min="0"
+                step="any"
+                value={draft.discountValue}
+                onChange={(event) => setDraft({ ...draft, discountValue: event.target.value })}
+                className="w-20 rounded-lg border border-cookie-charcoal/20 px-2 py-1.5 font-mono text-sm text-cookie-charcoal"
+              />
+              <div className="inline-flex rounded-full bg-cookie-charcoal/10 p-1">
+                <button
+                  type="button"
+                  onClick={() => setDraft({ ...draft, discountType: 'fixed' })}
+                  className={`rounded-full px-3 py-1 text-xs font-bold uppercase transition-colors ${
+                    draft.discountType === 'fixed' ? 'bg-cookie-rust text-cookie-cream' : 'text-cookie-charcoal/60'
+                  }`}
+                >
+                  Den
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDraft({ ...draft, discountType: 'percent' })}
+                  className={`rounded-full px-3 py-1 text-xs font-bold uppercase transition-colors ${
+                    draft.discountType === 'percent' ? 'bg-cookie-rust text-cookie-cream' : 'text-cookie-charcoal/60'
+                  }`}
+                >
+                  %
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-bold text-cookie-charcoal/60 uppercase">Applies to</span>
+            <div className="inline-flex rounded-full bg-cookie-charcoal/10 p-1">
+              <button
+                type="button"
+                onClick={() => setDraft({ ...draft, discountScope: 'per_cookie' })}
+                className={`rounded-full px-3 py-1 text-xs font-bold uppercase transition-colors ${
+                  draft.discountScope === 'per_cookie' ? 'bg-cookie-rust text-cookie-cream' : 'text-cookie-charcoal/60'
+                }`}
+              >
+                Per cookie
+              </button>
+              <button
+                type="button"
+                onClick={() => setDraft({ ...draft, discountScope: 'total' })}
+                className={`rounded-full px-3 py-1 text-xs font-bold uppercase transition-colors ${
+                  draft.discountScope === 'total' ? 'bg-cookie-rust text-cookie-cream' : 'text-cookie-charcoal/60'
+                }`}
+              >
+                Final price
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -247,6 +337,7 @@ function PromoCodesTab() {
           <thead>
             <tr className="bg-cookie-brown text-xs font-bold text-cookie-cream uppercase">
               <th className="px-3 py-2">Code</th>
+              <th className="px-3 py-2">Discount</th>
               <th className="px-3 py-2">Uses</th>
               <th className="px-3 py-2 text-center">Active</th>
               <th className="px-3 py-2" />
@@ -256,6 +347,7 @@ function PromoCodesTab() {
             {codes.map((promo, index) => (
               <tr key={promo.id} className={index % 2 === 1 ? 'bg-cookie-honey/25' : ''}>
                 <td className="px-3 py-2 font-mono font-bold text-cookie-brown">{promo.code}</td>
+                <td className="px-3 py-2 font-mono text-cookie-charcoal/70">{formatDiscount(promo)}</td>
                 <td className="px-3 py-2 font-mono text-cookie-charcoal/70">
                   {promo.uses} / {promo.max_uses ?? '∞'}
                 </td>
@@ -298,6 +390,7 @@ function PromoCodesTab() {
           >
             <div className="min-w-0">
               <p className="truncate font-mono font-bold text-cookie-brown">{promo.code}</p>
+              <p className="font-mono text-xs text-cookie-charcoal/50">{formatDiscount(promo)}</p>
               <p className="font-mono text-xs text-cookie-charcoal/50">
                 {promo.uses} / {promo.max_uses ?? '∞'} uses
               </p>

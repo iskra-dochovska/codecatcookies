@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
-import { DISCOUNT_PER_COOKIE } from '../../lib/discount'
 
 export type OrderItemRow = {
   id: string
@@ -33,6 +32,7 @@ export type OrderRow = {
   total: number
   status: OrderStatus
   discount: boolean
+  discount_amount: number
   promo_code: string | null
   order_items: OrderItemRow[]
   order_packaging: OrderPackagingRow[]
@@ -47,7 +47,7 @@ export function packagingCost(order: OrderRow) {
 }
 
 export function effectiveTotal(order: OrderRow) {
-  return order.discount ? order.total - DISCOUNT_PER_COOKIE * orderQuantity(order) : order.total
+  return order.total - order.discount_amount
 }
 
 export function formatPickupCell(pickupDate: string, pickupTime: string) {

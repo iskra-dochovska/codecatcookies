@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useCookies } from '../../../data/CookiesContext'
 import { supabase } from '../../../lib/supabaseClient'
-import { DISCOUNT_PER_COOKIE } from '../../../lib/discount'
 import { formatDen } from '../../../lib/format'
 import { packagingCost, type OrderRow } from '../orders'
 
@@ -56,7 +55,7 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       const orderPackagingCost = packagingCost(order)
       packagingTotal += orderPackagingCost
 
-      const discountAmount = order.discount ? DISCOUNT_PER_COOKIE * quantity : 0
+      const discountAmount = order.discount_amount
       if (order.status === 'completed') {
         revenue += order.total - discountAmount
         profit += orderProfit - discountAmount - orderPackagingCost

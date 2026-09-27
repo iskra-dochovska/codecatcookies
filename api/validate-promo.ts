@@ -19,7 +19,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { data, error } = await supabase
     .from('promo_codes')
-    .select('uses, max_uses, active')
+    .select('uses, max_uses, active, discount_type, discount_scope, discount_value')
     .eq('code', code.toUpperCase())
     .maybeSingle()
 
@@ -29,5 +29,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const valid = data.active && (data.max_uses === null || data.uses < data.max_uses)
-  res.status(200).json({ valid })
+  res.status(200).json({
+    valid,
+    discountType: data.discount_type,
+    discountScope: data.discount_scope,
+    discountValue: data.discount_value,
+  })
 }

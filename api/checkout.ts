@@ -11,8 +11,6 @@ const LOGO_URL = 'https://www.codecatcookies.com/logo.svg'
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
 
-const DISCOUNT_PER_COOKIE = 10
-
 const BRAND = {
   brown: '#542916',
   rust: '#a13a1e',
@@ -335,9 +333,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return
   }
 
-  const discountApplied = Boolean((orderResult as { discount_applied?: boolean } | null)?.discount_applied)
-  const quantity = items.reduce((sum, item) => sum + item.quantity, 0)
-  const discountAmount = discountApplied ? DISCOUNT_PER_COOKIE * quantity : 0
+  const discountAmount = Number(
+    (orderResult as { discount_amount?: number } | null)?.discount_amount ?? 0,
+  )
 
   const orderPayload: OrderPayload = {
     fullName,
