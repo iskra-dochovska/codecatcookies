@@ -67,9 +67,8 @@ function getBuySteps(lang: Lang) {
         title: 'Изберете ги вашите колачиња',
         description: (
           <>
-            Прелистајте ја страницата Колачиња и додадете во кошничката сè што сакате да
-            купите. Нашите колачиња доаѓаат во кутија од 4, па минималната нарачка е 4
-            колачиња.
+            Додадете во кошничка тоа што ви изгледа највкусно на нашата КОЛАЧИЊА страница.
+            Имајте на ум дека минимална нарачка е 4 кукиси.
           </>
         ),
       },
@@ -87,8 +86,9 @@ function getBuySteps(lang: Lang) {
         title: 'Подигање',
         description: (
           <>
-            Моментално нудиме само подигање додека не ја изградиме нашата мала продавница.
-            Вашите колачиња ќе ве чекаат!
+            Ние ќе ве чекаме со колачињата спремни да ви ја предадеме вашата нарачка. Ве
+            молиме почитувајте го вашиот термин и доколку има некакви проблеми, слободно
+            јавете ни се.
           </>
         ),
       },
@@ -100,8 +100,8 @@ function getBuySteps(lang: Lang) {
       title: 'Choose your cookies',
       description: (
         <>
-          Browse our Cookies page and add whatever you&apos;d like to buy to your cart. Our
-          cookies come in a box of 4, so the minimum order is 4 cookies.
+          Add to cart whatever looks most delicious to you from our COOKIES page. Keep in
+          mind that there&apos;s a minimum of 4 cookies per order.
         </>
       ),
     },
@@ -118,8 +118,9 @@ function getBuySteps(lang: Lang) {
       title: 'Pick up',
       description: (
         <>
-          Currently we only offer pickup until we build out our little shop. Your cookies
-          will be waiting your arrival!
+          We&apos;ll be waiting for you, box of cookies in hand to give you your order!
+          Please be mindful of your pickup time and if there are any issues, give us a
+          ring.
         </>
       ),
     },

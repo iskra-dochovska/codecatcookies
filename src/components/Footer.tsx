@@ -46,6 +46,21 @@ function Footer() {
             </svg>
             info@codecatcookies.com
           </a>
+          <a href="tel:+38971245330" className="flex items-center gap-2 hover:underline">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384z" />
+            </svg>
+            +389 71 245 330
+          </a>
         </div>
         <div className="flex flex-col items-center gap-1 text-center text-cookie-cream/70 sm:flex-row sm:gap-2">
           <span>&copy; {new Date().getFullYear()} codecatcookies.</span>
