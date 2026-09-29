@@ -1029,9 +1029,17 @@ function OrdersTab({
     }
   }
 
+  async function adjustPromoUses(code: string, delta: number) {
+    const { data } = await supabase.from('promo_codes').select('id, uses').eq('code', code).single()
+    if (!data) return
+    await supabase.from('promo_codes').update({ uses: Math.max(0, data.uses + delta) }).eq('id', data.id)
+  }
+
   async function setOrderPromo(id: string, code: string) {
     const order = orders.find((candidate) => candidate.id === id)
     if (!order) return
+
+    const previousCode = order.promo_code
 
     let updates: { discount: boolean; discount_amount: number; promo_code: string | null }
     if (!code) {
@@ -1050,9 +1058,13 @@ function OrdersTab({
       updates = { discount: true, discount_amount: amount, promo_code: promo.code }
     }
 
+    if (updates.promo_code === previousCode) return
+
     const { error } = await supabase.from('orders').update(updates).eq('id', id)
     if (!error) {
       setOrders((prev) => prev.map((candidate) => (candidate.id === id ? { ...candidate, ...updates } : candidate)))
+      if (previousCode) await adjustPromoUses(previousCode, -1)
+      if (updates.promo_code) await adjustPromoUses(updates.promo_code, 1)
     }
   }
 
