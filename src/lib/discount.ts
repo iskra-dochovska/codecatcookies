@@ -29,6 +29,3 @@ export function calculateDiscount(config: DiscountConfig, lines: DiscountLine[])
 
   return Math.min(amount, total)
 }
-
-// Flat rate for the admin manual discount toggle (orders with no promo code).
-export const MANUAL_DISCOUNT_PER_COOKIE = 10

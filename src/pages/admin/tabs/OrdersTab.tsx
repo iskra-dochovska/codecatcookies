@@ -7,17 +7,23 @@ import ConfirmModal from '../ConfirmModal'
 import {
   effectiveTotal,
   formatPickupCell,
-  orderQuantity,
   packagingCost,
   type OrderPackagingRow,
   type OrderRow,
   type OrderStatus,
 } from '../orders'
-import { MANUAL_DISCOUNT_PER_COOKIE } from '../../../lib/discount'
+import { calculateDiscount, type DiscountScope, type DiscountType } from '../../../lib/discount'
 
 type PackagingItem = { id: string; name: string; price: number }
 
 type CookieOption = { slug: string; name: string; price: number; production_cost: number }
+
+type PromoOption = {
+  code: string
+  discount_type: DiscountType
+  discount_scope: DiscountScope
+  discount_value: number
+}
 
 type OrderLineDraft = { slug: string; quantity: string }
 
@@ -761,14 +767,16 @@ function OrderActionButtons({
 function OrderCard({
   order,
   showPackaging,
-  onToggleDiscount,
+  promoCodes,
+  onPromoChange,
   onMarkCompleted,
   onDelete,
   onOpenPackaging,
 }: {
   order: OrderRow
   showPackaging: boolean
-  onToggleDiscount: (id: string, discount: boolean) => void
+  promoCodes: PromoOption[]
+  onPromoChange: (id: string, code: string) => void
   onMarkCompleted: (id: string) => void
   onDelete: (order: OrderRow) => void
   onOpenPackaging: (id: string) => void
@@ -805,18 +813,25 @@ function OrderCard({
       )}
 
       <label className="flex items-center gap-2 text-xs font-bold text-cookie-charcoal/60 uppercase">
-        <input
-          type="checkbox"
-          checked={order.discount}
-          onChange={(event) => onToggleDiscount(order.id, event.target.checked)}
-          aria-label="Discount applied"
-          className="h-4 w-4 accent-cookie-rust"
-        />
-        Discount
+        Promo
+        <select
+          value={order.promo_code ?? ''}
+          onChange={(event) => onPromoChange(order.id, event.target.value)}
+          aria-label="Promo code"
+          className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1 font-mono text-xs normal-case"
+        >
+          <option value="">None</option>
+          {order.promo_code && !promoCodes.some((promo) => promo.code === order.promo_code) && (
+            <option value={order.promo_code}>{order.promo_code}</option>
+          )}
+          {promoCodes.map((promo) => (
+            <option key={promo.code} value={promo.code}>
+              {promo.code}
+            </option>
+          ))}
+        </select>
         {order.discount && (
-          <span className="font-mono text-cookie-charcoal/50 normal-case">
-            (-{order.discount_amount} den{order.promo_code ? ` · ${order.promo_code}` : ''})
-          </span>
+          <span className="font-mono text-cookie-charcoal/50 normal-case">(-{order.discount_amount} den)</span>
         )}
       </label>
 
@@ -850,6 +865,7 @@ function OrdersTab({
   const [packagingOrderId, setPackagingOrderId] = useState<string | null>(null)
   const [packagingItems, setPackagingItems] = useState<PackagingItem[]>([])
   const [cookieOptions, setCookieOptions] = useState<CookieOption[]>([])
+  const [promoCodes, setPromoCodes] = useState<PromoOption[]>([])
   const [showNewOrder, setShowNewOrder] = useState(false)
   const filteredOrders = orders.filter((order) => order.status === statusFilter)
   const packagingOrder = orders.find((order) => order.id === packagingOrderId) ?? null
@@ -866,6 +882,13 @@ function OrdersTab({
       .select('slug, name, price, production_cost')
       .order('name')
       .then(({ data }) => setCookieOptions((data as CookieOption[] | null) ?? []))
+
+    supabase
+      .from('promo_codes')
+      .select('code, discount_type, discount_scope, discount_value')
+      .eq('active', true)
+      .order('code')
+      .then(({ data }) => setPromoCodes((data as PromoOption[] | null) ?? []))
   }, [])
 
   async function createOrder(payload: {
@@ -1006,12 +1029,27 @@ function OrdersTab({
     }
   }
 
-  async function toggleDiscount(id: string, discount: boolean) {
+  async function setOrderPromo(id: string, code: string) {
     const order = orders.find((candidate) => candidate.id === id)
     if (!order) return
-    const updates = discount
-      ? { discount, discount_amount: MANUAL_DISCOUNT_PER_COOKIE * orderQuantity(order) }
-      : { discount, discount_amount: 0, promo_code: null }
+
+    let updates: { discount: boolean; discount_amount: number; promo_code: string | null }
+    if (!code) {
+      updates = { discount: false, discount_amount: 0, promo_code: null }
+    } else {
+      const promo = promoCodes.find((candidate) => candidate.code === code)
+      if (!promo) return
+      const amount = calculateDiscount(
+        {
+          discountType: promo.discount_type,
+          discountScope: promo.discount_scope,
+          discountValue: promo.discount_value,
+        },
+        order.order_items.map((item) => ({ price: item.unit_price, quantity: item.quantity })),
+      )
+      updates = { discount: true, discount_amount: amount, promo_code: promo.code }
+    }
+
     const { error } = await supabase.from('orders').update(updates).eq('id', id)
     if (!error) {
       setOrders((prev) => prev.map((candidate) => (candidate.id === id ? { ...candidate, ...updates } : candidate)))
@@ -1071,8 +1109,7 @@ function OrdersTab({
               <th className="px-3 py-2">Pickup</th>
               <th className="px-3 py-2">Items</th>
               <th className="px-3 py-2">Notes</th>
-              <th className="px-3 py-2 text-center">Discount</th>
-              <th className="px-3 py-2">Code</th>
+              <th className="px-3 py-2">Promo</th>
               <th className="px-3 py-2 text-center">Total</th>
               {statusFilter === 'completed' && <th className="px-3 py-2 text-center">Packaging</th>}
               <th className="px-3 py-2" />
@@ -1100,18 +1137,29 @@ function OrdersTab({
                   {order.notes}
                 </td>
                 <td className="px-3 py-2">
-                  <div className="flex justify-center">
-                    <input
-                      type="checkbox"
-                      checked={order.discount}
-                      onChange={(event) => toggleDiscount(order.id, event.target.checked)}
-                      aria-label="Discount applied"
-                      className="h-4 w-4 accent-cookie-rust"
-                    />
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={order.promo_code ?? ''}
+                      onChange={(event) => setOrderPromo(order.id, event.target.value)}
+                      aria-label="Promo code"
+                      className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1 font-mono text-xs"
+                    >
+                      <option value="">None</option>
+                      {order.promo_code && !promoCodes.some((promo) => promo.code === order.promo_code) && (
+                        <option value={order.promo_code}>{order.promo_code}</option>
+                      )}
+                      {promoCodes.map((promo) => (
+                        <option key={promo.code} value={promo.code}>
+                          {promo.code}
+                        </option>
+                      ))}
+                    </select>
+                    {order.discount && (
+                      <span className="font-mono text-xs text-cookie-charcoal/50">
+                        -{order.discount_amount} den
+                      </span>
+                    )}
                   </div>
-                </td>
-                <td className="px-3 py-2 font-mono text-cookie-charcoal/70">
-                  {order.promo_code ?? '—'}
                 </td>
                 <td className="px-3 py-2 text-center font-mono font-bold text-cookie-brown">
                   {effectiveTotal(order)} den
@@ -1149,7 +1197,8 @@ function OrdersTab({
             key={order.id}
             order={order}
             showPackaging={statusFilter === 'completed'}
-            onToggleDiscount={toggleDiscount}
+            promoCodes={promoCodes}
+            onPromoChange={setOrderPromo}
             onMarkCompleted={markCompleted}
             onDelete={setConfirmDelete}
             onOpenPackaging={setPackagingOrderId}

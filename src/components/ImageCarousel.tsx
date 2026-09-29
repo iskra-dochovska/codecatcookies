@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 export type CarouselImage = { src: string; alt: string; focalY?: number }
@@ -34,24 +34,85 @@ function Lightbox({
   onIndexChange: (index: number) => void
   onClose: () => void
 }) {
+  const count = images.length
+  const track = count > 1 ? [images[count - 1], ...images, images[0]] : images
+  const [position, setPosition] = useState(index + 1)
+  const [instant, setInstant] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [dragOffsetPx, setDragOffsetPx] = useState(0)
+  const [imageRect, setImageRect] = useState<{ left: number; right: number } | null>(null)
   const touchStartX = useRef<number | null>(null)
+  const activeImageRef = useRef<HTMLImageElement | null>(null)
+
+  function measureImage() {
+    const rect = activeImageRef.current?.getBoundingClientRect()
+    if (rect) setImageRect({ left: rect.left, right: rect.right })
+  }
+
+  useLayoutEffect(() => {
+    measureImage()
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('resize', measureImage)
+    return () => window.removeEventListener('resize', measureImage)
+  }, [])
+
+  useEffect(() => {
+    if (!instant) return
+    const raf = requestAnimationFrame(() => setInstant(false))
+    return () => cancelAnimationFrame(raf)
+  }, [instant])
+
+  function goToIndex(nextIndex: number) {
+    if (nextIndex !== index) setIsTransitioning(true)
+    setPosition(nextIndex + 1)
+    onIndexChange(nextIndex)
+  }
 
   function goPrev() {
-    onIndexChange((index - 1 + images.length) % images.length)
+    goToIndex((index - 1 + count) % count)
   }
 
   function goNext() {
-    onIndexChange((index + 1) % images.length)
+    goToIndex((index + 1) % count)
+  }
+
+  function handleTransitionEnd() {
+    measureImage()
+    setIsTransitioning(false)
+    if (count < 2) return
+    if (position === 0) {
+      setInstant(true)
+      setPosition(count)
+    } else if (position === count + 1) {
+      setInstant(true)
+      setPosition(1)
+    }
   }
 
   function handleTouchStart(event: React.TouchEvent) {
+    if (isTransitioning) return
     touchStartX.current = event.touches[0].clientX
+    setIsDragging(true)
+  }
+
+  function handleTouchMove(event: React.TouchEvent) {
+    if (touchStartX.current === null) return
+    setDragOffsetPx(event.touches[0].clientX - touchStartX.current)
+  }
+
+  function endDrag() {
+    touchStartX.current = null
+    setIsDragging(false)
+    setDragOffsetPx(0)
   }
 
   function handleTouchEnd(event: React.TouchEvent) {
     if (touchStartX.current === null) return
     const delta = event.changedTouches[0].clientX - touchStartX.current
-    touchStartX.current = null
+    endDrag()
     if (Math.abs(delta) < SWIPE_THRESHOLD_PX) return
     if (delta < 0) goNext()
     else goPrev()
@@ -59,47 +120,61 @@ function Lightbox({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6"
+      className="fixed inset-0 z-50 overflow-hidden bg-black/80"
       onClick={onClose}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={endDrag}
     >
-      <div className="relative">
-        <img
-          src={images[index].src}
-          alt={images[index].alt}
-          className="max-h-[calc(100vh-3rem)] max-w-[calc(100vw-3rem)] rounded-2xl object-contain"
-        />
-
-        {images.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation()
-                goPrev()
-              }}
-              aria-label="Previous image"
-              className="absolute top-1/2 left-0 hidden h-11 w-11 -translate-x-[calc(100%+12px)] -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-cookie-cream hover:bg-black/60 sm:flex"
-            >
-              <ChevronIcon direction="left" />
-            </button>
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation()
-                goNext()
-              }}
-              aria-label="Next image"
-              className="absolute top-1/2 right-0 hidden h-11 w-11 translate-x-[calc(100%+12px)] -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-cookie-cream hover:bg-black/60 sm:flex"
-            >
-              <ChevronIcon direction="right" />
-            </button>
-          </>
-        )}
+      <div
+        className={`flex h-full w-full ${instant || isDragging ? '' : 'transition-transform duration-500 ease-in-out'}`}
+        style={{ transform: `translateX(calc(-${position * 100}% + ${dragOffsetPx}px))` }}
+        onTransitionEnd={handleTransitionEnd}
+      >
+        {track.map((image, i) => (
+          <div key={i} className="flex h-full w-full flex-shrink-0 items-center justify-center p-6">
+            <img
+              ref={i === position ? activeImageRef : undefined}
+              onLoad={i === position ? measureImage : undefined}
+              src={image.src}
+              alt={image.alt}
+              className="max-h-full max-w-full rounded-2xl object-contain"
+            />
+          </div>
+        ))}
       </div>
 
-      {images.length > 1 && (
+      {count > 1 && imageRect && !isDragging && !isTransitioning && (
+        <>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              goPrev()
+            }}
+            aria-label="Previous image"
+            style={{ left: imageRect.left - 56 }}
+            className="absolute top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-cookie-cream hover:bg-black/60 sm:flex"
+          >
+            <ChevronIcon direction="left" />
+          </button>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation()
+              goNext()
+            }}
+            aria-label="Next image"
+            style={{ left: imageRect.right + 12 }}
+            className="absolute top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-cookie-cream hover:bg-black/60 sm:flex"
+          >
+            <ChevronIcon direction="right" />
+          </button>
+        </>
+      )}
+
+      {count > 1 && (
         <div
           className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2"
           onClick={(event) => event.stopPropagation()}
@@ -108,7 +183,7 @@ function Lightbox({
             <button
               key={image.src}
               type="button"
-              onClick={() => onIndexChange(i)}
+              onClick={() => goToIndex(i)}
               aria-label={`Show image ${i + 1}`}
               className={`h-2 w-2 rounded-full transition-colors ${
                 i === index ? 'bg-cookie-cream' : 'bg-cookie-cream/40'
@@ -160,15 +235,33 @@ export function ImageCarousel({
   const [position, setPosition] = useState(1)
   const [instant, setInstant] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [dragOffsetPx, setDragOffsetPx] = useState(0)
+  const [hasInteracted, setHasInteracted] = useState(false)
+  const [isPageVisible, setIsPageVisible] = useState(
+    () => typeof document === 'undefined' || document.visibilityState === 'visible',
+  )
   const touchStartX = useRef<number | null>(null)
 
   const activeIndex = count > 1 ? (((position - 1) % count) + count) % count : 0
 
   useEffect(() => {
-    if (count < 2 || lightboxOpen) return
-    const id = setInterval(() => setPosition((current) => current + 1), AUTO_ADVANCE_MS)
+    function handleVisibilityChange() {
+      setIsPageVisible(document.visibilityState === 'visible')
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
+
+  useEffect(() => {
+    if (count < 2 || lightboxOpen || isDragging || hasInteracted || !isPageVisible) return
+    const id = setInterval(() => {
+      setIsTransitioning(true)
+      setPosition((current) => current + 1)
+    }, AUTO_ADVANCE_MS)
     return () => clearInterval(id)
-  }, [count, lightboxOpen])
+  }, [count, lightboxOpen, isDragging, hasInteracted, isPageVisible])
 
   useEffect(() => {
     if (!instant) return
@@ -187,10 +280,14 @@ export function ImageCarousel({
   }
 
   function goToIndex(nextIndex: number) {
+    if (isTransitioning) return
+    setHasInteracted(true)
+    if (nextIndex + 1 !== position) setIsTransitioning(true)
     setPosition(nextIndex + 1)
   }
 
   function handleTransitionEnd() {
+    setIsTransitioning(false)
     if (count < 2) return
     if (position === 0) {
       setInstant(true)
@@ -202,14 +299,29 @@ export function ImageCarousel({
   }
 
   function handleTouchStart(event: React.TouchEvent) {
+    if (isTransitioning) return
     touchStartX.current = event.touches[0].clientX
+    setIsDragging(true)
+    setHasInteracted(true)
+  }
+
+  function handleTouchMove(event: React.TouchEvent) {
+    if (touchStartX.current === null) return
+    setDragOffsetPx(event.touches[0].clientX - touchStartX.current)
+  }
+
+  function endDrag() {
+    touchStartX.current = null
+    setIsDragging(false)
+    setDragOffsetPx(0)
   }
 
   function handleTouchEnd(event: React.TouchEvent) {
     if (touchStartX.current === null) return
     const delta = event.changedTouches[0].clientX - touchStartX.current
-    touchStartX.current = null
+    endDrag()
     if (Math.abs(delta) < SWIPE_THRESHOLD_PX) return
+    setIsTransitioning(true)
     setPosition((current) => (delta < 0 ? current + 1 : current - 1))
   }
 
@@ -218,18 +330,23 @@ export function ImageCarousel({
       <div
         className={`relative overflow-hidden bg-cookie-charcoal/5 ${className ?? ''}`}
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={endDrag}
       >
         <div
-          className={`flex h-full w-full ${instant ? '' : 'transition-transform duration-500 ease-in-out'}`}
-          style={{ transform: `translateX(-${position * 100}%)` }}
+          className={`flex h-full w-full ${instant || isDragging ? '' : 'transition-transform duration-500 ease-in-out'}`}
+          style={{ transform: `translateX(calc(-${position * 100}% + ${dragOffsetPx}px))` }}
           onTransitionEnd={handleTransitionEnd}
         >
           {track.map((image, i) => (
             <button
               key={i}
               type="button"
-              onClick={() => setLightboxOpen(true)}
+              onClick={() => {
+                setHasInteracted(true)
+                setLightboxOpen(true)
+              }}
               aria-label="View full image"
               className="h-full w-full flex-shrink-0"
             >
