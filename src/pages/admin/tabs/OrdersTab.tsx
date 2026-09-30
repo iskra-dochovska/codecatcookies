@@ -366,7 +366,7 @@ function PackagingEditor({
 
       {packagingItems.length === 0 ? (
         <p className="text-xs text-cookie-charcoal/50">
-          No packaging items defined yet — add some in the Costs tab.
+          No packaging items defined yet - add some in the Costs tab.
         </p>
       ) : (
         <div className="flex flex-wrap items-center gap-2">
@@ -804,6 +804,11 @@ function OrderCard({
             {item.cookie_name} x{item.quantity}
           </p>
         ))}
+        {order.order_merch_items.map((item) => (
+          <p key={item.id}>
+            {item.merch_name} x{item.quantity}
+          </p>
+        ))}
       </div>
 
       {order.notes && (
@@ -936,7 +941,7 @@ function OrdersTab({
 
     const { data: fullOrder, error: fetchError } = await supabase
       .from('orders')
-      .select('*, order_items(*), order_packaging(*)')
+      .select('*, order_items(*), order_merch_items(*), order_packaging(*)')
       .eq('id', orderId)
       .single()
 
@@ -1142,6 +1147,11 @@ function OrdersTab({
                   {order.order_items.map((item) => (
                     <p key={item.id}>
                       {item.cookie_name} x{item.quantity}
+                    </p>
+                  ))}
+                  {order.order_merch_items.map((item) => (
+                    <p key={item.id}>
+                      {item.merch_name} x{item.quantity}
                     </p>
                   ))}
                 </td>

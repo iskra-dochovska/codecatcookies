@@ -1107,7 +1107,7 @@ function DataTab() {
 
   async function deleteIngredient(id: string) {
     const { error } = await supabase.from('ingredients').delete().eq('id', id)
-    if (error) return 'Could not remove — it is used in a recipe.'
+    if (error) return 'Could not remove - it is used in a recipe.'
     setIngredients((prev) => prev.filter((ingredient) => ingredient.id !== id))
     return null
   }

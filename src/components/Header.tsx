@@ -71,6 +71,12 @@ function Header() {
           >
             {t(ui, 'navCookies', lang)}
           </Link>
+          <Link
+            to="/merch"
+            className="rounded-full bg-cookie-cream px-4 py-1.5 text-sm font-extrabold text-cookie-charcoal uppercase transition-transform hover:-translate-y-0.5"
+          >
+            {t(ui, 'navMerch', lang)}
+          </Link>
           <CartButton count={totalCount} onClick={() => setCartOpen(true)} />
           <button
             type="button"
@@ -169,6 +175,19 @@ function Header() {
               }
             >
               {t(ui, 'navCookies', lang)}
+            </NavLink>
+            <NavLink
+              to="/merch"
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                `rounded-full px-6 py-3 text-center text-lg font-semibold uppercase transition-colors ${
+                  isActive
+                    ? 'bg-cookie-cream text-cookie-charcoal'
+                    : 'bg-cookie-cream/10 text-cookie-cream hover:bg-cookie-cream/20'
+                }`
+              }
+            >
+              {t(ui, 'navMerch', lang)}
             </NavLink>
           </nav>
 

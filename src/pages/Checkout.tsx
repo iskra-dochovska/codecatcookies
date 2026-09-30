@@ -4,6 +4,7 @@ import { FramedSection } from '../components/CookieDecor'
 import DatePicker from '../components/DatePicker'
 import TimeSelect from '../components/TimeSelect'
 import { useCookies } from '../data/CookiesContext'
+import { useMerch } from '../data/MerchContext'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { t, ui } from '../i18n/translations'
@@ -35,7 +36,7 @@ const NOTES_MAX_LENGTH = 500
 function CheckoutHead() {
   return (
     <>
-      <title>Checkout — codecatcookies</title>
+      <title>Checkout - codecatcookies</title>
       <meta name="robots" content="noindex, nofollow" />
     </>
   )
@@ -45,14 +46,20 @@ function Checkout() {
   const { lang } = useLanguage()
   const { items, clear } = useCart()
   const { cookies, loading: cookiesLoading } = useCookies()
+  const { merch, loading: merchLoading } = useMerch()
   const navigate = useNavigate()
 
-  const lines = Object.entries(items).flatMap(([slug, quantity]) => {
+  const cookieLines = Object.entries(items).flatMap(([slug, quantity]) => {
     const cookie = cookies.find((c) => c.slug === slug)
-    return cookie ? [{ cookie, quantity }] : []
+    return cookie ? [{ slug, name: cookie.name, price: cookie.price, quantity }] : []
   })
-  const totalCount = lines.reduce((sum, line) => sum + line.quantity, 0)
-  const total = lines.reduce((sum, line) => sum + line.cookie.price * line.quantity, 0)
+  const merchLines = Object.entries(items).flatMap(([slug, quantity]) => {
+    const merchItem = merch.find((m) => m.slug === slug)
+    return merchItem ? [{ slug, name: merchItem.name, price: merchItem.price, quantity }] : []
+  })
+  const lines = [...cookieLines, ...merchLines]
+  const cookieCount = cookieLines.reduce((sum, line) => sum + line.quantity, 0)
+  const total = lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -74,7 +81,7 @@ function Checkout() {
       ? total -
         calculateDiscount(
           promoDiscount,
-          lines.map((line) => ({ price: line.cookie.price, quantity: line.quantity })),
+          lines.map((line) => ({ price: line.price, quantity: line.quantity })),
         )
       : total
 
@@ -171,8 +178,12 @@ function Checkout() {
           time,
           notes,
           promoCode: promoCode.trim(),
-          items: lines.map((line) => ({
-            slug: line.cookie.slug,
+          items: cookieLines.map((line) => ({
+            slug: line.slug,
+            quantity: line.quantity,
+          })),
+          merchItems: merchLines.map((line) => ({
+            slug: line.slug,
             quantity: line.quantity,
           })),
         }),
@@ -210,7 +221,7 @@ function Checkout() {
     )
   }
 
-  if (cookiesLoading) {
+  if (cookiesLoading || merchLoading) {
     return (
       <section className="mx-auto flex w-full max-w-xl flex-col gap-6 px-6 py-16 text-center">
         <CheckoutHead />
@@ -219,7 +230,7 @@ function Checkout() {
     )
   }
 
-  if (totalCount < MIN_CHECKOUT_ITEMS) {
+  if (cookieCount < MIN_CHECKOUT_ITEMS) {
     return (
       <section className="mx-auto flex w-full max-w-xl flex-col gap-6 px-6 py-16 text-center">
         <CheckoutHead />
@@ -227,7 +238,7 @@ function Checkout() {
           {t(ui, 'checkout', lang)}
         </h1>
         <p className="font-bold text-cookie-charcoal/80 uppercase">
-          {t(ui, 'checkoutMinNotice', lang).replace('{n}', String(MIN_CHECKOUT_ITEMS - totalCount))}
+          {t(ui, 'checkoutMinNotice', lang).replace('{n}', String(MIN_CHECKOUT_ITEMS - cookieCount))}
         </p>
         <Link
           to="/cookies"
@@ -250,13 +261,13 @@ function Checkout() {
         <h2 className="text-lg font-black text-cookie-brown uppercase">
           {t(ui, 'orderSummary', lang)}
         </h2>
-        {lines.map(({ cookie, quantity }) => (
-          <div key={cookie.slug} className="flex items-center justify-between font-mono text-sm">
+        {lines.map((line) => (
+          <div key={line.slug} className="flex items-center justify-between font-mono text-sm">
             <span className="text-cookie-charcoal/80">
-              {cookie.name} x {quantity}
+              {line.name} x {line.quantity}
             </span>
             <span className="font-bold text-cookie-brown">
-              {cookie.price * quantity} {t(ui, 'currency', lang)}
+              {line.price * line.quantity} {t(ui, 'currency', lang)}
             </span>
           </div>
         ))}

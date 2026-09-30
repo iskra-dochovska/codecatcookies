@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { supabase } from '../../../lib/supabaseClient'
+import { compressImage } from '../../../lib/imageCompression'
 import ConfirmModal from '../ConfirmModal'
 
 type CookieOption = { slug: string; name: string }
@@ -14,30 +15,6 @@ type CookieImageRow = {
 }
 
 const BUCKET = 'cookie-images'
-const MAX_DIMENSION = 1200
-const JPEG_QUALITY = 0.8
-
-async function compressImage(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height))
-  const width = Math.round(bitmap.width * scale)
-  const height = Math.round(bitmap.height * scale)
-
-  const canvas = document.createElement('canvas')
-  canvas.width = width
-  canvas.height = height
-  const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('Could not get canvas context')
-  ctx.drawImage(bitmap, 0, 0, width, height)
-
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error('Compression failed'))),
-      'image/jpeg',
-      JPEG_QUALITY,
-    )
-  })
-}
 
 function TrashIcon() {
   return (

@@ -17,11 +17,17 @@ function Cookies() {
     return topSeller && topSeller.unitsSold > 0 ? topSeller.slug : null
   }, [cookies])
 
+  const orderedCookies = useMemo(() => {
+    const bestSeller = cookies.find((cookie) => cookie.slug === bestSellerSlug)
+    if (!bestSeller) return cookies
+    return [bestSeller, ...cookies.filter((cookie) => cookie.slug !== bestSellerSlug)]
+  }, [cookies, bestSellerSlug])
+
   const productsJsonLd = useMemo(
     () => ({
       '@context': 'https://schema.org',
       '@type': 'ItemList',
-      itemListElement: cookies.map((cookie, index) => ({
+      itemListElement: orderedCookies.map((cookie, index) => ({
         '@type': 'Product',
         position: index + 1,
         name: cookie.name,
@@ -36,7 +42,7 @@ function Cookies() {
         },
       })),
     }),
-    [cookies],
+    [orderedCookies],
   )
 
   useEffect(() => {
@@ -50,7 +56,7 @@ function Cookies() {
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16">
-      <title>Our cookies — codecatcookies</title>
+      <title>Our cookies - codecatcookies</title>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productsJsonLd) }}
@@ -76,7 +82,7 @@ function Cookies() {
           {t(ui, 'loading', lang)}
         </p>
       ) : (
-        cookies.map((cookie) => (
+        orderedCookies.map((cookie) => (
           <CookieCard key={cookie.slug} cookie={cookie} isBestSeller={cookie.slug === bestSellerSlug} />
         ))
       )}

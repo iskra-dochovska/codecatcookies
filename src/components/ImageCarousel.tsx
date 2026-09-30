@@ -36,7 +36,7 @@ function Lightbox({
 }) {
   const count = images.length
   const track = count > 1 ? [images[count - 1], ...images, images[0]] : images
-  const [position, setPosition] = useState(index + 1)
+  const [position, setPosition] = useState(count > 1 ? index + 1 : index)
   const [instant, setInstant] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -67,7 +67,7 @@ function Lightbox({
 
   function goToIndex(nextIndex: number) {
     if (nextIndex !== index) setIsTransitioning(true)
-    setPosition(nextIndex + 1)
+    setPosition(count > 1 ? nextIndex + 1 : nextIndex)
     onIndexChange(nextIndex)
   }
 
@@ -93,7 +93,7 @@ function Lightbox({
   }
 
   function handleTouchStart(event: React.TouchEvent) {
-    if (isTransitioning) return
+    if (isTransitioning || count < 2) return
     touchStartX.current = event.touches[0].clientX
     setIsDragging(true)
   }
@@ -232,7 +232,7 @@ export function ImageCarousel({
   // image, so wrapping past either end can animate forward/backward instead of
   // snapping back across the whole strip.
   const track = count > 1 ? [images[count - 1], ...images, images[0]] : images
-  const [position, setPosition] = useState(1)
+  const [position, setPosition] = useState(count > 1 ? 1 : 0)
   const [instant, setInstant] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -282,8 +282,9 @@ export function ImageCarousel({
   function goToIndex(nextIndex: number) {
     if (isTransitioning) return
     setHasInteracted(true)
-    if (nextIndex + 1 !== position) setIsTransitioning(true)
-    setPosition(nextIndex + 1)
+    const nextPosition = count > 1 ? nextIndex + 1 : nextIndex
+    if (nextPosition !== position) setIsTransitioning(true)
+    setPosition(nextPosition)
   }
 
   function handleTransitionEnd() {
@@ -299,7 +300,7 @@ export function ImageCarousel({
   }
 
   function handleTouchStart(event: React.TouchEvent) {
-    if (isTransitioning) return
+    if (isTransitioning || count < 2) return
     touchStartX.current = event.touches[0].clientX
     setIsDragging(true)
     setHasInteracted(true)

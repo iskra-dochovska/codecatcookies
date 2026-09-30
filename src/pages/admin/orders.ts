@@ -10,6 +10,14 @@ export type OrderItemRow = {
   unit_cost: number
 }
 
+export type OrderMerchItemRow = {
+  id: string
+  merch_slug: string
+  merch_name: string
+  quantity: number
+  unit_price: number
+}
+
 export type OrderStatus = 'pending' | 'completed'
 
 export type OrderPackagingRow = {
@@ -35,6 +43,7 @@ export type OrderRow = {
   discount_amount: number
   promo_code: string | null
   order_items: OrderItemRow[]
+  order_merch_items: OrderMerchItemRow[]
   order_packaging: OrderPackagingRow[]
 }
 
@@ -69,7 +78,7 @@ export function useOrders() {
 
     supabase
       .from('orders')
-      .select('*, order_items(*), order_packaging(*)')
+      .select('*, order_items(*), order_merch_items(*), order_packaging(*)')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
         if (cancelled) return

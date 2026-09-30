@@ -1,21 +1,31 @@
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { useCookies } from '../data/CookiesContext'
+import { useMerch } from '../data/MerchContext'
 import { MIN_CHECKOUT_ITEMS, useCart } from '../cart/CartContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { t, ui } from '../i18n/translations'
 
+type CartLine = { slug: string; name: string; price: number; quantity: number }
+
 export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { items, increment, decrement, remove, totalCount } = useCart()
+  const { items, increment, decrement, remove } = useCart()
   const { cookies } = useCookies()
+  const { merch } = useMerch()
   const { lang } = useLanguage()
 
-  const lines = Object.entries(items).flatMap(([slug, quantity]) => {
+  const cookieLines: CartLine[] = Object.entries(items).flatMap(([slug, quantity]) => {
     const cookie = cookies.find((c) => c.slug === slug)
-    return cookie ? [{ cookie, quantity }] : []
+    return cookie ? [{ slug, name: cookie.name, price: cookie.price, quantity }] : []
   })
+  const merchLines: CartLine[] = Object.entries(items).flatMap(([slug, quantity]) => {
+    const merchItem = merch.find((m) => m.slug === slug)
+    return merchItem ? [{ slug, name: merchItem.name, price: merchItem.price, quantity }] : []
+  })
+  const lines = [...cookieLines, ...merchLines]
 
-  const total = lines.reduce((sum, line) => sum + line.cookie.price * line.quantity, 0)
+  const cookieCount = cookieLines.reduce((sum, line) => sum + line.quantity, 0)
+  const total = lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
 
   return createPortal(
     <div className={`fixed inset-0 z-50 ${open ? '' : 'pointer-events-none'}`}>
@@ -64,29 +74,29 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         ) : (
           <>
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
-              {lines.map(({ cookie, quantity }) => (
-                <div key={cookie.slug} className="flex items-center justify-between gap-3">
+              {lines.map((line) => (
+                <div key={line.slug} className="flex items-center justify-between gap-3">
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-cookie-brown">{cookie.name}</span>
+                    <span className="text-sm font-bold text-cookie-brown">{line.name}</span>
                     <span className="font-mono text-xs text-cookie-charcoal/60">
-                      {cookie.price} {t(ui, 'currency', lang)} x {quantity}
+                      {line.price} {t(ui, 'currency', lang)} x {line.quantity}
                     </span>
                   </div>
                   <div className="flex flex-none items-center gap-3">
                     <div className="flex items-center gap-2 rounded-full bg-cookie-rust px-2 py-1 text-cookie-cream">
                       <button
                         type="button"
-                        onClick={() => decrement(cookie.slug)}
-                        aria-label={`Decrease ${cookie.name} quantity`}
+                        onClick={() => decrement(line.slug)}
+                        aria-label={`Decrease ${line.name} quantity`}
                         className="flex h-6 w-6 items-center justify-center text-lg font-bold"
                       >
                         −
                       </button>
-                      <span className="w-4 text-center text-sm font-bold">{quantity}</span>
+                      <span className="w-4 text-center text-sm font-bold">{line.quantity}</span>
                       <button
                         type="button"
-                        onClick={() => increment(cookie.slug)}
-                        aria-label={`Increase ${cookie.name} quantity`}
+                        onClick={() => increment(line.slug)}
+                        aria-label={`Increase ${line.name} quantity`}
                         className="flex h-6 w-6 items-center justify-center text-lg font-bold"
                       >
                         +
@@ -94,8 +104,8 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
                     </div>
                     <button
                       type="button"
-                      onClick={() => remove(cookie.slug)}
-                      aria-label={`Remove ${cookie.name} from cart`}
+                      onClick={() => remove(line.slug)}
+                      aria-label={`Remove ${line.name} from cart`}
                       className="text-cookie-charcoal/50"
                     >
                       <svg
@@ -120,7 +130,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
             <div className="flex flex-col gap-1 border-t-2 border-dashed border-cookie-charcoal/30 pt-4 font-mono text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-cookie-charcoal/70">{t(ui, 'cookiesCountLabel', lang)}</span>
-                <span className="font-bold text-cookie-brown">{totalCount}</span>
+                <span className="font-bold text-cookie-brown">{cookieCount}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-cookie-charcoal/70">{t(ui, 'total', lang)}</span>
@@ -130,7 +140,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
               </div>
             </div>
 
-            {totalCount >= MIN_CHECKOUT_ITEMS ? (
+            {cookieCount >= MIN_CHECKOUT_ITEMS ? (
               <Link
                 to="/checkout"
                 onClick={onClose}
@@ -142,7 +152,7 @@ export function CartDrawer({ open, onClose }: { open: boolean; onClose: () => vo
               <p className="text-center text-xs font-bold text-cookie-charcoal/60 uppercase">
                 {t(ui, 'checkoutMinNotice', lang).replace(
                   '{n}',
-                  String(MIN_CHECKOUT_ITEMS - totalCount),
+                  String(MIN_CHECKOUT_ITEMS - cookieCount),
                 )}
               </p>
             )}

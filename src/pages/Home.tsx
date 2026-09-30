@@ -187,7 +187,7 @@ function Home() {
 
   return (
     <>
-      <title>codecatcookies — Fresh baked cookies in Skopje</title>
+      <title>codecatcookies - Fresh baked cookies in Skopje</title>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bakeryJsonLd) }}

@@ -15,4 +15,4 @@ npm run dev
 npm run build
 ```
 
-Email signup ("Get notified") posts to Web3Forms — see `src/lib/subscribe.ts`.
+Email signup ("Get notified") posts to Web3Forms - see `src/lib/subscribe.ts`.

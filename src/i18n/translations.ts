@@ -68,8 +68,8 @@ export const ui: Dict = {
   selectDate: { en: 'Select a date', mk: 'Изберете датум' },
   selectTime: { en: 'Select a time', mk: 'Изберете час' },
   noTimesAvailable: {
-    en: 'No pickup times left that day — orders need at least 24h notice. Pick a later date.',
-    mk: 'Нема слободни термини тој ден — нарачките бараат најмалку 24ч претходно. Изберете подоцнежен датум.',
+    en: 'No pickup times left that day - orders need at least 24h notice. Pick a later date.',
+    mk: 'Нема слободни термини тој ден - нарачките бараат најмалку 24ч претходно. Изберете подоцнежен датум.',
   },
   orderNotes: { en: 'Order notes (optional)', mk: 'Забелешки (по желба)' },
   orderNotesPlaceholder: {
@@ -102,6 +102,9 @@ export const ui: Dict = {
 
   navHome: { en: 'Home', mk: 'Почетна' },
   navCookies: { en: 'Cookies', mk: 'Колачиња' },
+  navMerch: { en: 'Merch', mk: 'Џиџи миџи' },
+
+  merchPageTitle: { en: 'Merch', mk: 'Џиџи миџи' },
 
   yourCart: { en: 'Your cart', mk: 'Вашата кошничка' },
   emptyCartMessage: {

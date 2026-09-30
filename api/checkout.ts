@@ -46,6 +46,7 @@ type CheckoutRequestBody = {
   notes?: string
   promoCode?: string
   items: CheckoutItem[]
+  merchItems?: CheckoutItem[]
 }
 
 const NOTES_MAX_LENGTH = 500
@@ -59,6 +60,21 @@ function isSafeNotes(notes: string) {
     notes.length <= NOTES_MAX_LENGTH &&
     !CONTROL_CHAR_PATTERN.test(notes) &&
     !SQL_INJECTION_PATTERN.test(notes)
+  )
+}
+
+function isCheckoutItemList(value: unknown): value is CheckoutItem[] {
+  return (
+    Array.isArray(value) &&
+    value.every(
+      (item): item is CheckoutItem =>
+        Boolean(item) &&
+        typeof item === 'object' &&
+        typeof (item as CheckoutItem).slug === 'string' &&
+        typeof (item as CheckoutItem).quantity === 'number' &&
+        Number.isInteger((item as CheckoutItem).quantity) &&
+        (item as CheckoutItem).quantity > 0,
+    )
   )
 }
 
@@ -76,17 +92,9 @@ function isCheckoutRequestBody(body: unknown): body is CheckoutRequestBody {
     (b.promoCode === undefined ||
       (typeof b.promoCode === 'string' &&
         (b.promoCode === '' || PROMO_CODE_PATTERN.test(b.promoCode)))) &&
-    Array.isArray(b.items) &&
+    isCheckoutItemList(b.items) &&
     b.items.length > 0 &&
-    b.items.every(
-      (item): item is CheckoutItem =>
-        Boolean(item) &&
-        typeof item === 'object' &&
-        typeof (item as CheckoutItem).slug === 'string' &&
-        typeof (item as CheckoutItem).quantity === 'number' &&
-        Number.isInteger((item as CheckoutItem).quantity) &&
-        (item as CheckoutItem).quantity > 0,
-    )
+    (b.merchItems === undefined || isCheckoutItemList(b.merchItems))
   )
 }
 
@@ -217,7 +225,7 @@ export function buildCustomerEmail(payload: OrderPayload) {
   const html = renderShell(`Thanks for your order, ${safeName}!`, bodyHtml)
 
   const itemsText = lines
-    .map((line) => `${line.name} x ${line.quantity} — ${line.price * line.quantity} den`)
+    .map((line) => `${line.name} x ${line.quantity} - ${line.price * line.quantity} den`)
     .join('\n')
   const discountText = discountAmount > 0 ? `\nPromo discount: -${discountAmount} den` : ''
   const text = `Thanks for your order, ${fullName}!\n\n${itemsText}${discountText}\n\nTotal: ${total} den, payable in cash on pickup.\n\nPickup: ${prettyDate} at ${time}\n${PICKUP_CONTACT}\n${PICKUP_ADDRESS}`
@@ -255,7 +263,7 @@ export function buildBusinessEmail(payload: OrderPayload) {
   const html = renderShell(`New order from ${safeName}`, bodyHtml)
 
   const itemsText = lines
-    .map((line) => `${line.name} x ${line.quantity} — ${line.price * line.quantity} den`)
+    .map((line) => `${line.name} x ${line.quantity} - ${line.price * line.quantity} den`)
     .join('\n')
   const discountText = discountAmount > 0 ? `\nPromo discount: -${discountAmount} den` : ''
   const notesText = notes && notes.trim() ? `\n\nNotes: ${notes}` : ''
@@ -275,7 +283,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return
   }
 
-  const { fullName, email, phone, date, time, notes, promoCode, items } = req.body
+  const { fullName, email, phone, date, time, notes, promoCode, items, merchItems = [] } = req.body
 
   const slugs = items.map((item) => item.slug)
   const { data: cookieRows, error: cookiesError } = await supabase
@@ -295,10 +303,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return
   }
 
-  const lines: OrderLine[] = items.map((item) => {
-    const cookie = cookiesBySlug.get(item.slug)!
-    return { name: cookie.name, quantity: item.quantity, price: cookie.price }
-  })
+  const merchSlugs = merchItems.map((item) => item.slug)
+  const { data: merchRows, error: merchError } = merchSlugs.length
+    ? await supabase.from('merch').select('slug, name, price, active').in('slug', merchSlugs)
+    : { data: [], error: null }
+
+  if (merchError || !merchRows) {
+    console.error('merch lookup failure', merchError)
+    res.status(502).json({ error: 'Failed to place order' })
+    return
+  }
+
+  const merchBySlug = new Map(merchRows.map((row) => [row.slug, row]))
+  if (!merchSlugs.every((slug) => merchBySlug.get(slug)?.active)) {
+    res.status(400).json({ error: 'Invalid order payload' })
+    return
+  }
+
+  const lines: OrderLine[] = [
+    ...items.map((item) => {
+      const cookie = cookiesBySlug.get(item.slug)!
+      return { name: cookie.name, quantity: item.quantity, price: cookie.price }
+    }),
+    ...merchItems.map((item) => {
+      const merch = merchBySlug.get(item.slug)!
+      return { name: merch.name, quantity: item.quantity, price: merch.price }
+    }),
+  ]
   const total = lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
 
   const orderItems = items.map((item) => {
@@ -309,6 +340,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       quantity: item.quantity,
       unit_price: cookie.price,
       unit_cost: cookie.production_cost,
+    }
+  })
+
+  const orderMerchItems = merchItems.map((item) => {
+    const merch = merchBySlug.get(item.slug)!
+    return {
+      merch_slug: item.slug,
+      merch_name: merch.name,
+      quantity: item.quantity,
+      unit_price: merch.price,
     }
   })
 
@@ -324,6 +365,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     },
     items: orderItems,
     promo_code: promoCode?.trim() || null,
+    merch_items: orderMerchItems,
   })
 
   if (createOrderError) {

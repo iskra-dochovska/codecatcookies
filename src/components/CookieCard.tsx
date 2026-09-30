@@ -1,5 +1,6 @@
 import { ImageCarousel, type CarouselImage } from './ImageCarousel'
 import { FramedSection } from './CookieDecor'
+import { QuantityControls } from './QuantityControls'
 import bestSellerIcon from '../assets/best_seller.svg'
 import type { Cookie } from '../data/CookiesContext'
 import { allergenColors, defaultAllergenColor } from '../data/allergens'
@@ -12,12 +13,9 @@ import {
   t,
   ui,
 } from '../i18n/translations'
-import { useCart } from '../cart/CartContext'
 
 export function CookieCard({ cookie, isBestSeller }: { cookie: Cookie; isBestSeller?: boolean }) {
   const { lang } = useLanguage()
-  const { items, increment, decrement } = useCart()
-  const quantity = items[cookie.slug] ?? 0
   const hasDetails = Boolean(cookie.nutrition || cookie.allergens)
 
   const images: CarouselImage[] = cookie.images.map((image) => ({
@@ -37,13 +35,7 @@ export function CookieCard({ cookie, isBestSeller }: { cookie: Cookie; isBestSel
               {cookie.price} {t(ui, 'currency', lang)}
             </span>
           </div>
-          <CartControls
-            cookie={cookie}
-            quantity={quantity}
-            increment={increment}
-            decrement={decrement}
-            className="hidden sm:flex"
-          />
+          <QuantityControls slug={cookie.slug} className="hidden sm:flex" />
         </div>
         <div className="flex flex-col items-center gap-3 text-center sm:items-start sm:text-left">
           <h2 className="text-2xl font-black text-cookie-brown uppercase">
@@ -99,13 +91,7 @@ export function CookieCard({ cookie, isBestSeller }: { cookie: Cookie; isBestSel
         )}
       </div>
 
-      <CartControls
-        cookie={cookie}
-        quantity={quantity}
-        increment={increment}
-        decrement={decrement}
-        className="flex sm:hidden"
-      />
+      <QuantityControls slug={cookie.slug} className="flex sm:hidden" />
     </FramedSection>
   )
 }
@@ -115,72 +101,6 @@ function BestSellerBadge() {
     <span className="absolute -top-14 -left-4 z-10 h-28 w-28 sm:-top-16 sm:-left-16 sm:h-32 sm:w-32">
       <img src={bestSellerIcon} alt="Best seller" className="h-full w-full" />
     </span>
-  )
-}
-
-function CartControls({
-  cookie,
-  quantity,
-  increment,
-  decrement,
-  className,
-}: {
-  cookie: Cookie
-  quantity: number
-  increment: (slug: string) => void
-  decrement: (slug: string) => void
-  className?: string
-}) {
-  const { lang } = useLanguage()
-
-  return (
-    <div
-      className={`items-center justify-center gap-3 rounded-full bg-cookie-rust px-3 py-1.5 text-cookie-cream ${className ?? 'flex'}`}
-    >
-      {quantity === 0 ? (
-        <button
-          type="button"
-          onClick={() => increment(cookie.slug)}
-          className="flex items-center gap-2 px-1 text-xs font-bold uppercase"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4 flex-none"
-            aria-hidden="true"
-          >
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-            <path d="M3 6h18" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
-          </svg>
-          {t(ui, 'addToCart', lang)}
-        </button>
-      ) : (
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => decrement(cookie.slug)}
-            aria-label="Decrease quantity"
-            className="flex h-5 w-5 items-center justify-center text-lg font-bold"
-          >
-            −
-          </button>
-          <span className="w-4 text-center text-sm font-bold">{quantity}</span>
-          <button
-            type="button"
-            onClick={() => increment(cookie.slug)}
-            aria-label="Increase quantity"
-            className="flex h-5 w-5 items-center justify-center text-lg font-bold"
-          >
-            +
-          </button>
-        </div>
-      )}
-    </div>
   )
 }
 
