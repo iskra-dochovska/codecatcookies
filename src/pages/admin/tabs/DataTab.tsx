@@ -10,6 +10,13 @@ type CookieCostRow = {
   production_cost: number
 }
 
+type MerchCostRow = {
+  slug: string
+  name: string
+  price: number
+  production_cost: number
+}
+
 type IngredientUnit = 'gram' | 'item'
 
 type Ingredient = {
@@ -55,6 +62,84 @@ function CookiesSection({ cookies, loading }: { cookies: CookieCostRow[]; loadin
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function MerchCostInputRow({
+  item,
+  index,
+  onUpdateCost,
+}: {
+  item: MerchCostRow
+  index: number
+  onUpdateCost: (slug: string, cost: number) => Promise<void>
+}) {
+  const [value, setValue] = useState(String(item.production_cost))
+
+  useEffect(() => {
+    setValue(String(item.production_cost))
+  }, [item.production_cost])
+
+  function commit() {
+    const parsed = Number(value)
+    if (!Number.isFinite(parsed) || parsed === item.production_cost) return
+    onUpdateCost(item.slug, parsed)
+  }
+
+  return (
+    <tr className={index % 2 === 1 ? 'bg-cookie-cream/50' : ''}>
+      <td className="px-2 py-1.5 font-bold text-cookie-brown">{item.name}</td>
+      <td className="px-2 py-1.5 font-mono text-cookie-charcoal/70">{formatDen(item.price)} den</td>
+      <td className="px-2 py-1.5">
+        <input
+          type="number"
+          step="any"
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          onBlur={commit}
+          className="w-16 rounded border border-cookie-charcoal/20 bg-white px-1.5 py-0.5 font-mono text-cookie-charcoal"
+        />
+      </td>
+    </tr>
+  )
+}
+
+function MerchCostsSection({
+  items,
+  loading,
+  onUpdateCost,
+}: {
+  items: MerchCostRow[]
+  loading: boolean
+  onUpdateCost: (slug: string, cost: number) => Promise<void>
+}) {
+  return (
+    <div className="flex min-w-0 flex-col gap-3 rounded-lg border border-cookie-charcoal/15 bg-white p-4">
+      <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Merch</p>
+      {loading ? (
+        <p className="font-bold text-cookie-charcoal/60 uppercase">Loading...</p>
+      ) : (
+        <div className="max-h-80 overflow-auto rounded-lg border border-cookie-charcoal/10">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="sticky top-0 bg-cookie-brown text-[11px] font-bold text-cookie-cream uppercase">
+                <th className="px-2 py-1.5">Item</th>
+                <th className="px-2 py-1.5">Price</th>
+                <th className="px-2 py-1.5">Prod. cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, index) => (
+                <MerchCostInputRow key={item.slug} item={item} index={index} onUpdateCost={onUpdateCost} />
+              ))}
+            </tbody>
+          </table>
+          {items.length === 0 && (
+            <p className="px-4 py-6 text-sm text-cookie-charcoal/50">No merch items yet.</p>
+          )}
         </div>
       )}
     </div>
@@ -1044,6 +1129,8 @@ function PackagingSection({
 function DataTab() {
   const [cookies, setCookies] = useState<CookieCostRow[]>([])
   const [cookiesLoading, setCookiesLoading] = useState(true)
+  const [merchCosts, setMerchCosts] = useState<MerchCostRow[]>([])
+  const [merchCostsLoading, setMerchCostsLoading] = useState(true)
   const [ingredients, setIngredients] = useState<Ingredient[]>([])
   const [ingredientsLoading, setIngredientsLoading] = useState(true)
   const [packagingItems, setPackagingItems] = useState<PackagingItem[]>([])
@@ -1057,6 +1144,15 @@ function DataTab() {
       .then(({ data }) => {
         setCookies((data as CookieCostRow[] | null) ?? [])
         setCookiesLoading(false)
+      })
+
+    supabase
+      .from('merch')
+      .select('slug, name, price, production_cost')
+      .order('price')
+      .then(({ data }) => {
+        setMerchCosts((data as MerchCostRow[] | null) ?? [])
+        setMerchCostsLoading(false)
       })
 
     supabase
@@ -1143,10 +1239,24 @@ function DataTab() {
     return null
   }
 
+  async function updateMerchProductionCost(slug: string, cost: number) {
+    const { error } = await supabase.from('merch').update({ production_cost: cost }).eq('slug', slug)
+    if (!error) {
+      setMerchCosts((prev) =>
+        prev.map((item) => (item.slug === slug ? { ...item, production_cost: cost } : item)),
+      )
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <CookiesSection cookies={cookies} loading={cookiesLoading} />
+        <MerchCostsSection
+          items={merchCosts}
+          loading={merchCostsLoading}
+          onUpdateCost={updateMerchProductionCost}
+        />
         <IngredientsSection
           ingredients={ingredients}
           loading={ingredientsLoading}

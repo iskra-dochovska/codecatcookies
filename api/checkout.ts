@@ -305,7 +305,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const merchSlugs = merchItems.map((item) => item.slug)
   const { data: merchRows, error: merchError } = merchSlugs.length
-    ? await supabase.from('merch').select('slug, name, price, active').in('slug', merchSlugs)
+    ? await supabase.from('merch').select('slug, name, price, production_cost, active').in('slug', merchSlugs)
     : { data: [], error: null }
 
   if (merchError || !merchRows) {
@@ -350,6 +350,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       merch_name: merch.name,
       quantity: item.quantity,
       unit_price: merch.price,
+      unit_cost: merch.production_cost,
     }
   })
 

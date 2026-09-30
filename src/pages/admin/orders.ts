@@ -16,6 +16,7 @@ export type OrderMerchItemRow = {
   merch_name: string
   quantity: number
   unit_price: number
+  unit_cost: number
 }
 
 export type OrderStatus = 'pending' | 'completed'

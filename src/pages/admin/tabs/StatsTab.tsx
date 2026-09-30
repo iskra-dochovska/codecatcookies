@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useCookies } from '../../../data/CookiesContext'
+import { useMerch } from '../../../data/MerchContext'
 import { useClickOutside } from '../../../hooks/useClickOutside'
 import { supabase } from '../../../lib/supabaseClient'
 import { formatDen } from '../../../lib/format'
@@ -98,6 +99,7 @@ function MonthSelect({
 
 function StatsTab({ orders }: { orders: OrderRow[] }) {
   const { cookies } = useCookies()
+  const { merch } = useMerch()
   const [timeView, setTimeView] = useState<'hour' | 'day'>('hour')
   const [cookieCosts, setCookieCosts] = useState<CookieCost[]>([])
   const currentMonthKey = useMemo(() => monthKey(new Date()), [])
@@ -132,12 +134,14 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
     let profit = 0
     let revenue = 0
     let totalCookiesSold = 0
+    let totalMerchSold = 0
     let discountCount = 0
     let discountTotal = 0
     let packagingTotal = 0
     let productionTotal = 0
     let revenueOrderCount = 0
     const unitsBySlug = new Map<string, number>()
+    const unitsByMerchSlug = new Map<string, number>()
     const hourCounts = new Array(24).fill(0)
     const dayCounts = new Array(7).fill(0)
     const customersByEmail = new Map<string, { name: string; email: string; quantity: number }>()
@@ -156,6 +160,13 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
         totalCookiesSold += item.quantity
         quantity += item.quantity
         unitsBySlug.set(item.cookie_slug, (unitsBySlug.get(item.cookie_slug) ?? 0) + item.quantity)
+      }
+      for (const item of order.order_merch_items) {
+        orderProfit += item.quantity * (item.unit_price - item.unit_cost)
+        orderProductionCost += item.quantity * item.unit_cost
+        totalMerchSold += item.quantity
+        quantity += item.quantity
+        unitsByMerchSlug.set(item.merch_slug, (unitsByMerchSlug.get(item.merch_slug) ?? 0) + item.quantity)
       }
 
       const orderPackagingCost = packagingCost(order)
@@ -182,6 +193,10 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       .map((cookie) => ({ slug: cookie.slug, name: cookie.name, quantity: unitsBySlug.get(cookie.slug) ?? 0 }))
       .sort((a, b) => b.quantity - a.quantity)
 
+    const merchSales = merch
+      .map((item) => ({ slug: item.slug, name: item.name, quantity: unitsByMerchSlug.get(item.slug) ?? 0 }))
+      .sort((a, b) => b.quantity - a.quantity)
+
     const cookieProfitability = cookieCosts
       .map((cookie) => ({
         slug: cookie.slug,
@@ -195,6 +210,7 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       .slice(0, TOP_CUSTOMERS_LIMIT)
 
     const maxUnits = Math.max(1, ...cookieSales.map((c) => c.quantity))
+    const maxMerchUnits = Math.max(1, ...merchSales.map((m) => m.quantity))
     const maxMargin = Math.max(1, ...cookieProfitability.map((c) => c.margin))
     const maxCustomerUnits = Math.max(1, ...topCustomers.map((c) => c.quantity))
     const maxHourCount = Math.max(1, ...hourCounts)
@@ -204,12 +220,15 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       profit,
       revenue,
       totalCookiesSold,
+      totalMerchSold,
       discountCount,
       discountTotal,
       packagingTotal,
       productionTotal,
       revenueOrderCount,
       cookieSales,
+      merchSales,
+      maxMerchUnits,
       cookieProfitability,
       topCustomers,
       maxCustomerUnits,
@@ -220,7 +239,7 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       maxHourCount,
       maxDayCount,
     }
-  }, [filteredOrders, cookies, cookieCosts])
+  }, [filteredOrders, cookies, merch, cookieCosts])
 
   return (
     <div className="flex flex-col gap-4">
@@ -269,6 +288,13 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
         </div>
 
         <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
+          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total merch sold</p>
+          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+            {stats.totalMerchSold}
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
           <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Discounts given</p>
           <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
             {stats.discountTotal.toFixed(0)} den
@@ -296,6 +322,31 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
                 </div>
                 <span className="w-6 flex-none text-right font-mono text-xs text-cookie-charcoal/70">
                   {cookie.quantity}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
+          <p className="mb-3 text-xs font-bold text-cookie-charcoal/60 uppercase">Merch sold</p>
+          <div className="flex flex-col gap-2">
+            {stats.merchSales.length === 0 && (
+              <p className="text-sm text-cookie-charcoal/50">No merch yet.</p>
+            )}
+            {stats.merchSales.map((item) => (
+              <div key={item.slug} className="flex items-center gap-3">
+                <span className="w-24 flex-none truncate text-xs font-bold text-cookie-brown">
+                  {item.name}
+                </span>
+                <div className="h-2.5 flex-1 rounded-full bg-cookie-charcoal/10">
+                  <div
+                    className="h-2.5 rounded-full bg-cookie-rust"
+                    style={{ width: `${(item.quantity / stats.maxMerchUnits) * 100}%` }}
+                  />
+                </div>
+                <span className="w-6 flex-none text-right font-mono text-xs text-cookie-charcoal/70">
+                  {item.quantity}
                 </span>
               </div>
             ))}
