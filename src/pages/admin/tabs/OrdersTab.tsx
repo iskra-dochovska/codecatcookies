@@ -450,32 +450,55 @@ function PackagingModal({
   )
 }
 
-function NewOrderModal({
+type OrderFormPayload = {
+  fullName: string
+  email: string
+  phone: string
+  pickupDate: string
+  pickupTime: string
+  notes: string
+  promoCode: string
+  lines: { slug: string; quantity: number }[]
+}
+
+type OrderFormInitial = {
+  fullName: string
+  email: string
+  phone: string
+  pickupDate: string
+  pickupTime: string
+  notes: string
+  promoCode: string
+  lines: OrderLineDraft[]
+}
+
+function OrderFormModal({
+  mode,
   cookieOptions,
-  onCreate,
+  promoCodes,
+  initial,
+  merchSubtotal = 0,
+  onSubmit,
   onClose,
 }: {
+  mode: 'create' | 'edit'
   cookieOptions: CookieOption[]
-  onCreate: (payload: {
-    fullName: string
-    email: string
-    phone: string
-    pickupDate: string
-    pickupTime: string
-    notes: string
-    lines: { slug: string; quantity: number }[]
-  }) => Promise<string | null>
+  promoCodes: PromoOption[]
+  initial?: OrderFormInitial
+  merchSubtotal?: number
+  onSubmit: (payload: OrderFormPayload) => Promise<string | null>
   onClose: () => void
 }) {
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [pickupDate, setPickupDate] = useState('')
-  const [pickupTime, setPickupTime] = useState('')
-  const [notes, setNotes] = useState('')
-  const [lines, setLines] = useState<OrderLineDraft[]>([
-    { slug: cookieOptions[0]?.slug ?? '', quantity: '1' },
-  ])
+  const [fullName, setFullName] = useState(initial?.fullName ?? '')
+  const [email, setEmail] = useState(initial?.email ?? '')
+  const [phone, setPhone] = useState(initial?.phone ?? '')
+  const [pickupDate, setPickupDate] = useState(initial?.pickupDate ?? '')
+  const [pickupTime, setPickupTime] = useState(initial?.pickupTime ?? '')
+  const [notes, setNotes] = useState(initial?.notes ?? '')
+  const [promoCode, setPromoCode] = useState(initial?.promoCode ?? '')
+  const [lines, setLines] = useState<OrderLineDraft[]>(
+    initial?.lines ?? [{ slug: cookieOptions[0]?.slug ?? '', quantity: '1' }],
+  )
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -491,7 +514,7 @@ function NewOrderModal({
     setLines((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const total = lines.reduce((sum, line) => {
+  const cookieTotal = lines.reduce((sum, line) => {
     const cookie = cookieOptions.find((option) => option.slug === line.slug)
     const quantity = Number(line.quantity)
     return cookie && Number.isFinite(quantity) ? sum + cookie.price * quantity : sum
@@ -519,13 +542,14 @@ function NewOrderModal({
     }
 
     setSubmitting(true)
-    const message = await onCreate({
+    const message = await onSubmit({
       fullName: fullName.trim(),
       email: email.trim(),
       phone: phone.trim(),
       pickupDate,
       pickupTime,
       notes: notes.trim(),
+      promoCode,
       lines: parsedLines,
     })
     setSubmitting(false)
@@ -540,7 +564,7 @@ function NewOrderModal({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
-          <p className="text-lg font-bold text-cookie-brown">New order</p>
+          <p className="text-lg font-bold text-cookie-brown">{mode === 'create' ? 'New order' : 'Edit order'}</p>
           <button
             type="button"
             onClick={onClose}
@@ -682,10 +706,46 @@ function NewOrderModal({
             </button>
           </div>
 
-          <div className="flex items-center justify-between border-t border-dashed border-cookie-charcoal/20 pt-2 font-mono text-sm">
-            <span className="text-cookie-charcoal/60">Total</span>
-            <span className="font-bold text-cookie-brown">{formatDen(total)} den</span>
-          </div>
+          <label className="flex flex-col gap-1 text-xs font-bold text-cookie-charcoal/60 uppercase">
+            Promo code
+            <select
+              value={promoCode}
+              onChange={(event) => setPromoCode(event.target.value)}
+              className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm font-normal normal-case text-cookie-charcoal"
+            >
+              <option value="">None</option>
+              {promoCode && !promoCodes.some((promo) => promo.code === promoCode) && (
+                <option value={promoCode}>{promoCode}</option>
+              )}
+              {promoCodes.map((promo) => (
+                <option key={promo.code} value={promo.code}>
+                  {promo.code}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {merchSubtotal > 0 ? (
+            <div className="flex flex-col gap-1 border-t border-dashed border-cookie-charcoal/20 pt-2 font-mono text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-cookie-charcoal/60">Cookie total</span>
+                <span className="font-bold text-cookie-brown">{formatDen(cookieTotal)} den</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-cookie-charcoal/60">Merch (not editable here)</span>
+                <span className="font-bold text-cookie-brown">{formatDen(merchSubtotal)} den</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-cookie-charcoal/60">Order total</span>
+                <span className="font-bold text-cookie-brown">{formatDen(cookieTotal + merchSubtotal)} den</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between border-t border-dashed border-cookie-charcoal/20 pt-2 font-mono text-sm">
+              <span className="text-cookie-charcoal/60">Total</span>
+              <span className="font-bold text-cookie-brown">{formatDen(cookieTotal)} den</span>
+            </div>
+          )}
 
           {error && <p className="text-sm font-bold text-cookie-rust">{error}</p>}
 
@@ -694,7 +754,13 @@ function NewOrderModal({
             disabled={submitting}
             className="rounded-full bg-cookie-rust px-4 py-2 text-xs font-bold text-cookie-cream uppercase disabled:opacity-50"
           >
-            {submitting ? 'Creating...' : 'Create order'}
+            {submitting
+              ? mode === 'create'
+                ? 'Creating...'
+                : 'Saving...'
+              : mode === 'create'
+                ? 'Create order'
+                : 'Save changes'}
           </button>
         </form>
       </div>
@@ -703,64 +769,92 @@ function NewOrderModal({
   )
 }
 
+function EditOrderIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+    </svg>
+  )
+}
+
 function OrderActionButtons({
   order,
+  onEdit,
   onMarkCompleted,
   onDelete,
 }: {
   order: OrderRow
+  onEdit: (order: OrderRow) => void
   onMarkCompleted: (id: string) => void
   onDelete: (order: OrderRow) => void
 }) {
-  if (order.status === 'pending') {
-    return (
+  return (
+    <>
       <button
         type="button"
-        onClick={() => onMarkCompleted(order.id)}
-        aria-label="Mark completed"
-        title="Mark completed"
-        className="flex h-7 w-7 items-center justify-center rounded-full bg-cookie-rust text-cookie-cream"
+        onClick={() => onEdit(order)}
+        aria-label="Edit order"
+        title="Edit order"
+        className="text-cookie-charcoal/60 hover:text-cookie-brown"
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-4 w-4"
-          aria-hidden="true"
-        >
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
+        <EditOrderIcon />
       </button>
-    )
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={() => onDelete(order)}
-      aria-label="Delete order"
-      title="Delete order"
-      className="text-cookie-charcoal/60 hover:text-cookie-rust"
-    >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-4 w-4"
-        aria-hidden="true"
-      >
-        <polyline points="3 6 5 6 21 6" />
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-        <line x1="10" y1="11" x2="10" y2="17" />
-        <line x1="14" y1="11" x2="14" y2="17" />
-      </svg>
-    </button>
+      {order.status === 'pending' ? (
+        <button
+          type="button"
+          onClick={() => onMarkCompleted(order.id)}
+          aria-label="Mark completed"
+          title="Mark completed"
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-cookie-rust text-cookie-cream"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+            aria-hidden="true"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => onDelete(order)}
+          aria-label="Delete order"
+          title="Delete order"
+          className="text-cookie-charcoal/60 hover:text-cookie-rust"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-4 w-4"
+            aria-hidden="true"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <line x1="10" y1="11" x2="10" y2="17" />
+            <line x1="14" y1="11" x2="14" y2="17" />
+          </svg>
+        </button>
+      )}
+    </>
   )
 }
 
@@ -769,6 +863,7 @@ function OrderCard({
   showPackaging,
   promoCodes,
   onPromoChange,
+  onEdit,
   onMarkCompleted,
   onDelete,
   onOpenPackaging,
@@ -777,6 +872,7 @@ function OrderCard({
   showPackaging: boolean
   promoCodes: PromoOption[]
   onPromoChange: (id: string, code: string) => void
+  onEdit: (order: OrderRow) => void
   onMarkCompleted: (id: string) => void
   onDelete: (order: OrderRow) => void
   onOpenPackaging: (id: string) => void
@@ -790,7 +886,7 @@ function OrderCard({
           <p className="truncate text-xs text-cookie-charcoal/50">{order.email}</p>
         </div>
         <div className="flex flex-none items-center gap-2">
-          <OrderActionButtons order={order} onMarkCompleted={onMarkCompleted} onDelete={onDelete} />
+          <OrderActionButtons order={order} onEdit={onEdit} onMarkCompleted={onMarkCompleted} onDelete={onDelete} />
         </div>
       </div>
 
@@ -872,6 +968,7 @@ function OrdersTab({
   const [cookieOptions, setCookieOptions] = useState<CookieOption[]>([])
   const [promoCodes, setPromoCodes] = useState<PromoOption[]>([])
   const [showNewOrder, setShowNewOrder] = useState(false)
+  const [editingOrder, setEditingOrder] = useState<OrderRow | null>(null)
   const filteredOrders = orders.filter((order) => order.status === statusFilter)
   const packagingOrder = orders.find((order) => order.id === packagingOrderId) ?? null
 
@@ -896,15 +993,7 @@ function OrdersTab({
       .then(({ data }) => setPromoCodes((data as PromoOption[] | null) ?? []))
   }, [])
 
-  async function createOrder(payload: {
-    fullName: string
-    email: string
-    phone: string
-    pickupDate: string
-    pickupTime: string
-    notes: string
-    lines: { slug: string; quantity: number }[]
-  }) {
+  async function createOrder(payload: OrderFormPayload) {
     const orderItems = payload.lines.flatMap((line) => {
       const cookie = cookieOptions.find((option) => option.slug === line.slug)
       if (!cookie) return []
@@ -933,11 +1022,15 @@ function OrdersTab({
         total,
       },
       items: orderItems,
-      promo_code: null,
+      promo_code: payload.promoCode.trim() || null,
     })
 
     const orderId = (result as { order_id?: string } | null)?.order_id
-    if (error || !orderId) return 'Could not create order.'
+    if (error) {
+      if (error.message?.includes('invalid_promo_code')) return 'That promo code is invalid or no longer active.'
+      return 'Could not create order.'
+    }
+    if (!orderId) return 'Could not create order.'
 
     const { data: fullOrder, error: fetchError } = await supabase
       .from('orders')
@@ -948,6 +1041,93 @@ function OrdersTab({
     if (fetchError || !fullOrder) return 'Order created but failed to load.'
 
     setOrders((prev) => [fullOrder as OrderRow, ...prev])
+    return null
+  }
+
+  async function updateOrder(orderId: string, payload: OrderFormPayload) {
+    const order = orders.find((candidate) => candidate.id === orderId)
+    if (!order) return 'Order not found.'
+
+    const cookieLines = payload.lines.flatMap((line) => {
+      const cookie = cookieOptions.find((option) => option.slug === line.slug)
+      if (!cookie) return []
+      return [
+        {
+          cookie_slug: cookie.slug,
+          cookie_name: cookie.name,
+          quantity: line.quantity,
+          unit_price: cookie.price,
+          unit_cost: cookie.production_cost,
+        },
+      ]
+    })
+    if (cookieLines.length === 0) return 'Could not save order.'
+
+    const cookieTotal = cookieLines.reduce((sum, item) => sum + item.quantity * item.unit_price, 0)
+    const merchTotal = order.order_merch_items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0)
+    const total = cookieTotal + merchTotal
+
+    const trimmedCode = payload.promoCode.trim()
+    let discount = false
+    let discountAmount = 0
+    let resolvedCode: string | null = null
+    if (trimmedCode) {
+      const promo = promoCodes.find((candidate) => candidate.code === trimmedCode)
+      if (!promo) return 'That promo code is invalid or no longer active.'
+      discount = true
+      resolvedCode = promo.code
+      discountAmount = calculateDiscount(
+        {
+          discountType: promo.discount_type,
+          discountScope: promo.discount_scope,
+          discountValue: promo.discount_value,
+        },
+        [
+          ...cookieLines.map((item) => ({ price: item.unit_price, quantity: item.quantity })),
+          ...order.order_merch_items.map((item) => ({ price: item.unit_price, quantity: item.quantity })),
+        ],
+      )
+    }
+
+    const { error: updateError } = await supabase
+      .from('orders')
+      .update({
+        full_name: payload.fullName,
+        email: payload.email,
+        phone: payload.phone,
+        pickup_date: payload.pickupDate,
+        pickup_time: payload.pickupTime,
+        notes: payload.notes || null,
+        total,
+        discount,
+        discount_amount: discountAmount,
+        promo_code: resolvedCode,
+      })
+      .eq('id', orderId)
+    if (updateError) return 'Could not save order.'
+
+    const { error: deleteError } = await supabase.from('order_items').delete().eq('order_id', orderId)
+    if (deleteError) return 'Could not save order.'
+
+    const { error: insertError } = await supabase
+      .from('order_items')
+      .insert(cookieLines.map((item) => ({ order_id: orderId, ...item })))
+    if (insertError) return 'Could not save order.'
+
+    const previousCode = order.promo_code
+    if (previousCode !== resolvedCode) {
+      if (previousCode) await adjustPromoUses(previousCode, -1)
+      if (resolvedCode) await adjustPromoUses(resolvedCode, 1)
+    }
+
+    const { data: fullOrder, error: fetchError } = await supabase
+      .from('orders')
+      .select('*, order_items(*), order_merch_items(*), order_packaging(*)')
+      .eq('id', orderId)
+      .single()
+    if (fetchError || !fullOrder) return 'Order saved but failed to reload.'
+
+    setOrders((prev) => prev.map((candidate) => (candidate.id === orderId ? (fullOrder as OrderRow) : candidate)))
     return null
   }
 
@@ -1199,7 +1379,12 @@ function OrdersTab({
                 )}
                 <td className="px-3 py-2">
                   <div className="flex items-center gap-2">
-                    <OrderActionButtons order={order} onMarkCompleted={markCompleted} onDelete={setConfirmDelete} />
+                    <OrderActionButtons
+                      order={order}
+                      onEdit={setEditingOrder}
+                      onMarkCompleted={markCompleted}
+                      onDelete={setConfirmDelete}
+                    />
                   </div>
                 </td>
               </tr>
@@ -1221,6 +1406,7 @@ function OrdersTab({
             showPackaging={statusFilter === 'completed'}
             promoCodes={promoCodes}
             onPromoChange={setOrderPromo}
+            onEdit={setEditingOrder}
             onMarkCompleted={markCompleted}
             onDelete={setConfirmDelete}
             onOpenPackaging={setPackagingOrderId}
@@ -1259,10 +1445,39 @@ function OrdersTab({
       )}
 
       {showNewOrder && (
-        <NewOrderModal
+        <OrderFormModal
+          mode="create"
           cookieOptions={cookieOptions}
-          onCreate={createOrder}
+          promoCodes={promoCodes}
+          onSubmit={createOrder}
           onClose={() => setShowNewOrder(false)}
+        />
+      )}
+
+      {editingOrder && (
+        <OrderFormModal
+          mode="edit"
+          cookieOptions={cookieOptions}
+          promoCodes={promoCodes}
+          initial={{
+            fullName: editingOrder.full_name,
+            email: editingOrder.email,
+            phone: editingOrder.phone,
+            pickupDate: editingOrder.pickup_date,
+            pickupTime: editingOrder.pickup_time,
+            notes: editingOrder.notes ?? '',
+            promoCode: editingOrder.promo_code ?? '',
+            lines: editingOrder.order_items.map((item) => ({
+              slug: item.cookie_slug,
+              quantity: String(item.quantity),
+            })),
+          }}
+          merchSubtotal={editingOrder.order_merch_items.reduce(
+            (sum, item) => sum + item.quantity * item.unit_price,
+            0,
+          )}
+          onSubmit={(payload) => updateOrder(editingOrder.id, payload)}
+          onClose={() => setEditingOrder(null)}
         />
       )}
     </div>

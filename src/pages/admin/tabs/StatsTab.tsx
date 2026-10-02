@@ -131,6 +131,8 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
   )
 
   const stats = useMemo(() => {
+    const completedOrders = filteredOrders.filter((order) => order.status === 'completed')
+
     let profit = 0
     let revenue = 0
     let totalCookiesSold = 0
@@ -139,14 +141,13 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
     let discountTotal = 0
     let packagingTotal = 0
     let productionTotal = 0
-    let revenueOrderCount = 0
     const unitsBySlug = new Map<string, number>()
     const unitsByMerchSlug = new Map<string, number>()
     const hourCounts = new Array(24).fill(0)
     const dayCounts = new Array(7).fill(0)
     const customersByEmail = new Map<string, { name: string; email: string; quantity: number }>()
 
-    for (const order of filteredOrders) {
+    for (const order of completedOrders) {
       const placedAt = new Date(order.created_at)
       hourCounts[placedAt.getHours()] += 1
       dayCounts[placedAt.getDay()] += 1
@@ -171,14 +172,11 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
 
       const orderPackagingCost = packagingCost(order)
       packagingTotal += orderPackagingCost
+      productionTotal += orderProductionCost
 
       const discountAmount = order.discount_amount
-      if (order.status === 'completed') {
-        revenue += order.total - discountAmount
-        profit += orderProfit - discountAmount - orderPackagingCost
-        revenueOrderCount += 1
-        productionTotal += orderProductionCost
-      }
+      revenue += order.total - discountAmount
+      profit += orderProfit - discountAmount - orderPackagingCost
       if (order.discount) {
         discountCount += 1
         discountTotal += discountAmount
@@ -188,6 +186,8 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
       if (customer) customer.quantity += quantity
       else customersByEmail.set(order.email, { name: order.full_name, email: order.email, quantity })
     }
+
+    const revenueOrderCount = completedOrders.length
 
     const cookieSales = cookies
       .map((cookie) => ({ slug: cookie.slug, name: cookie.name, quantity: unitsBySlug.get(cookie.slug) ?? 0 }))
