@@ -27,6 +27,63 @@ type PromoOption = {
 
 type OrderLineDraft = { slug: string; quantity: string }
 
+type SortKey = 'customer' | 'pickup' | 'total'
+
+const PAGE_SIZE = 10
+
+function orderComparator(key: SortKey, direction: 'asc' | 'desc') {
+  const sign = direction === 'asc' ? 1 : -1
+  return (a: OrderRow, b: OrderRow) => {
+    if (key === 'customer') return a.full_name.localeCompare(b.full_name) * sign
+    if (key === 'pickup') {
+      return `${a.pickup_date} ${a.pickup_time}`.localeCompare(`${b.pickup_date} ${b.pickup_time}`) * sign
+    }
+    return (effectiveTotal(a) - effectiveTotal(b)) * sign
+  }
+}
+
+function SortIcon({ direction }: { direction: 'asc' | 'desc' }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`h-3 w-3 transition-transform ${direction === 'desc' ? 'rotate-180' : ''}`}
+      aria-hidden="true"
+    >
+      <polyline points="18 15 12 9 6 15" />
+    </svg>
+  )
+}
+
+function SortableHeader({
+  label,
+  sortKey,
+  activeKey,
+  direction,
+  onSort,
+}: {
+  label: string
+  sortKey: SortKey
+  activeKey: SortKey | null
+  direction: 'asc' | 'desc'
+  onSort: (key: SortKey) => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSort(sortKey)}
+      className="inline-flex items-center gap-1 uppercase"
+    >
+      {label}
+      {activeKey === sortKey && <SortIcon direction={direction} />}
+    </button>
+  )
+}
+
 function pad(value: number) {
   return value.toString().padStart(2, '0')
 }
@@ -969,8 +1026,39 @@ function OrdersTab({
   const [promoCodes, setPromoCodes] = useState<PromoOption[]>([])
   const [showNewOrder, setShowNewOrder] = useState(false)
   const [editingOrder, setEditingOrder] = useState<OrderRow | null>(null)
-  const filteredOrders = orders.filter((order) => order.status === statusFilter)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortKey, setSortKey] = useState<SortKey | null>('pickup')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+  const [currentPage, setCurrentPage] = useState(1)
   const packagingOrder = orders.find((order) => order.id === packagingOrderId) ?? null
+
+  const statusOrders = orders.filter((order) => order.status === statusFilter)
+
+  const query = searchQuery.trim().toLowerCase()
+  const searchedOrders = query
+    ? statusOrders.filter(
+        (order) =>
+          order.full_name.toLowerCase().includes(query) ||
+          order.email.toLowerCase().includes(query) ||
+          order.phone.includes(query),
+      )
+    : statusOrders
+
+  const sortedOrders = sortKey ? [...searchedOrders].sort(orderComparator(sortKey, sortDirection)) : searchedOrders
+
+  const totalPages = Math.max(1, Math.ceil(sortedOrders.length / PAGE_SIZE))
+  const page = Math.min(currentPage, totalPages)
+  const pageOrders = sortedOrders.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  function handleSort(key: SortKey) {
+    setCurrentPage(1)
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortKey(key)
+      setSortDirection('asc')
+    }
+  }
 
   useEffect(() => {
     supabase
@@ -1268,18 +1356,31 @@ function OrdersTab({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(event) => {
+            setSearchQuery(event.target.value)
+            setCurrentPage(1)
+          }}
+          placeholder="Search name, email, phone..."
+          className="order-1 w-full min-w-0 rounded-full border border-cookie-charcoal/20 bg-white px-4 py-1.5 text-sm text-cookie-charcoal sm:order-2 sm:w-auto sm:max-w-xs sm:flex-1"
+        />
         <button
           type="button"
           onClick={() => setShowNewOrder(true)}
-          className="rounded-full bg-cookie-rust px-4 py-1.5 text-xs font-bold text-cookie-cream uppercase"
+          className="order-2 flex-none rounded-full bg-cookie-rust px-4 py-1.5 text-xs font-bold text-cookie-cream uppercase sm:order-1"
         >
           + New order
         </button>
-        <div className="inline-flex rounded-full bg-cookie-charcoal/10 p-1">
+        <div className="order-3 inline-flex rounded-full bg-cookie-charcoal/10 p-1 sm:ml-auto">
           <button
             type="button"
-            onClick={() => setStatusFilter('pending')}
+            onClick={() => {
+              setStatusFilter('pending')
+              setCurrentPage(1)
+            }}
             className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition-colors ${
               statusFilter === 'pending' ? 'bg-cookie-rust text-cookie-cream' : 'text-cookie-charcoal/60'
             }`}
@@ -1288,7 +1389,10 @@ function OrdersTab({
           </button>
           <button
             type="button"
-            onClick={() => setStatusFilter('completed')}
+            onClick={() => {
+              setStatusFilter('completed')
+              setCurrentPage(1)
+            }}
             className={`rounded-full px-4 py-1.5 text-xs font-bold uppercase transition-colors ${
               statusFilter === 'completed' ? 'bg-cookie-rust text-cookie-cream' : 'text-cookie-charcoal/60'
             }`}
@@ -1302,18 +1406,24 @@ function OrdersTab({
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="bg-cookie-brown text-xs font-bold text-cookie-cream uppercase">
-              <th className="px-3 py-2">Customer</th>
-              <th className="px-3 py-2">Pickup</th>
+              <th className="px-3 py-2">
+                <SortableHeader label="Customer" sortKey="customer" activeKey={sortKey} direction={sortDirection} onSort={handleSort} />
+              </th>
+              <th className="px-3 py-2">
+                <SortableHeader label="Pickup" sortKey="pickup" activeKey={sortKey} direction={sortDirection} onSort={handleSort} />
+              </th>
               <th className="px-3 py-2">Items</th>
               <th className="px-3 py-2">Notes</th>
               <th className="px-3 py-2">Promo</th>
-              <th className="px-3 py-2 text-center">Total</th>
+              <th className="px-3 py-2 text-center">
+                <SortableHeader label="Total" sortKey="total" activeKey={sortKey} direction={sortDirection} onSort={handleSort} />
+              </th>
               {statusFilter === 'completed' && <th className="px-3 py-2 text-center">Packaging</th>}
               <th className="px-3 py-2" />
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.map((order, index) => (
+            {pageOrders.map((order, index) => (
               <tr key={order.id} className={index % 2 === 1 ? 'bg-cookie-honey/25' : ''}>
                 <td className="px-3 py-2">
                   <p className="font-bold text-cookie-brown">{order.full_name}</p>
@@ -1391,15 +1501,15 @@ function OrdersTab({
             ))}
           </tbody>
         </table>
-        {filteredOrders.length === 0 && (
+        {sortedOrders.length === 0 && (
           <p className="px-4 py-6 text-sm text-cookie-charcoal/50">
-            No {statusFilter === 'pending' ? 'current' : 'completed'} orders.
+            No {statusFilter === 'pending' ? 'current' : 'completed'} orders{query ? ' match your search' : ''}.
           </p>
         )}
       </div>
 
       <div className="flex flex-col gap-3 sm:hidden">
-        {filteredOrders.map((order) => (
+        {pageOrders.map((order) => (
           <OrderCard
             key={order.id}
             order={order}
@@ -1412,12 +1522,38 @@ function OrdersTab({
             onOpenPackaging={setPackagingOrderId}
           />
         ))}
-        {filteredOrders.length === 0 && (
+        {sortedOrders.length === 0 && (
           <p className="rounded-lg border border-cookie-charcoal/15 bg-white px-4 py-6 text-sm text-cookie-charcoal/50">
-            No {statusFilter === 'pending' ? 'current' : 'completed'} orders.
+            No {statusFilter === 'pending' ? 'current' : 'completed'} orders{query ? ' match your search' : ''}.
           </p>
         )}
       </div>
+
+      {sortedOrders.length > 0 && (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs text-cookie-charcoal/50">
+            {sortedOrders.length} order{sortedOrders.length === 1 ? '' : 's'} · page {page} of {totalPages}
+          </p>
+          <div className="inline-flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={page <= 1}
+              className="rounded-full border border-cookie-charcoal/20 px-3 py-1 text-xs font-bold text-cookie-charcoal/70 uppercase disabled:opacity-40"
+            >
+              Prev
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+              disabled={page >= totalPages}
+              className="rounded-full border border-cookie-charcoal/20 px-3 py-1 text-xs font-bold text-cookie-charcoal/70 uppercase disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {confirmDelete && (
         <ConfirmModal
