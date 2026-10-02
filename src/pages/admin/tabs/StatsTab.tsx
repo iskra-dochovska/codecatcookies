@@ -248,64 +248,64 @@ function StatsTab({ orders }: { orders: OrderRow[] }) {
         <MonthSelect value={monthFilter} options={monthOptions} onChange={setMonthFilter} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total profit</p>
-          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-3">
+          <p className="text-[10px] font-bold text-cookie-charcoal/60 uppercase">Total profit</p>
+          <p className="mt-1 font-mono text-lg font-black text-cookie-brown">
             {stats.profit.toFixed(0)} den
           </p>
         </div>
 
-        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Production costs</p>
-          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-3">
+          <p className="text-[10px] font-bold text-cookie-charcoal/60 uppercase">Production costs</p>
+          <p className="mt-1 font-mono text-lg font-black text-cookie-brown">
             {stats.productionTotal.toFixed(0)} den
           </p>
         </div>
 
-        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Packaging costs</p>
-          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-3">
+          <p className="text-[10px] font-bold text-cookie-charcoal/60 uppercase">Packaging costs</p>
+          <p className="mt-1 font-mono text-lg font-black text-cookie-brown">
             {stats.packagingTotal.toFixed(0)} den
           </p>
         </div>
 
-        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total revenue</p>
-          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-3">
+          <p className="text-[10px] font-bold text-cookie-charcoal/60 uppercase">Total revenue</p>
+          <p className="mt-1 font-mono text-lg font-black text-cookie-brown">
             {stats.revenue.toFixed(0)} den
           </p>
-          <p className="mt-1 text-xs text-cookie-charcoal/50">
+          <p className="mt-0.5 text-[10px] text-cookie-charcoal/50">
             {stats.revenueOrderCount} order{stats.revenueOrderCount === 1 ? '' : 's'}
           </p>
         </div>
 
-        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total cookies sold</p>
-          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-3">
+          <p className="text-[10px] font-bold text-cookie-charcoal/60 uppercase">Total cookies sold</p>
+          <p className="mt-1 font-mono text-lg font-black text-cookie-brown">
             {stats.totalCookiesSold}
           </p>
         </div>
 
-        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Total merch sold</p>
-          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-3">
+          <p className="text-[10px] font-bold text-cookie-charcoal/60 uppercase">Total merch sold</p>
+          <p className="mt-1 font-mono text-lg font-black text-cookie-brown">
             {stats.totalMerchSold}
           </p>
         </div>
 
-        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
-          <p className="text-xs font-bold text-cookie-charcoal/60 uppercase">Discounts given</p>
-          <p className="mt-1 font-mono text-3xl font-black text-cookie-brown">
+        <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-3">
+          <p className="text-[10px] font-bold text-cookie-charcoal/60 uppercase">Discounts given</p>
+          <p className="mt-1 font-mono text-lg font-black text-cookie-brown">
             {stats.discountTotal.toFixed(0)} den
           </p>
-          <p className="mt-1 text-xs text-cookie-charcoal/50">
+          <p className="mt-0.5 text-[10px] text-cookie-charcoal/50">
             {stats.discountCount} order{stats.discountCount === 1 ? '' : 's'}
           </p>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-lg border border-cookie-charcoal/15 bg-white p-5">
           <p className="mb-3 text-xs font-bold text-cookie-charcoal/60 uppercase">Cookies sold</p>
           <div className="flex flex-col gap-2">
