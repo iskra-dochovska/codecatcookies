@@ -4,6 +4,8 @@ import { supabase } from '../../../lib/supabaseClient'
 import { formatDen } from '../../../lib/format'
 import { useClickOutside } from '../../../hooks/useClickOutside'
 import ConfirmModal from '../ConfirmModal'
+import DatePicker from '../../../components/DatePicker'
+import TimeSelect from '../../../components/TimeSelect'
 import {
   effectiveTotal,
   formatPickupCell,
@@ -96,41 +98,7 @@ const TIME_SLOTS = (() => {
   return slots
 })()
 
-function StyledSelect({
-  value,
-  onChange,
-  children,
-  className = '',
-}: {
-  value: string
-  onChange: (value: string) => void
-  children: React.ReactNode
-  className?: string
-}) {
-  return (
-    <div className={`relative ${className}`}>
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="w-full appearance-none rounded-lg border border-cookie-charcoal/20 bg-white py-1.5 pr-8 pl-3 text-sm font-normal normal-case text-cookie-charcoal transition-colors hover:border-cookie-charcoal/40 focus:border-cookie-rust focus:ring-2 focus:ring-cookie-rust/30 focus:outline-none"
-      >
-        {children}
-      </select>
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="pointer-events-none absolute top-1/2 right-2.5 h-3.5 w-3.5 -translate-y-1/2 text-cookie-charcoal/50"
-        aria-hidden="true"
-      >
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
-    </div>
-  )
-}
+const MIN_PICKUP_DATE = '2000-01-01'
 
 type ItemOption = { key: string; label: string }
 
@@ -148,16 +116,33 @@ function ItemSelect({
   className?: string
 }) {
   const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
   useClickOutside(containerRef, () => setOpen(false), open)
 
   const selected = options.find((option) => option.key === value)
+  const query = search.trim().toLowerCase()
+  const filteredOptions = query
+    ? options.filter((option) => option.label.toLowerCase().includes(query))
+    : options
+
+  function toggleOpen() {
+    setOpen((current) => {
+      const next = !current
+      if (next) {
+        setSearch('')
+        requestAnimationFrame(() => searchRef.current?.focus())
+      }
+      return next
+    })
+  }
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <button
         type="button"
-        onClick={() => setOpen((current) => !current)}
+        onClick={toggleOpen}
         aria-haspopup="listbox"
         aria-expanded={open}
         className={`flex w-full items-center justify-between gap-2 rounded-lg border bg-white px-3 py-1.5 text-left text-sm text-cookie-charcoal transition-colors hover:border-cookie-charcoal/40 ${
@@ -180,29 +165,43 @@ function ItemSelect({
       </button>
 
       {open && (
-        <div
-          role="listbox"
-          className="absolute z-20 mt-1 max-h-[8.5rem] w-full overflow-y-auto rounded-lg border border-cookie-charcoal/20 bg-white p-1 shadow-lg"
-        >
-          {options.map((option) => (
-            <button
-              key={option.key}
-              type="button"
-              role="option"
-              aria-selected={option.key === value}
-              onClick={() => {
-                onChange(option.key)
-                setOpen(false)
-              }}
-              className={`block w-full truncate rounded-md px-2.5 py-1.5 text-left text-sm ${
-                option.key === value
-                  ? 'bg-cookie-rust font-bold text-cookie-cream'
-                  : 'text-cookie-charcoal hover:bg-cookie-cream'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-cookie-charcoal/20 bg-white shadow-lg">
+          <input
+            ref={searchRef}
+            type="text"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') setOpen(false)
+            }}
+            placeholder="Search..."
+            className="w-full border-b border-cookie-charcoal/10 px-2.5 py-1.5 text-sm text-cookie-charcoal outline-none"
+          />
+          <div role="listbox" className="max-h-[8.5rem] overflow-y-auto p-1">
+            {filteredOptions.length === 0 ? (
+              <p className="px-2.5 py-1.5 text-sm text-cookie-charcoal/50">No matches</p>
+            ) : (
+              filteredOptions.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  role="option"
+                  aria-selected={option.key === value}
+                  onClick={() => {
+                    onChange(option.key)
+                    setOpen(false)
+                  }}
+                  className={`block w-full truncate rounded-md px-2.5 py-1.5 text-left text-sm ${
+                    option.key === value
+                      ? 'bg-cookie-rust font-bold text-cookie-cream'
+                      : 'text-cookie-charcoal hover:bg-cookie-cream'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -679,23 +678,23 @@ function OrderFormModal({
             </label>
             <label className="flex flex-col gap-1 text-xs font-bold text-cookie-charcoal/60 uppercase">
               Pickup date
-              <input
-                type="date"
+              <DatePicker
                 value={pickupDate}
-                onChange={(event) => setPickupDate(event.target.value)}
-                className="rounded-lg border border-cookie-charcoal/20 bg-white px-2 py-1.5 text-sm font-normal normal-case text-cookie-charcoal"
+                onChange={setPickupDate}
+                min={MIN_PICKUP_DATE}
+                lang="en"
+                placeholder="Select date"
               />
             </label>
             <label className="flex flex-col gap-1 text-xs font-bold text-cookie-charcoal/60 uppercase">
               Pickup time
-              <StyledSelect value={pickupTime} onChange={setPickupTime}>
-                <option value="">Select time</option>
-                {TIME_SLOTS.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </StyledSelect>
+              <TimeSelect
+                value={pickupTime}
+                onChange={setPickupTime}
+                options={TIME_SLOTS}
+                disabled={false}
+                placeholder="Select time"
+              />
             </label>
           </div>
 
