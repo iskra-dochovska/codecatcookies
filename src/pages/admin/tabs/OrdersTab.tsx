@@ -98,7 +98,12 @@ const TIME_SLOTS = (() => {
   return slots
 })()
 
-const MIN_PICKUP_DATE = '2000-01-01'
+function todayISODate() {
+  const now = new Date()
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+}
+
+const MIN_PICKUP_DATE = todayISODate()
 
 type ItemOption = { key: string; label: string }
 
@@ -683,6 +688,7 @@ function OrderFormModal({
                 onChange={setPickupDate}
                 min={MIN_PICKUP_DATE}
                 lang="en"
+                align="right"
                 placeholder="Select date"
               />
             </label>

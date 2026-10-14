@@ -7,6 +7,7 @@ type DatePickerProps = {
   min: string
   lang: 'en' | 'mk'
   placeholder: string
+  align?: 'left' | 'right'
 }
 
 function pad(value: number) {
@@ -22,10 +23,14 @@ function parseISODate(value: string) {
   return new Date(year, month - 1, day)
 }
 
-function DatePicker({ value, onChange, min, lang, placeholder }: DatePickerProps) {
+function DatePicker({ value, onChange, min, lang, placeholder, align = 'left' }: DatePickerProps) {
   const [open, setOpen] = useState(false)
   const minDate = useMemo(() => parseISODate(min), [min])
-  const [viewDate, setViewDate] = useState(() => (value ? parseISODate(value) : minDate))
+  const [viewDate, setViewDate] = useState(() => {
+    if (value) return parseISODate(value)
+    const today = new Date()
+    return today < minDate ? minDate : today
+  })
   const containerRef = useRef<HTMLDivElement>(null)
 
   useClickOutside(containerRef, () => setOpen(false), open)
@@ -110,7 +115,9 @@ function DatePicker({ value, onChange, min, lang, placeholder }: DatePickerProps
         <div
           role="dialog"
           aria-label={placeholder}
-          className="absolute z-20 mt-2 w-72 rounded-xl border border-cookie-charcoal/20 bg-white p-3 shadow-lg"
+          className={`absolute z-20 mt-2 w-72 rounded-xl border border-cookie-charcoal/20 bg-white p-3 shadow-lg ${
+            align === 'right' ? 'right-0' : ''
+          }`}
         >
           <div className="mb-2 flex items-center justify-between">
             <button
