@@ -7,10 +7,10 @@ import OrdersTab from './tabs/OrdersTab'
 import StatsTab from './tabs/StatsTab'
 import DataTab from './tabs/DataTab'
 import PromoCodesTab from './tabs/PromoCodesTab'
-import ImagesTab from './tabs/ImagesTab'
+import CookieCardsTab from './tabs/CookieCardsTab'
 import MerchTab from './tabs/MerchTab'
 
-const TABS = ['orders', 'statistics', 'costs', 'promos', 'images', 'merch'] as const
+const TABS = ['orders', 'statistics', 'costs', 'promos', 'cookie cards', 'merch'] as const
 type Tab = (typeof TABS)[number]
 
 function LogoutIcon() {
@@ -192,7 +192,7 @@ function AdminDashboard() {
             {tab === 'statistics' && <StatsTab orders={orders} />}
             {tab === 'costs' && <DataTab />}
             {tab === 'promos' && <PromoCodesTab />}
-            {tab === 'images' && <ImagesTab />}
+            {tab === 'cookie cards' && <CookieCardsTab />}
             {tab === 'merch' && <MerchTab />}
           </>
         )}
